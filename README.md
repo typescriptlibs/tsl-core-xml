@@ -25,18 +25,25 @@ const xml = new XMLScanner(
     '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
 );
 
-console.log(await xml.scan()); // { tag: "!DOCTYPE", attributes: { html: "" } }
-console.log(await xml.scan()); // { tag: "html", attributes: { lang: "en" } }
-console.log(await xml.scan()); // { tag: "head" }
-console.log(await xml.scan()); // { tag: "title" }
-console.log(await xml.scan()); // "My Webpage"
-console.log(await xml.scan()); // { tag: "/title" }
-console.log(await xml.scan()); // { tag: "/head" }
-console.log(await xml.scan()); // { tag: "body", attributes: { style: "background:#9CF" } }
-console.log(await xml.scan()); // { tag: "h1" }
-console.log(await xml.scan()); // "My Webpage"
-console.log(await xml.scan()); // { tag: "/h1" }
-console.log(await xml.scan()); // { tag: "/body" }
-console.log(await xml.scan()); // { tag: "hr", empty: true }
-console.log(await xml.scan()); // { tag: "/html" }
+let node: XMLNode;
+
+while (node = xml.scan()) {
+    console.log(node);
+}
+
+// console.log:
+// { tag: "!DOCTYPE", attributes: { html: "" } }
+// { tag: "html", attributes: { lang: "en" } }
+// { tag: "head" }
+// { tag: "title" }
+// "My Webpage"
+// { tag: "/title" }
+// { tag: "/head" }
+// { tag: "body", attributes: { style: "background:#9CF" } }
+// { tag: "h1" }
+// "My Webpage"
+// { tag: "/h1" }
+// { tag: "/body" }
+// { tag: "hr", empty: true }
+// { tag: "/html" }
 ```
