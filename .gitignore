@@ -1,3 +1,7 @@
+/tst-run/
+
+.DS_Store
+
 # Logs
 logs
 *.log
