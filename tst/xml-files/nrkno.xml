@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+  <channel>
+    <title>NRK</title>
+    <link>https://www.nrk.no/</link>
+    <description>Siste saker fra nrk.no</description>
+    <atom:link href="https://www.nrk.no/" type="text/html" rel="alternate" />
+    <atom:link href="https://www.nrk.no/toppsaker.rss" type="application/rss+xml" rel="self" />
+    <image>
+      <title>NRK logo</title>
+      <url>https://gfx.nrk.no/ZQa7ZMdrmZjV5uzIGBzl-wpLfS5fQrnZ2A7K39YPcXrA</url>
+      <link>https://www.nrk.no</link>
+      <width>114</width>
+      <height>114</height>
+    </image>
+    <item>
+      <title>2022 fra A til Å</title>
+      <link>https://www.nrk.no/direkte/xl/2022-fra-a-til-a---vi-oppsummerer-aret-som-har-gatt-1.16218358</link>
+      <description>Du vet det har vært et år spekket med snakkiser og øyeblikk når verken Putin eller rekordhøye strømpriser får plass på listen.</description>
+      <pubDate>Sat, 31 Dec 2022 19:10:52 GMT</pubDate>
+      <guid isPermaLink="false">1.16218358</guid>
+      <dc:creator>David Skovly</dc:creator>
+      <dc:date>2022-12-31T19:10:52Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/066T4UeBrmKU_Wio5Vp8wAWDWKACisrYfjEURhs7W4Dg.jpg">
+        <media:title>Året 2022, fra A til Å</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Kongens nyttårstale: – Det er ei tid for å sjå kvarandre nå</title>
+      <link>https://www.nrk.no/norge/kongens-nyttarstale-2022-1.16237336</link>
+      <description>Kong Harald omtala 2022 som eit år med mykje dramatikk, og hadde ei spesiell helsing til dei unge. – Me fell, og me reiser oss. Igjen og igjen. Men me klarer det sjeldan åleine.</description>
+      <category>Nyttårsaften</category>
+      <category>Kongefamilien</category>
+      <category>Psykisk helse</category>
+      <pubDate>Sat, 31 Dec 2022 18:29:43 GMT</pubDate>
+      <guid isPermaLink="false">1.16237336</guid>
+      <dc:creator>Ingeborg Undheim</dc:creator>
+      <dc:date>2022-12-31T18:29:43Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/aKWR6snP4SI_T80WEZkaQgFqA11UM88Vh3RUZ9dAPXfA.jpg" />
+      <media:content medium="video">
+        <media:player url="https://www.nrk.no/video/embed/aa8c258f-86ff-4913-85b5-289211a37e2e" />
+        <media:title>HM Kongens Nyttårstale</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Nyttårstalen: – Akkurat nå tror jeg det er ekstra viktig å være tilpasningsdyktig</title>
+      <link>https://www.nrk.no/kvensk/kvensk-nyttarstale-2022_-_-en-verden-full-av-uro-og-kriser-1.16236194</link>
+      <description>Vår tilpasningsevne viser en styrke og trygghet vi kan være stolte av, sier leder i Norske kveners forbund, Kai Petter Johansen i sin nyttårstale.</description>
+      <pubDate>Sat, 31 Dec 2022 17:42:39 GMT</pubDate>
+      <guid isPermaLink="false">1.16236194</guid>
+      <dc:creator>Sander Larsson Framnes</dc:creator>
+      <dc:date>2022-12-31T17:42:39Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/jD17bMSORxE8ZIILyyJ1rwuzhmpN0LbRoLV3fre2xRdQ.jpg" />
+      <media:content medium="video">
+        <media:player url="https://www.nrk.no/video/embed/cf6d6f3f-1d86-42ed-b592-5123ee4b081c" />
+        <media:title>Kvensk nyttårstale 2022</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Slik blir nyttårsværet</title>
+      <link>https://www.nrk.no/mr/darlig-vaer-gjor-at-fellesfyrverkeriet-i-molde-kan-bli-utsatt-til-forste-nyttarsdag-1.16239110</link>
+      <description>Østlendingene får best vær, mens innbyggerne i Midt- og Nord-Norge må forberede seg på drittvær. I Molde blir fellesfyrverkeriet utsatt til første nyttårsdag.</description>
+      <category>Møre og Romsdal</category>
+      <category>Nyttårsaften</category>
+      <category>Siste saker om været i Norge</category>
+      <category>Troms og Finnmark</category>
+      <category>Norge</category>
+      <pubDate>Sat, 31 Dec 2022 13:36:32 GMT</pubDate>
+      <guid isPermaLink="false">1.16239110</guid>
+      <dc:creator>Silje Thalberg</dc:creator>
+      <dc:date>2022-12-31T13:36:32Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/IknZBZOWOU4Ymjttux0h-gYRKSR1X-LMJ4IC9B0ZQ02g.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">NRK</media:credit>
+        <media:title>Fyrverkeri over hotell Seilet i Molde</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Uvêr fleire stader i landet – påverkar både vegar og bygg</title>
+      <link>https://www.nrk.no/nordland/stengde-fjellovergangar-og-stor-snoskredfare_-_-vurder-om-du-ma-ut-a-koyre-1.16238988</link>
+      <description>Uvêret rungar over landet siste dag i 2022. Det har ført til fleire farevarsel og stengde vegar. Nå har også eit kyrkjeur i Haugesund blåst inn.</description>
+      <category>Siste saker om været i Norge</category>
+      <category>Trafikksaker fra NRK</category>
+      <category>Vei og trafikk i Nordland</category>
+      <category>Vei og trafikk i Finnmark</category>
+      <category>Troms og Finnmark</category>
+      <pubDate>Sat, 31 Dec 2022 07:39:04 GMT</pubDate>
+      <guid isPermaLink="false">1.16238988</guid>
+      <dc:creator>Ingrid G. Årdal</dc:creator>
+      <dc:date>2022-12-31T07:39:04Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/BnI3HH01FW82ypGDCbj-Eg-h3zZRHdOEXpbtB2eg2p-Q.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Tor Andre Johannessen</media:credit>
+        <media:title>Det sørvendte uret ved Vårs Frelsers kirke i Haugesund har fått deler blåst inn.</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Flere eksplosjoner i Stockholm - mistenker kobling til drap på to rapartister</title>
+      <link>https://www.nrk.no/urix/flere-eksplosjoner-i-stockholm---mistenker-kobling-til-drap-pa-to-rapartister-1.16239002</link>
+      <description>Natt til årets siste dag gikk enda en sprengladning av i Stockholm. Hovedstaden i Sverige opplever en voldsspiral i julen etter et drap 1. juledag.</description>
+      <category>Sverige</category>
+      <category>Urix</category>
+      <pubDate>Sat, 31 Dec 2022 08:42:00 GMT</pubDate>
+      <guid isPermaLink="false">1.16239002</guid>
+      <dc:creator>Ola Mjaaland</dc:creator>
+      <dc:date>2022-12-31T08:42:00Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/HBvlR1RX6YphzX3QnDkl5AUYkRyRvqi7Zse_PBB36Hsw.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Johan Jeppsson/TT NYHETSBYRÅN</media:credit>
+        <media:title>2ZLd-sm7a_U</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Etter flere dårlige år, meldes det om mye reker</title>
+      <link>https://www.nrk.no/vestfoldogtelemark/etter-flere-darlige-ar_-meldes-det-om-mye-reker-1.16230963</link>
+      <description>Første halvår beskrives som forferdelig, men nå opplever flere at rekefisket tatt seg opp.</description>
+      <category>Norsk fiskerinæring</category>
+      <pubDate>Sat, 31 Dec 2022 08:15:10 GMT</pubDate>
+      <guid isPermaLink="false">1.16230963</guid>
+      <dc:creator>Vegard Lilleås</dc:creator>
+      <dc:date>2022-12-31T08:15:10Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/kZ-mpV_Rega-fTn5RmvTywp5MZ6QGVz0g1Oo9USp9sjw.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Tore Martinsen/Privat</media:credit>
+        <media:title>Rekefiske utenfor Kristiansand.</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Kongeleg dokumentar, tekstrobot og Pokémon-sjokk</title>
+      <link>https://www.nrk.no/kultur/kongeleg-dokumentar_-tekstrobot-og-pokemon-sjokk-1.16229823</link>
+      <description>Kva fekk du med deg frå den siste månaden? Ta vår popkultur-quiz for desember!</description>
+      <category>Quiz</category>
+      <category>Kultur &amp; Underholdning</category>
+      <category>Kultur</category>
+      <category>Film</category>
+      <category>TV-serier</category>
+      <category>Musikk</category>
+      <pubDate>Fri, 30 Dec 2022 12:40:51 GMT</pubDate>
+      <guid isPermaLink="false">1.16229823</guid>
+      <dc:creator>Xin Li</dc:creator>
+      <dc:date>2022-12-30T12:40:51Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/p_aVV3Epooe6C5By0qswRwLY-Z0me5h98dNTkrtj133Q.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Fabio Lovino/HBO</media:credit>
+        <media:title>White Lotus på HBO</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Verste børsåret i USA siden 2008</title>
+      <link>https://www.nrk.no/nyheter/verste-borsaret-i-usa-siden-2008-1.16238920</link>
+      <description>Det ble et tungt børsår i både USA og Europa. Wall Street endte med den største nedgangen siden finanskrisen for 14 år siden.
+Da de amerikanske børsene stengte fredag, var det klart at S&amp;P 500-indeksen falt med 19,4 prosent i 2022.
+Med den teknologitunge Nasdaq-indeksen gikk det enda verre: Et fall på 33 prosent.
+Også europeiske aksjemarkeder har lagt et tungt år bak seg, påvirket av krigen i Ukraina, kraftig inflasjon og økt styringsrente.
+Ikke siden 2018 har europeiske børser hatt et så dårlig år, skriver Bloomberg fredag.
+På årets siste handelsdag falt den europeiske indeksen Stoxx Europe 600 med 0,8 prosent fredag ettermiddag, slik at nedgangen i året som helhet ble på over 12 prosent.
+Også i Frankfurt lød nedgangen på 12 prosent, mens Paris-børsen nøyde seg med et fall på 9 prosent.
+I London endte imidlertid indeksen FTSE 100 med en oppgang på 0,9 prosent for året som helhet. Landets energisektor nøt godt av økte energipriser. Hovedindeksen på Oslo Børs falt med 1 prosent i 2022.
+På vei inn i 2023 er det frykt for økonomisk tilbakegang som preger markedene. (NTB)</description>
+      <category>Uro på børsene</category>
+      <pubDate>Fri, 30 Dec 2022 21:24:29 GMT</pubDate>
+      <guid isPermaLink="false">1.16238920</guid>
+      <dc:date>2022-12-30T21:24:29Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/LfohK2okSFi4nNfpgTl7rgEKNQDeRaMBZHUUnDEK8nFQ.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Mark Lennihan/AP</media:credit>
+        <media:title>Amerikanske store selskaper hadde mer overskudd i fjor enn i 1950, viser tall fra USAs handelsdepartement.</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Bærekraftige bobler og lasershow: Dette kan erstatte fyrverkeriet</title>
+      <link>https://www.nrk.no/norge/baerekraftige-bobler-og-lasershow_-dette-kan-erstatte-fyrverkeriet-1.16238030</link>
+      <description>Her er alternativene til bråkete, forurensende nyttårsraketter som kan skape festlig feiring for både festbremser og «fyrverkerister».</description>
+      <category>Klima og miljø</category>
+      <category>Nyttårsaften</category>
+      <category>Fra NRKs klimaredaksjon</category>
+      <pubDate>Fri, 30 Dec 2022 19:58:53 GMT</pubDate>
+      <guid isPermaLink="false">1.16238030</guid>
+      <dc:creator>Iselin Elise Fjeld</dc:creator>
+      <dc:date>2022-12-30T19:58:53Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/Il_w_10sBxIL6jtcTJmwaAjnTDX5Z4b_eDayIbAZ31KA.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Studio Roosegaarde</media:credit>
+        <media:title>SPARK lysshow i London: Daan Roosegaarde</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Her er NRK-fotografenes beste bilder fra 2022</title>
+      <link>https://www.nrk.no/direkte/xl/nrks-beste-bilder-fra-2022-1.16236826</link>
+      <description>Det ble et år fylt av store nyhetshendelser og sterke historier, alt fanget av våre fotografer.</description>
+      <category>Norge</category>
+      <category>Urix</category>
+      <pubDate>Fri, 30 Dec 2022 19:24:09 GMT</pubDate>
+      <guid isPermaLink="false">1.16236826</guid>
+      <dc:creator>Cicilie Sigrid Andersen</dc:creator>
+      <dc:date>2022-12-30T19:24:09Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/ozGzhnZGfXKbV97PBDhicwOx9GpgP68DtEvOtWKZLmkA.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Andras D.Hajdu/NRK</media:credit>
+        <media:title>Mariia (9) bor i Bilyaivka i Kherson med moren og søsteren sin. Da en rakett landet i hagen til familien, overlevde Mariia av ren, skjær flaks. – Mamma lar meg ikke leke i hagen lenger. Det er fortsatt bomber overalt der, sier hun.</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Disse lovene trer i kraft 1. januar</title>
+      <link>https://www.nrk.no/nordland/disse-lovene-trer-i-kraft-1.-januar-2023-1.16237991</link>
+      <description>Sparer du til bolig eller er hundeeier? Eier du uregistrert våpen eller handler tobakk på taxfree? Da blir du påvirket av lovendringene som trer i kraft i 2023.</description>
+      <category>Nordland</category>
+      <category>Norge</category>
+      <category>Økonomi</category>
+      <category>Forbruker-saker (Nordland)</category>
+      <category>Lover og regler</category>
+      <pubDate>Fri, 30 Dec 2022 11:52:34 GMT</pubDate>
+      <guid isPermaLink="false">1.16237991</guid>
+      <dc:creator>Elise Angermo Fossland</dc:creator>
+      <dc:date>2022-12-30T11:52:34Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/oU02oWZoQ33tljK_f5yVLA7HbJ_Bsjk84eKS7PEcl1ug.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Simon Skjelvik Brandseth/NRK</media:credit>
+        <media:title>Penger</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Dette er fridagane for 2023</title>
+      <link>https://www.nrk.no/nordland/dette-er-fridagane-og-raude-dagar-for-2023-1.16236682</link>
+      <description>Det er fleire fridagar i sikte i 2023 enn i år. Men vi er for dårlege på å nytte moglegheitene som fridagane faktisk gir oss, meiner psykolog.</description>
+      <category>Nordland</category>
+      <category>Arbeidsliv og sysselsetting</category>
+      <category>Psykologi</category>
+      <pubDate>Fri, 30 Dec 2022 17:14:10 GMT</pubDate>
+      <guid isPermaLink="false">1.16236682</guid>
+      <dc:creator>Ingrid G. Årdal</dc:creator>
+      <dc:date>2022-12-30T17:14:10Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/5wOkTA1AcI8ki6kfH3PeDgLAYjHrbEsTBUSLVmYnm1jQ.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Sondre Skjelvik/NRK</media:credit>
+        <media:title>Det blir kaldt vær fremover</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Magien ved å si nei</title>
+      <link>https://www.nrk.no/ytring/magien-ved-a-si-nei-1.15732233</link>
+      <description>Endelig et nyttårsforsett som faktisk kan gi deg et bedre liv.</description>
+      <category>Ytring</category>
+      <category>Psykisk helse</category>
+      <pubDate>Fri, 30 Dec 2022 15:31:58 GMT</pubDate>
+      <guid isPermaLink="false">1.15732233</guid>
+      <dc:creator>Johanne Refseth</dc:creator>
+      <dc:date>2022-12-30T15:31:58Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/Fct2dJ_l2SFq0wOusHmJugjxFV8T4t7V2xwaLZDYwNGA.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Johanne Refseth</media:credit>
+        <media:title>Johanne Refseth i varmgul boblejakke en solfylt vinterdag.</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Færre greide å spare i 2022</title>
+      <link>https://www.nrk.no/norge/faerre-greide-a-spare-i-2022-1.16228057</link>
+      <description>Husholdningene har fått en real økonomisk trøkk i 2022. Strøm og alt annet har blitt dyrt. Særlig en ting gjør at 2023 ser lysere ut, mener ekspertene.</description>
+      <category>Personlig økonomi</category>
+      <pubDate>Fri, 30 Dec 2022 14:52:22 GMT</pubDate>
+      <guid isPermaLink="false">1.16228057</guid>
+      <dc:creator>Johan B Sættem</dc:creator>
+      <dc:date>2022-12-30T14:52:22Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/aTq3bdEfIk0fmSeTOcMRrgdPwuZc3lKnWL1clwtE1Fkg.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Johan B. Sættem</media:credit>
+        <media:title>Kjersti Haugland, sjeføkonom i DNB Markets</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Strømprisrekord i Sør-Norge i 2022 – snittpris på 2 kroner per kWh</title>
+      <link>https://www.nrk.no/nyheter/stromprisrekord-i-sor-norge-i-2022-_-snittpris-pa-2-kroner-per-kwh-1.16238406</link>
+      <description>Snittprisen for strøm ender på rundt 2 kroner per kWh i hele Sør-Norge i 2022. Det er nær tre ganger høyere enn rekordåret 2021 og 20 ganger høyere enn 2020.
+– Vi har aldri vært i nærheten av disse prisene før. Selv i fjor var årsgjennomsnittet langt over det vanlige. Nå slås det tallet med tregangen, sier strømanalytiker Tor Reier Lilleholt i selskapet Volue Insight til NTB.
+(NTB)</description>
+      <category>Strømpriser</category>
+      <category domain="emphasis">high</category>
+      <pubDate>Fri, 30 Dec 2022 12:26:26 GMT</pubDate>
+      <guid isPermaLink="false">1.16238406</guid>
+      <dc:date>2022-12-30T12:26:26Z</dc:date>
+    </item>
+    <item>
+      <title>Nå må du ha forsikring på elsparkesykkelen - Politiet kan derimot ikke sjekke den</title>
+      <link>https://www.nrk.no/rogaland/na-ma-du-ha-forsikring-pa-elsparkesykkelen---politiet-kan-derimot-ikke-sjekke-den-1.16230028</link>
+      <description>Fra nyttår er det krav om ansvarsforsikring på privateide elsparkesykler, men politiet vil trolig ikke prioritere å kontrollere akkurat dette.</description>
+      <category>Sykling</category>
+      <category>Forsikring</category>
+      <category>Rogaland</category>
+      <pubDate>Fri, 30 Dec 2022 06:10:20 GMT</pubDate>
+      <guid isPermaLink="false">1.16230028</guid>
+      <dc:creator>Odin Omland</dc:creator>
+      <dc:date>2022-12-30T06:10:20Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/aAo4OPHIb7yoFFH_cR31DQhTlqqbHIFBqqQs565O5VAw.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Odin Omland/NRK</media:credit>
+        <media:title>Elsparkesykkel</media:title>
+      </media:content>
+    </item>
+    <item>
+      <title>Uvær i Sør-Norge – flere stengte fjelloverganger</title>
+      <link>https://www.nrk.no/vestland/bedre-forhold-i-nord-_-i-ettermiddag-kommer-uvaeret-til-sor-norge-1.16237891</link>
+      <description>Et kraftig uvær med sterke vindkast har skapt problemer i Sør-Norge. Hardangervidda og flere fjelloverganger er fremdeles stengt på grunn av uværet.</description>
+      <category>Siste saker om været i Norge</category>
+      <category>Trafikksaker fra NRK</category>
+      <category>Vei og trafikk i Nordland</category>
+      <category>Nyheiter frå Vestland</category>
+      <category>Trafikk i Vestland</category>
+      <pubDate>Fri, 30 Dec 2022 08:51:45 GMT</pubDate>
+      <guid isPermaLink="false">1.16237891</guid>
+      <dc:creator>Olav Røli</dc:creator>
+      <dc:date>2022-12-30T08:51:45Z</dc:date>
+      <media:content medium="image" type="image/jpeg" url="https://gfx.nrk.no/TJMJsG5JbnWAFPJSm3e-mQqJ70-Hg8tPTpttWrgDiMeQ.jpg">
+        <media:credit role="photographer" scheme="urn:ebu">Statens vegvesen</media:credit>
+        <media:title>Haukelifjell</media:title>
+      </media:content>
+    </item>
+  </channel>
+</rss>
