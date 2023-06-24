@@ -1,0 +1,43 @@
+{
+    "private": true,
+    "author": "TypeScriptLibs and Contributers",
+    "description": "TypeScript Library for XML",
+    "license": "MIT",
+    "name": "tsl-core-xml",
+    "type": "module",
+    "version": "0.1.0",
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "bugs": "https://github.com/typescriptlibs/tsl-core-xml/issues",
+    "homepage": "https://github.com/typescriptlibs/tsl-core-xml#readme",
+    "repository": "https://github.com/typescriptlibs/tsl-core-xml.git",
+    "devDependencies": {
+        "@types/node": "~18.6.0",
+        "@typescriptlibs/tst": "^0.0.5",
+        "husky": "~8.0.3",
+        "tsl-core-xml": "./",
+        "typescript": "~5.1.3"
+    },
+    "engines": {
+        "node": ">=18.6.0"
+    },
+    "files": [
+        "amd/",
+        "lib/",
+        "AUTHORS.md",
+        "LICENSE.md",
+        "README.md"
+    ],
+    "keywords": [
+        "TypeScript",
+        "XML"
+    ],
+    "scripts": {
+        "build": "npm run clean && npm run build:amd && npm run build:lib",
+        "build:amd": "tsc -p src/tsconfig.amd.json",
+        "build:lib": "tsc -p src/tsconfig.json",
+        "clean": "rm -rf lib/ tst-run/",
+        "test": "npm run build && npx tst --verbose tst/",
+        "watch": "npm run build -- --watch"
+    }
+}
