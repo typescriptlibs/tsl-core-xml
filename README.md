@@ -20,12 +20,10 @@ Examples
 
 ``` TypeScript
 const xml = new XMLScanner(
-    '<!DOCTYPE html>',
-    '<html lang="en"><head><title>My Webpage</title></head>'
-    '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>';
+    '<!DOCTYPE html>' +
+    '<html lang="en"><head><title>My Webpage</title></head>' +
+    '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
 );
-
-await xml.open();
 
 console.log(await xml.scan()); // { tag: "!DOCTYPE", attributes: { html: "" } }
 console.log(await xml.scan()); // { tag: "html", attributes: { lang: "en" } }
@@ -41,6 +39,4 @@ console.log(await xml.scan()); // { tag: "/h1" }
 console.log(await xml.scan()); // { tag: "/body" }
 console.log(await xml.scan()); // { tag: "hr", empty: true }
 console.log(await xml.scan()); // { tag: "/html" }
-
-await xml.close();
 ```
