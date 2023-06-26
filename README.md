@@ -25,10 +25,10 @@ const xml = new XMLScanner(
     '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
 );
 
-let node: XMLNode;
+let node: ( XMLNode | undefined );
 
-while (node = xml.scan()) {
-    console.log(node);
+while ( node = xml.scan() ) {
+    console.log( node );
 }
 
 // console.log:
@@ -43,7 +43,7 @@ while (node = xml.scan()) {
 // { tag: "h1" }
 // "My Webpage"
 // { tag: "/h1" }
-// { tag: "/body" }
 // { tag: "hr", empty: true }
+// { tag: "/body" }
 // { tag: "/html" }
 ```
