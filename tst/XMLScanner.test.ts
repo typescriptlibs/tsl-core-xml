@@ -92,9 +92,11 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
     let xml = new XMLScanner( [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<!DOCTYPE html>',
+        '<!TEST:TEST.TEST-TEST#ENTITY>',
         '<!---->',
         '<!--3-->',
-        '<hr />'
+        '<hr />',
+        '<br/>'
     ].join( '' ) );
 
     assert.deepStrictEqual(
@@ -107,7 +109,7 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
                 encoding: 'UTF-8'
             }
         },
-        'XMLStream should return an XML tag with empty flag and attributes.'
+        'XMLScanner should return an XML tag with empty flag and attributes.'
     );
 
     assert.deepStrictEqual(
@@ -118,7 +120,18 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
                 html: ''
             }
         },
-        'XMLStream should return a DOCTYPE tag with an empty html attribute.'
+        'XMLScanner should return a DOCTYPE tag with an empty html attribute.'
+    );
+
+    assert.deepStrictEqual(
+        await xml.scan(),
+        {
+            tag: '!TEST:TEST.TEST-TEST',
+            attributes: {
+                '#ENTITY': ''
+            }
+        },
+        'XMLScanner should return a TEST tag with an empty #ENTITY attribute.'
     );
 
     assert.deepStrictEqual(
@@ -126,7 +139,7 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
         {
             comment: ''
         },
-        'XMLStream should return an empty comment tag.'
+        'XMLScanner should return an empty comment tag.'
     );
 
     assert.deepStrictEqual(
@@ -134,7 +147,7 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
         {
             comment: '3'
         },
-        'XMLStream should return a comment tag with a value of 3.'
+        'XMLScanner should return a comment tag with a value of 3.'
     );
 
     assert.deepStrictEqual(
@@ -143,7 +156,16 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
             tag: 'hr',
             empty: true
         },
-        'XMLStream should return a HR tag with empty flag.'
+        'XMLScanner should return a HR tag with empty flag.'
+    );
+
+    assert.deepStrictEqual(
+        await xml.scan(),
+        {
+            tag: 'br',
+            empty: true
+        },
+        'XMLScanner should return a BR tag with empty flag.'
     );
 
 } );
