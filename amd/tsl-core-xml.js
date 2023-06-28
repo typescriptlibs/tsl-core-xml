@@ -88,19 +88,35 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          * - Group 3: Double quote encapsuled value.
          * - Group 4: None encapsuled value.
          */
-        Attribute: /\s+([^'"\s\/<=>]+)(?:=(?:'([^']*?)'|"([^"]*?)"|([^'"\s\/<=>]+?)))?/gsu,
+        Attribute: /\s*([\w#][\w\-.:]*)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
+        /**
+         * RegExp pattern for XML close tag.
+         * - Group 1: Tag name.
+         */
+        CloseTag: /<(\/\w[\w\-.:]*)>/su,
         /**
          * RegExp pattern for XML comment.
          * - Group 1: Comment.
          */
-        Comment: /<!--(.*?)-->/su,
+        Comment: /<!--((?:[^<]|<(?!!))*?)-->/su,
         /**
-         * RegExp pattern for XML tag.
-         * - Group 1: Trailing tag name, including special characters.
+         * RegExp pattern for XML declaration.
+         * - Group 1: Declaration name.
          * - Group 2: Attributes separated by space.
-         * - Group 3: Empty character.
          */
-        Tag: /<([^\s<=>]+)([^>]*?)([\/?]?)>/su
+        Declaration: /<(\?\w[\w\-.:]*)(\b[^>]*)?\?>/su,
+        /**
+         * RegExp pattern for XML definition.
+         * - Group 1: Definition name.
+         * - Group 2: Attributes separated by space.
+         */
+        Definition: /<(!\w[\w\-.:]*)(\b[^>]*)?>/su,
+        /**
+         * RegExp pattern for regular XML tag.
+         * - Group 1: Trailing tag name, including special characters.
+         * - Group 2: Space of attributes and optional self-closing character.
+         */
+        Tag: /<(\w[\w\-.:]*)(\b(?:'[^']*'|"[^"]*"|[^'"<>]+)*)?>/su
     };
     /* *
      *
@@ -163,83 +179,143 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
             return this._text;
         }
         /**
-         * Scans the text for the next XML node. Returns `undefined` if the scan
-         * process has reached the end of the text.
+         * Scans the text for the next XML node. It will return a string, if no XML
+         * tag can be found in the next 1 million characters. Returns `undefined` if
+         * the scan process has reached the end of the text.
          *
          * @return
          * Found XML node; or `undefined`, if reached the end.
          */
         scan() {
             let index = (this._index || 0);
-            let node;
+            let nextIndex = Infinity;
+            // Restore buffer
             const buffer = this._text.substring(index);
             if (!buffer) {
                 return;
             }
-            // Search
-            const matchComment = buffer.match(XMLRegExp_js_1.default.Comment);
-            const matchTag = buffer.match(XMLRegExp_js_1.default.Tag);
-            // Comment is next
-            if (matchComment &&
-                (!matchTag ||
-                    matchComment.index <= matchTag.index)) {
-                // Return leading text
-                if (matchComment.index) {
-                    index += matchComment.index;
-                    node = buffer.substring(0, matchComment.index);
+            // Search tag
+            let match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Tag);
+            if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
+                if (match.index > 0) {
+                    nextIndex = (match.index < nextIndex ? match.index : nextIndex);
                 }
-                // Return the comment itself
                 else {
-                    index += matchComment[0].length;
-                    node = {
-                        comment: matchComment[1]
+                    this._index = index + match[0].length;
+                    this._node = {
+                        tag: match[1]
                     };
+                    if (match[2]) {
+                        let rest = match[2];
+                        // Self-closing tags are marked empty
+                        if (rest.endsWith('/')) {
+                            this._node.empty = true;
+                            rest.substring(0, rest.length - 1);
+                        }
+                        // Search for attributes
+                        const attributes = this.scanAttributes(rest);
+                        if (attributes) {
+                            this._node.attributes = attributes;
+                        }
+                    }
+                    return this._node;
                 }
             }
-            // Tag is next
-            else if (matchTag) {
-                // Return leading text
-                if (matchTag.index) {
-                    index += matchTag.index;
-                    node = buffer.substring(0, matchTag.index);
+            // Search close tag
+            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.CloseTag);
+            if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
+                if (match.index > 0) {
+                    nextIndex = (match.index < nextIndex ? match.index : nextIndex);
                 }
-                // Return the tag itself
                 else {
-                    index += matchTag[0].length;
-                    node = {
-                        tag: matchTag[1]
+                    this._index = index + match[0].length;
+                    this._node = {
+                        tag: match[1]
                     };
-                    // Self-closing tags are marked empty
-                    if (matchTag[3]) {
-                        node.empty = true;
-                    }
-                    // Search for attributes
-                    if (matchTag[2]) {
-                        let attributes = {};
-                        let matchAttribute;
-                        let scanner = new RegExp(XMLRegExp_js_1.default.Attribute.source, XMLRegExp_js_1.default.Attribute.flags);
-                        let snippet = matchTag[2];
-                        while (matchAttribute = scanner.exec(snippet)) {
-                            attributes[matchAttribute[1]] = (matchAttribute[2] ||
-                                matchAttribute[3] ||
-                                matchAttribute[4] ||
-                                '');
-                        }
-                        if (Object.keys(attributes).length) {
-                            node.attributes = attributes;
-                        }
-                    }
+                    return this._node;
                 }
+            }
+            // Search comment
+            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Comment);
+            if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
+                if (match.index > 0) {
+                    nextIndex = (match.index < nextIndex ? match.index : nextIndex);
+                }
+                else {
+                    this._index = index + match[0].length;
+                    this._node = {
+                        comment: match[1]
+                    };
+                    return this._node;
+                }
+            }
+            // Search definition
+            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Definition);
+            if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
+                if (match.index > 0) {
+                    nextIndex = (match.index < nextIndex ? match.index : nextIndex);
+                }
+                else {
+                    this._index = index + match[0].length;
+                    this._node = {
+                        tag: match[1]
+                    };
+                    // Search for attributes
+                    if (match[2]) {
+                        const attributes = this.scanAttributes(match[2]);
+                        if (attributes) {
+                            this._node.attributes = attributes;
+                        }
+                    }
+                    return this._node;
+                }
+            }
+            // Search declaration
+            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Declaration);
+            if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
+                if (match.index > 0) {
+                    nextIndex = (match.index < nextIndex ? match.index : nextIndex);
+                }
+                else {
+                    this._index = index + match[0].length;
+                    this._node = {
+                        tag: match[1],
+                        empty: true
+                    };
+                    // Search for attributes
+                    if (match[2]) {
+                        const attributes = this.scanAttributes(match[2]);
+                        if (attributes) {
+                            this._node.attributes = attributes;
+                        }
+                    }
+                    return this._node;
+                }
+            }
+            // Return leading text before match in next round
+            if (nextIndex > 0 && nextIndex < Infinity) {
+                this._index = index + nextIndex;
+                this._node = buffer.substring(0, nextIndex);
+                return this._node;
             }
             // Rest is just text
-            else {
-                index += buffer.length;
-                node = buffer;
+            this._index = index + buffer.length;
+            this._node = buffer;
+            return this._node;
+        }
+        scanAttributes(snippet) {
+            const attributes = {};
+            let matchAttribute;
+            let scanner = new RegExp(XMLRegExp_js_1.default.Attribute.source, XMLRegExp_js_1.default.Attribute.flags);
+            while (matchAttribute = scanner.exec(snippet)) {
+                attributes[matchAttribute[1]] = (matchAttribute[2] ||
+                    matchAttribute[3] ||
+                    matchAttribute[4] ||
+                    '');
             }
-            // Save and return
-            this._index = index;
-            this._node = node;
-            return node;
+            if (Object.keys(attributes).length) {
+                return attributes;
+            }
         }
         /**
          * Sets the text used by the scan process.

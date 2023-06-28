@@ -39,13 +39,15 @@ export declare class XMLScanner {
      */
     getText(): string;
     /**
-     * Scans the text for the next XML node. Returns `undefined` if the scan
-     * process has reached the end of the text.
+     * Scans the text for the next XML node. It will return a string, if no XML
+     * tag can be found in the next 1 million characters. Returns `undefined` if
+     * the scan process has reached the end of the text.
      *
      * @return
      * Found XML node; or `undefined`, if reached the end.
      */
     scan(): (XMLNode | undefined);
+    private scanAttributes;
     /**
      * Sets the text used by the scan process.
      *

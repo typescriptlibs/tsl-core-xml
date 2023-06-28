@@ -100,15 +100,18 @@ export class XMLScanner {
 
 
     /**
-     * Scans the text for the next XML node. Returns `undefined` if the scan
-     * process has reached the end of the text.
+     * Scans the text for the next XML node. It will return a string, if no XML
+     * tag can be found in the next 1 million characters. Returns `undefined` if
+     * the scan process has reached the end of the text.
      *
      * @return
      * Found XML node; or `undefined`, if reached the end.
      */
     public scan (): ( XMLNode | undefined ) {
         let index = ( this._index || 0 );
-        let node: XMLNode;
+        let nextIndex = Infinity;
+
+        // Restore buffer
 
         const buffer = this._text.substring( index );
 
@@ -116,103 +119,174 @@ export class XMLScanner {
             return;
         }
 
-        // Search
+        // Search tag
 
-        const matchComment = buffer.match( XMLRegExp.Comment );
-        const matchTag = buffer.match( XMLRegExp.Tag );
+        let match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Tag );
 
-        // Comment is next
-
-        if (
-            matchComment &&
-            (
-                !matchTag ||
-                matchComment.index! <= matchTag.index!
-            )
-        ) {
-
-            // Return leading text
-
-            if ( matchComment.index ) {
-                index += matchComment.index;
-                node = buffer.substring( 0, matchComment.index );
+        if ( typeof match?.index === 'number' ) {
+            if ( match.index > 0 ) {
+                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
             }
-
-            // Return the comment itself
-
             else {
-                index += matchComment[0].length;
-                node = {
-                    comment: matchComment[1]
+                this._index = index + match[0].length;
+                this._node = {
+                    tag: match[1]
                 };
-            }
 
+                if ( match[2] ) {
+                    let rest = match[2]
+
+                    // Self-closing tags are marked empty
+
+                    if ( rest.endsWith( '/' ) ) {
+                        this._node.empty = true;
+                        rest.substring( 0, rest.length - 1 );
+                    }
+
+                    // Search for attributes
+
+                    const attributes = this.scanAttributes( rest );
+
+                    if ( attributes ) {
+                        this._node.attributes = attributes;
+                    }
+                }
+
+                return this._node;
+            }
         }
 
-        // Tag is next
+        // Search close tag
 
-        else if ( matchTag ) {
+        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.CloseTag );
 
-            // Return leading text
-
-            if ( matchTag.index ) {
-                index += matchTag.index;
-                node = buffer.substring( 0, matchTag.index );
+        if ( typeof match?.index === 'number' ) {
+            if ( match.index > 0 ) {
+                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
             }
-
-            // Return the tag itself
-
             else {
-                index += matchTag[0].length;
-                node = {
-                    tag: matchTag[1]
+                this._index = index + match[0].length;
+                this._node = {
+                    tag: match[1]
                 };
 
-                // Self-closing tags are marked empty
+                return this._node;
+            }
+        }
 
-                if ( matchTag[3] ) {
-                    node.empty = true;
-                }
+        // Search comment
+
+        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Comment );
+
+        if ( typeof match?.index === 'number' ) {
+            if ( match.index > 0 ) {
+                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
+            }
+            else {
+                this._index = index + match[0].length;
+                this._node = {
+                    comment: match[1]
+                };
+
+                return this._node;
+            }
+        }
+
+        // Search definition
+
+        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Definition );
+
+        if ( typeof match?.index === 'number' ) {
+            if ( match.index > 0 ) {
+                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
+            }
+            else {
+                this._index = index + match[0].length;
+                this._node = {
+                    tag: match[1]
+                };
 
                 // Search for attributes
 
-                if ( matchTag[2] ) {
-                    let attributes: XMLTag['attributes'] = {};
-                    let matchAttribute: ( RegExpExecArray | null );
-                    let scanner = new RegExp( XMLRegExp.Attribute.source, XMLRegExp.Attribute.flags );
-                    let snippet = matchTag[2];
+                if ( match[2] ) {
+                    const attributes = this.scanAttributes( match[2] );
 
-                    while ( matchAttribute = scanner.exec( snippet ) ) {
-                        attributes[matchAttribute[1]] = (
-                            matchAttribute[2] ||
-                            matchAttribute[3] ||
-                            matchAttribute[4] ||
-                            ''
-                        );
-                    }
-
-                    if ( Object.keys( attributes ).length ) {
-                        node.attributes = attributes;
+                    if ( attributes ) {
+                        this._node.attributes = attributes;
                     }
                 }
 
+                return this._node;
             }
+        }
 
+        // Search declaration
+
+        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Declaration );
+
+        if ( typeof match?.index === 'number' ) {
+            if ( match.index > 0 ) {
+                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
+            }
+            else {
+                this._index = index + match[0].length;
+                this._node = {
+                    tag: match[1],
+                    empty: true
+                };
+
+                // Search for attributes
+
+                if ( match[2] ) {
+                    const attributes = this.scanAttributes( match[2] );
+
+                    if ( attributes ) {
+                        this._node.attributes = attributes;
+                    }
+                }
+
+                return this._node;
+            }
+        }
+
+        // Return leading text before match in next round
+
+        if ( nextIndex > 0 && nextIndex < Infinity ) {
+            this._index = index + nextIndex;
+            this._node = buffer.substring( 0, nextIndex );
+
+            return this._node;
         }
 
         // Rest is just text
 
-        else {
-            index += buffer.length;
-            node = buffer;
+        this._index = index + buffer.length;
+        this._node = buffer;
+
+        return this._node;
+    }
+
+
+    private scanAttributes (
+        snippet: string
+    ): ( Record<string, string> | undefined ) {
+        const attributes: Record<string, string> = {};
+
+        let matchAttribute: ( RegExpExecArray | null );
+        let scanner = new RegExp( XMLRegExp.Attribute.source, XMLRegExp.Attribute.flags );
+
+        while ( matchAttribute = scanner.exec( snippet ) ) {
+            attributes[matchAttribute[1]] = (
+                matchAttribute[2] ||
+                matchAttribute[3] ||
+                matchAttribute[4] ||
+                ''
+            );
         }
 
-        // Save and return
-
-        this._index = index;
-        this._node = node;
-
-        return node;
+        if ( Object.keys( attributes ).length ) {
+            return attributes;
+        }
     }
 
 
