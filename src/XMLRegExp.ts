@@ -30,13 +30,13 @@ export const XMLRegExp = {
      * - Group 3: Double quote encapsuled value.
      * - Group 4: None encapsuled value.
      */
-    Attribute: /\s+(\w[\w\-.:]*)(?:=(?:'([^']*?)'|"([^"]*?)"|([^'"\s\/<=>]+?)))?/gsu,
+    Attribute: /\s+([\w#][\w\-.:]*)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
 
     /**
      * RegExp pattern for XML close tag.
      * - Group 1: Tag name.
      */
-    CloseTag: /<\/(\w[\w\-.:]*)>/su,
+    CloseTag: /<(\/\w[\w\-.:]*)>/su,
 
     /**
      * RegExp pattern for XML comment.
@@ -49,14 +49,14 @@ export const XMLRegExp = {
      * - Group 1: Declaration name.
      * - Group 2: Attributes separated by space.
      */
-    Declaration: /<\?(\w[\w\-.:]*)(\s[^>]*)?\?>/su,
+    Declaration: /<(\?\w[\w\-.:]*)(\s[^>]*)?\?>/su,
 
     /**
      * RegExp pattern for XML definition.
      * - Group 1: Definition name.
      * - Group 2: Attributes separated by space.
      */
-    Definition: /<!(\w[\w\-.:]*)(\s[^>]*)?>/su,
+    Definition: /<(!\w[\w\-.:]*)(\s[^>]*)?>/su,
 
     /**
      * RegExp pattern for regular XML tag.

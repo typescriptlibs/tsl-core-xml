@@ -88,12 +88,12 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          * - Group 3: Double quote encapsuled value.
          * - Group 4: None encapsuled value.
          */
-        Attribute: /\s+(\w[\w\-.:]*)(?:=(?:'([^']*?)'|"([^"]*?)"|([^'"\s\/<=>]+?)))?/gsu,
+        Attribute: /\s+([\w#][\w\-.:]*)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
         /**
          * RegExp pattern for XML close tag.
          * - Group 1: Tag name.
          */
-        CloseTag: /<\/(\w[\w\-.:]*)>/su,
+        CloseTag: /<(\/\w[\w\-.:]*)>/su,
         /**
          * RegExp pattern for XML comment.
          * - Group 1: Comment.
@@ -104,13 +104,13 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          * - Group 1: Declaration name.
          * - Group 2: Attributes separated by space.
          */
-        Declaration: /<\?(\w[\w\-.:]*)(\s[^>]*)?\?>/su,
+        Declaration: /<(\?\w[\w\-.:]*)(\s[^>]*)?\?>/su,
         /**
          * RegExp pattern for XML definition.
          * - Group 1: Definition name.
          * - Group 2: Attributes separated by space.
          */
-        Definition: /<!(\w[\w\-.:]*)(\s[^>]*)?>/su,
+        Definition: /<(!\w[\w\-.:]*)(\s[^>]*)?>/su,
         /**
          * RegExp pattern for regular XML tag.
          * - Group 1: Trailing tag name, including special characters.
@@ -229,7 +229,7 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                 else {
                     this._index = index + match[0].length;
                     this._node = {
-                        tag: `/${match[1]}`
+                        tag: match[1]
                     };
                     return this._node;
                 }
@@ -257,7 +257,7 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                 else {
                     this._index = index + match[0].length;
                     this._node = {
-                        tag: `!${match[1]}`
+                        tag: match[1]
                     };
                     // Search for attributes
                     if (match[2]) {
@@ -278,7 +278,7 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                 else {
                     this._index = index + match[0].length;
                     this._node = {
-                        tag: `?${match[1]}`,
+                        tag: match[1],
                         empty: true
                     };
                     // Search for attributes

@@ -166,7 +166,7 @@ export class XMLScanner {
             else {
                 this._index = index + match[0].length;
                 this._node = {
-                    tag: `/${match[1]}`
+                    tag: match[1]
                 };
 
                 return this._node;
@@ -202,7 +202,7 @@ export class XMLScanner {
             else {
                 this._index = index + match[0].length;
                 this._node = {
-                    tag: `!${match[1]}`
+                    tag: match[1]
                 };
 
                 // Search for attributes
@@ -230,7 +230,7 @@ export class XMLScanner {
             else {
                 this._index = index + match[0].length;
                 this._node = {
-                    tag: `?${match[1]}`,
+                    tag: match[1],
                     empty: true
                 };
 
