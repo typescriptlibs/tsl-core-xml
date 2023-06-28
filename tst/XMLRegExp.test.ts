@@ -44,7 +44,7 @@ test( 'Test XMLRegExp.Comment ReDOS limitations', async ( assert: test.Assert ) 
     );
 
     assert.ok(
-        ( Date.now() - timestamp ) < 100,
+        ( Date.now() - timestamp ) < 10,
         'Comment processing should not take much time. (#2)'
     );
 
@@ -66,7 +66,7 @@ test( 'Test XMLRegExp.Declaration ReDOS limitations', async ( assert: test.Asser
     );
 
     assert.ok(
-        ( Date.now() - timestamp ) < 100,
+        ( Date.now() - timestamp ) < 10,
         'Declaration processing should not take much time. (#2)'
     );
 
@@ -88,7 +88,7 @@ test( 'Test XMLRegExp.Definition ReDOS limitations', async ( assert: test.Assert
     );
 
     assert.ok(
-        ( Date.now() - timestamp ) < 100,
+        ( Date.now() - timestamp ) < 10,
         'Definition processing should not take much time. (#2)'
     );
 
@@ -110,7 +110,7 @@ test( 'Test XMLRegExp.Tag ReDOS limitations', async ( assert: test.Assert ) => {
     );
 
     assert.ok(
-        ( Date.now() - timestamp ) < 100,
+        ( Date.now() - timestamp ) < 10,
         'Tag processing should not take much time. (#2)'
     );
 
