@@ -100,8 +100,9 @@ export class XMLScanner {
 
 
     /**
-     * Scans the text for the next XML node. Returns `undefined` if the scan
-     * process has reached the end of the text.
+     * Scans the text for the next XML node. It will return a string, if no XML
+     * tag can be found in the next 1 million characters. Returns `undefined` if
+     * the scan process has reached the end of the text.
      *
      * @return
      * Found XML node; or `undefined`, if reached the end.
@@ -120,7 +121,7 @@ export class XMLScanner {
 
         // Search tag
 
-        let match = buffer.match( XMLRegExp.Tag );
+        let match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Tag );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -157,7 +158,7 @@ export class XMLScanner {
 
         // Search close tag
 
-        match = buffer.match( XMLRegExp.CloseTag );
+        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.CloseTag );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -175,7 +176,7 @@ export class XMLScanner {
 
         // Search comment
 
-        match = buffer.match( XMLRegExp.Comment );
+        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Comment );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -193,7 +194,7 @@ export class XMLScanner {
 
         // Search definition
 
-        match = buffer.match( XMLRegExp.Definition );
+        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Definition );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -221,7 +222,7 @@ export class XMLScanner {
 
         // Search declaration
 
-        match = buffer.match( XMLRegExp.Declaration );
+        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Declaration );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
