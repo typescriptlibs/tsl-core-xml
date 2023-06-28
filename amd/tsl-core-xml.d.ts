@@ -115,15 +115,31 @@ declare module "XMLRegExp" {
          */
         Attribute: RegExp;
         /**
+         * RegExp pattern for XML close tag.
+         * - Group 1: Tag name.
+         */
+        CloseTag: RegExp;
+        /**
          * RegExp pattern for XML comment.
          * - Group 1: Comment.
          */
         Comment: RegExp;
         /**
-         * RegExp pattern for XML tag.
-         * - Group 1: Trailing tag name, including special characters.
+         * RegExp pattern for XML declaration.
+         * - Group 1: Declaration name.
          * - Group 2: Attributes separated by space.
-         * - Group 3: Empty character.
+         */
+        Declaration: RegExp;
+        /**
+         * RegExp pattern for XML definition.
+         * - Group 1: Definition name.
+         * - Group 2: Attributes separated by space.
+         */
+        Definition: RegExp;
+        /**
+         * RegExp pattern for regular XML tag.
+         * - Group 1: Trailing tag name, including special characters.
+         * - Group 2: Space of attributes and optional self-closing character.
          */
         Tag: RegExp;
     };
@@ -167,6 +183,7 @@ declare module "XMLScanner" {
          * Found XML node; or `undefined`, if reached the end.
          */
         scan(): (XMLNode | undefined);
+        private scanAttributes;
         /**
          * Sets the text used by the scan process.
          *

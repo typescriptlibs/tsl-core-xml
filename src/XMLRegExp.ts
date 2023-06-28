@@ -30,21 +30,40 @@ export const XMLRegExp = {
      * - Group 3: Double quote encapsuled value.
      * - Group 4: None encapsuled value.
      */
-    Attribute: /\s+([^'"\s\/<=>]+)(?:=(?:'([^']*?)'|"([^"]*?)"|([^'"\s\/<=>]+?)))?/gsu,
+    Attribute: /\s+(\w[\w\-.:]*)(?:=(?:'([^']*?)'|"([^"]*?)"|([^'"\s\/<=>]+?)))?/gsu,
+
+    /**
+     * RegExp pattern for XML close tag.
+     * - Group 1: Tag name.
+     */
+    CloseTag: /<\/(\w[\w\-.:]*)>/su,
 
     /**
      * RegExp pattern for XML comment.
      * - Group 1: Comment.
      */
-    Comment: /<!--(.*?)-->/su,
+    Comment: /<!--((?:[^<]|<(?!!))*?)-->/su,
 
     /**
-     * RegExp pattern for XML tag.
-     * - Group 1: Trailing tag name, including special characters.
+     * RegExp pattern for XML declaration.
+     * - Group 1: Declaration name.
      * - Group 2: Attributes separated by space.
-     * - Group 3: Empty character.
      */
-    Tag: /<([^\s<=>]+)([^>]*?)([\/?]?)>/su
+    Declaration: /<\?(\w[\w\-.:]*)(\s[^>]*)?\?>/su,
+
+    /**
+     * RegExp pattern for XML definition.
+     * - Group 1: Definition name.
+     * - Group 2: Attributes separated by space.
+     */
+    Definition: /<!(\w[\w\-.:]*)(\s[^>]*)?>/su,
+
+    /**
+     * RegExp pattern for regular XML tag.
+     * - Group 1: Trailing tag name, including special characters.
+     * - Group 2: Space of attributes and optional self-closing character.
+     */
+    Tag: /<(\w[\w\-.:]*)(\s(?:'[^']*'|"[^"]*"|[^'"<>]+)*)?>/su
 
 };
 

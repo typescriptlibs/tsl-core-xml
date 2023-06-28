@@ -46,6 +46,7 @@ export declare class XMLScanner {
      * Found XML node; or `undefined`, if reached the end.
      */
     scan(): (XMLNode | undefined);
+    private scanAttributes;
     /**
      * Sets the text used by the scan process.
      *
