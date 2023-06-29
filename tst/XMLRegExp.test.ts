@@ -97,10 +97,9 @@ test( 'Test XMLRegExp.Definition ReDOS limitations', async ( assert: test.Assert
 
 test( 'Test XMLRegExp.Tag ReDOS limitations', async ( assert: test.Assert ) => {
 
-    const text = '<a '.padEnd( 1000003, '!' ) + '>';
-
     // False Positive: Excessive repitition of `!` in attribute space.
 
+    let text = '<a '.padEnd( 1000003, '!' ) + '>';
     let timestamp = Date.now();
 
     assert.strictEqual(
@@ -112,6 +111,22 @@ test( 'Test XMLRegExp.Tag ReDOS limitations', async ( assert: test.Assert ) => {
     assert.ok(
         ( Date.now() - timestamp ) < 10,
         'Tag processing should not take much time. (#2)'
+    );
+
+    // False Positive: Excessive repitition of `!` in tag name.
+
+    text = '<a'.padEnd( 1000002, '!' ) + '>';
+    timestamp = Date.now();
+
+    assert.strictEqual(
+        text.match( XMLRegExp.Tag )![0].length,
+        text.length,
+        'Regular expression for tag should match whole text in time. (#8)'
+    );
+
+    assert.ok(
+        ( Date.now() - timestamp ) < 10,
+        'Tag processing should not take much time. (#8)'
     );
 
 } );

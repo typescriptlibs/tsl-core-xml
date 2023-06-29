@@ -22,8 +22,6 @@ import XMLRegExp from "./XMLRegExp.js";
 
 import XMLNode from './XMLNode.js';
 
-import XMLTag from './XMLTag.js';
-
 
 /* *
  *
@@ -113,7 +111,7 @@ export class XMLScanner {
 
         // Restore buffer
 
-        const buffer = this._text.substring( index );
+        const buffer = this._text.substring( index, index + 1e6 );
 
         if ( !buffer ) {
             return;
@@ -121,7 +119,7 @@ export class XMLScanner {
 
         // Search tag
 
-        let match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Tag );
+        let match = buffer.match( XMLRegExp.Tag );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -158,7 +156,7 @@ export class XMLScanner {
 
         // Search close tag
 
-        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.CloseTag );
+        match = buffer.match( XMLRegExp.CloseTag );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -176,7 +174,7 @@ export class XMLScanner {
 
         // Search comment
 
-        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Comment );
+        match = buffer.match( XMLRegExp.Comment );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -194,7 +192,7 @@ export class XMLScanner {
 
         // Search definition
 
-        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Definition );
+        match = buffer.match( XMLRegExp.Definition );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -222,7 +220,7 @@ export class XMLScanner {
 
         // Search declaration
 
-        match = buffer.substring( 0, 1e6 ).match( XMLRegExp.Declaration );
+        match = buffer.match( XMLRegExp.Declaration );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {

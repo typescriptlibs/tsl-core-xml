@@ -83,12 +83,12 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
     exports.XMLRegExp = {
         /**
          * RegExp pattern for XML attribute.
-         * - Group 1: Trailing attribute name, including special characters.
+         * - Group 1: Attribute name.
          * - Group 2: Single quote encapsuled value.
          * - Group 3: Double quote encapsuled value.
          * - Group 4: None encapsuled value.
          */
-        Attribute: /\s*([\w#][\w\-.:]*)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
+        Attribute: /([^'"\s\/<=>]+)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
         /**
          * RegExp pattern for XML close tag.
          * - Group 1: Tag name.
@@ -113,10 +113,11 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
         Definition: /<(!\w[\w\-.:]*)(\b[^>]*)?>/su,
         /**
          * RegExp pattern for regular XML tag.
-         * - Group 1: Trailing tag name, including special characters.
-         * - Group 2: Space of attributes and optional self-closing character.
+         * - Group 1: Tag name.
+         * - Group 2: Space of attributes.
+         * - Group 3: Self-closing character.
          */
-        Tag: /<(\w[\w\-.:]*)(\b(?:'[^']*'|"[^"]*"|[^'"<>]+)*)?>/su
+        Tag: /<([\w:][\w\-.:]*)(\b(?:'[^']*'|"[^"]*"|[^'"<>]+)*)?>/su
     };
     /* *
      *
@@ -190,12 +191,12 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
             let index = (this._index || 0);
             let nextIndex = Infinity;
             // Restore buffer
-            const buffer = this._text.substring(index);
+            const buffer = this._text.substring(index, index + 1e6);
             if (!buffer) {
                 return;
             }
             // Search tag
-            let match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Tag);
+            let match = buffer.match(XMLRegExp_js_1.default.Tag);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -222,7 +223,7 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                 }
             }
             // Search close tag
-            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.CloseTag);
+            match = buffer.match(XMLRegExp_js_1.default.CloseTag);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -236,7 +237,7 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                 }
             }
             // Search comment
-            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Comment);
+            match = buffer.match(XMLRegExp_js_1.default.Comment);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -250,7 +251,7 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                 }
             }
             // Search definition
-            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Definition);
+            match = buffer.match(XMLRegExp_js_1.default.Definition);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -271,7 +272,7 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                 }
             }
             // Search declaration
-            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Declaration);
+            match = buffer.match(XMLRegExp_js_1.default.Declaration);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
