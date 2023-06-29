@@ -9,7 +9,7 @@
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "bugs": "https://github.com/typescriptlibs/tsl-core-xml/issues",
-    "homepage": "https://github.com/typescriptlibs/tsl-core-xml#readme",
+    "homepage": "https://typescriptlibs.org/tsl-core-xml/",
     "repository": "https://github.com/typescriptlibs/tsl-core-xml.git",
     "devDependencies": {
         "@types/node": "~18.6.0",
