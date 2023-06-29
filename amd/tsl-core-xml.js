@@ -191,12 +191,12 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
             let index = (this._index || 0);
             let nextIndex = Infinity;
             // Restore buffer
-            const buffer = this._text.substring(index);
+            const buffer = this._text.substring(index, index + 1e6);
             if (!buffer) {
                 return;
             }
             // Search tag
-            let match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Tag);
+            let match = buffer.match(XMLRegExp_js_1.default.Tag);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -223,7 +223,7 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                 }
             }
             // Search close tag
-            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.CloseTag);
+            match = buffer.match(XMLRegExp_js_1.default.CloseTag);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -237,7 +237,7 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                 }
             }
             // Search comment
-            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Comment);
+            match = buffer.match(XMLRegExp_js_1.default.Comment);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -251,7 +251,7 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                 }
             }
             // Search definition
-            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Definition);
+            match = buffer.match(XMLRegExp_js_1.default.Definition);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -272,7 +272,7 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                 }
             }
             // Search declaration
-            match = buffer.substring(0, 1e6).match(XMLRegExp_js_1.default.Declaration);
+            match = buffer.match(XMLRegExp_js_1.default.Declaration);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
