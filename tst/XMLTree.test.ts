@@ -96,3 +96,86 @@ test( 'Test XMLTree on Atom RSS', async ( assert: test.Assert ) => {
     );
 
 } );
+
+
+
+test( 'Test XMLTree on HTML', async ( assert: test.Assert ) => {
+    const text = await FS.readFile( 'tst-data/samoyee.html', { encoding: 'utf8' } );
+    const xml = new XMLTree( text );
+
+    assert.deepStrictEqual(
+        xml.grow(),
+        [{
+            "tag": "div",
+            "innerXML": [{
+                "tag": "el-dialog",
+                "empty": true,
+                "attributes": {
+                    ":visible": "visible"
+                }
+            }, {
+                "comment": " test "
+            }, {
+                "tag": "div",
+                "attributes": {
+                    "v-if": "show",
+                    "class": "clazz",
+                    ":class": "myClass",
+                    ":visible": "visible",
+                    "v-html": "innerHtml",
+                    "@click": "\n    show = false\n    name = 'xxx'\n    $refs.input.focus()\n    ",
+                    "style": "display: block"
+                }
+            }, {
+                "tag": "div",
+                "attributes": {
+                    "v-else-if": "show2",
+                    ":style": "{ display: 'block', textAlign: show ? 'center' : 'left' }"
+                },
+                "innerXML": [{
+                    "tag": "div",
+                    "attributes": {
+                        "v-for": "item in list",
+                        ":key": "item.id"
+                    },
+                    "innerXML": [
+                        "{{ item.title }}"
+                    ]
+                }]
+            }, {
+                "tag": "template",
+                "attributes": {
+                    "v-else": ""
+                },
+                "innerXML": [{
+                    "tag": "div",
+                    "attributes": {
+                        "class": "else-clazz",
+                        ":class": "{ show }",
+                        "@click": "show = false"
+                    },
+                    "innerXML": [
+                        "{{ name }}"
+                    ]
+                }]
+            }, {
+                "tag": "input",
+                "empty": true,
+                "attributes": {
+                    "ref": "input",
+                    ":value": "name",
+                    "class": "input",
+                    ":style": "'display:' + (show ? 'block' : 'none')"
+                }
+            }, {
+                "tag": "div",
+                "attributes": {
+                    "id": "name",
+                    "@touch.stop": "",
+                    "@click": "\n    () => {\n        show = false\n        $refs.input.focus()\n    }\n    "
+                }
+            }]
+        }]
+    );
+
+} );

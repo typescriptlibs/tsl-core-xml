@@ -94,6 +94,7 @@ export class XMLTree {
         text: string = this.scanner.getText(),
         allStringNodes?: boolean
     ): Array<XMLNode> {
+        const closeStack: Array<XMLNode> = [];
         const roots = this.roots;
         const scanner = this.scanner;
 
@@ -111,31 +112,34 @@ export class XMLTree {
                 node.tag?.[0] === '/'
             ) {
                 const openTag = node.tag.substring( 1 );
-                const tagStack: Array<XMLNode> = [];
+                const openStack: Array<XMLNode> = [];
 
                 // Search opening tag and build stack with nodes in-between
 
-                for ( let i = roots.length - 1, stackNode: XMLNode; i >= 0; --i ) {
-                    stackNode = roots[i];
+                for ( let i = roots.length - 1, node2: XMLNode; i >= 0; --i ) {
+                    node2 = roots[i];
 
-                    // Check for opening tag and move in-between roots to tag
+                    // Find opening tag and remove openStack from roots
 
                     if (
-                        typeof stackNode === 'object' &&
-                        stackNode.tag === openTag &&
-                        !stackNode.empty &&
-                        !stackNode.innerXML
+                        typeof node2 === 'object' &&
+                        node2.tag === openTag &&
+                        !node2.empty &&
+                        !closeStack.includes( node2 )
                     ) {
-                        stackNode.innerXML = tagStack;
+                        if ( openStack.length ) {
+                            node2.innerXML = openStack;
+                            roots.length = roots.length - openStack.length;
+                        }
 
-                        roots.length = roots.length - tagStack.length;
+                        closeStack.push( node2 );
 
                         continue scan;
                     }
 
-                    // Save all nodes in the tagStack for innerXML
+                    // Save node in the openStack for innerXML
 
-                    tagStack.unshift( stackNode );
+                    openStack.unshift( node2 );
                 }
 
                 // Continue and ignore closing tag
