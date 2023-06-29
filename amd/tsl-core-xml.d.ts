@@ -108,7 +108,7 @@ declare module "XMLRegExp" {
     export const XMLRegExp: {
         /**
          * RegExp pattern for XML attribute.
-         * - Group 1: Trailing attribute name, including special characters.
+         * - Group 1: Attribute name.
          * - Group 2: Single quote encapsuled value.
          * - Group 3: Double quote encapsuled value.
          * - Group 4: None encapsuled value.
@@ -138,8 +138,9 @@ declare module "XMLRegExp" {
         Definition: RegExp;
         /**
          * RegExp pattern for regular XML tag.
-         * - Group 1: Trailing tag name, including special characters.
-         * - Group 2: Space of attributes and optional self-closing character.
+         * - Group 1: Tag name.
+         * - Group 2: Space of attributes.
+         * - Group 3: Self-closing character.
          */
         Tag: RegExp;
     };
