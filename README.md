@@ -47,3 +47,55 @@ while ( node = xml.scan() ) {
 // { tag: "/body" }
 // { tag: "/html" }
 ```
+
+
+### XMLTree
+
+``` TypeScript
+const xml = new XMLTree(
+    '<!DOCTYPE html>' +
+    '<html lang="en"><head><title>My Webpage</title></head>' +
+    '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
+);
+
+let roots = xml.grow();
+
+console.log( JSON.stringify( roots, null, '  ' ) );
+```
+``` JSON
+/* console.log: */
+[{
+  "tag": "!DOCTYPE",
+  "attributes": {
+     "html": ""
+  }
+}, {
+  "tag": "html",
+  "attributes": {
+    "lang": "en"
+  }
+  "innerXML": [{
+    "tag": "head",
+    "innerXML": [{
+      "tag": "title",
+      "innerXML": [
+        "My Webpage"
+      ]
+    }]
+  }, {
+    "tag": "body",
+    "attributes": {
+      "style": "background:#9CF"
+    },
+    "innerXML": [{
+      "tag": "h1",
+      "innerXML": [
+        "My Webpage"
+      ]
+    }, {
+      "tag": "hr",
+      "empty": true
+    }]
+  }]
+}]
+```

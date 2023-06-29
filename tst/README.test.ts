@@ -20,7 +20,11 @@
 
 import test from '@typescriptlibs/tst';
 
-import { XMLNode, XMLScanner } from 'tsl-core-xml';
+import {
+    XMLNode,
+    XMLScanner,
+    XMLTree
+} from 'tsl-core-xml';
 
 
 /* *
@@ -30,13 +34,13 @@ import { XMLNode, XMLScanner } from 'tsl-core-xml';
  * */
 
 
-test( 'Test README example', async ( assert: test.Assert ) => {
+test( 'Test README example for XMLScanner', async ( assert: test.Assert ) => {
     const log: Array<XMLNode> = [];
     const console = {
         log: ( node: XMLNode ) => log.push( node )
     };
 
-    // Start Example
+    // Example Start
 
     const xml = new XMLScanner(
         '<!DOCTYPE html>' +
@@ -50,7 +54,7 @@ test( 'Test README example', async ( assert: test.Assert ) => {
         console.log( node );
     }
 
-    // End Example
+    // Example End
 
     assert.deepStrictEqual(
         log,
@@ -70,6 +74,80 @@ test( 'Test README example', async ( assert: test.Assert ) => {
             { tag: "/body" },
             { tag: "/html" }
         ],
-        'Console.log should result in expected output.'
+        'Example with `console.log` should result in expected array output.'
+    );
+} );
+
+
+test( 'Test README example for XMLTree', async ( assert: test.Assert ) => {
+    const log: Array<XMLNode> = [];
+    const console = {
+        log: ( node: XMLNode ) => log.push( node )
+    };
+
+    // Example Start
+
+    const xml = new XMLTree(
+        '<!DOCTYPE html>' +
+        '<html lang="en"><head><title>My Webpage</title></head>' +
+        '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
+    );
+
+    let roots = xml.grow();
+
+    console.log( JSON.stringify( roots, null, '  ' ) );
+
+    // Example End
+
+    assert.deepStrictEqual(
+        log,
+        [
+            '[\n' +
+            '  {\n' +
+            '    "tag": "!DOCTYPE",\n' +
+            '    "attributes": {\n' +
+            '      "html": ""\n' +
+            '    }\n' +
+            '  },\n' +
+            '  {\n' +
+            '    "tag": "html",\n' +
+            '    "attributes": {\n' +
+            '      "lang": "en"\n' +
+            '    },\n' +
+            '    "innerXML": [\n' +
+            '      {\n' +
+            '        "tag": "head",\n' +
+            '        "innerXML": [\n' +
+            '          {\n' +
+            '            "tag": "title",\n' +
+            '            "innerXML": [\n' +
+            '              "My Webpage"\n' +
+            '            ]\n' +
+            '          }\n' +
+            '        ]\n' +
+            '      },\n' +
+            '      {\n' +
+            '        "tag": "body",\n' +
+            '        "attributes": {\n' +
+            '          "style": "background:#9CF"\n' +
+            '        },\n' +
+            '        "innerXML": [\n' +
+            '          {\n' +
+            '            "tag": "h1",\n' +
+            '            "innerXML": [\n' +
+            '              "My Webpage"\n' +
+            '            ]\n' +
+            '          },\n' +
+            '          {\n' +
+            '            "tag": "hr",\n' +
+            '            "empty": true\n' +
+            '          }\n' +
+            '        ]\n' +
+            '      }\n' +
+            '    ]\n' +
+            '  }\n' +
+            ']'
+        ],
+        'Example with `console.log` should result in expected JSON output.'
     );
 } );
