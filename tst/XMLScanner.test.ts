@@ -243,4 +243,29 @@ test( 'Test XMLScanner on Incomplete Tag', async ( assert: test.Assert ) => {
         'XMLScanner should return a BR tag with empty flag.'
     );
 
+
+    // Scan attribute right before buffer edge
+
+    scanner = new XMLScanner( ''.padStart( 999990, '<a ' ) + '<a href="abc">' );
+
+    result = await scanner.scan();
+    assert.strictEqual(
+        typeof result === 'string' && result.length,
+        999990,
+        'XMLScanner should return a text string with 999989 characters.'
+    );
+
+    result = await scanner.scan();
+    assert.deepStrictEqual(
+        typeof result === 'object' && result,
+        {
+            tag: 'a',
+            attributes: {
+                href: 'abc'
+            }
+        },
+        'XMLScanner should return a A tag with href attribute.'
+    );
+
+
 } );
