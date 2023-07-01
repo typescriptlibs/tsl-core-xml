@@ -59,6 +59,12 @@ export const XMLRegExp = {
     Definition: /<(!\w[\w\-.:]*)(\b[^>]*)?>/su,
 
     /**
+     * RegExp pattern for incomplete XML tag.
+     * - Group 1: Incomplete tag name.
+     */
+    IncompleteTag: /<$|<([\/:!?]?[\w\-.:]*)\b(?:'[^']*'?|"[^"]*"?|[^'"<>]+)*$/su,
+
+    /**
      * RegExp pattern for regular XML tag.
      * - Group 1: Tag name.
      * - Group 2: Space of attributes.

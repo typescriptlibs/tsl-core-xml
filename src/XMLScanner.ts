@@ -256,6 +256,19 @@ export class XMLScanner {
             return this._node;
         }
 
+        // Handle incomplete tag on the buffer edge
+
+        match = buffer.match( XMLRegExp.IncompleteTag );
+
+        if ( typeof match?.index === 'number' ) {
+            nextIndex = match.index;
+
+            this._index = index + nextIndex;
+            this._node = buffer.substring( 0, nextIndex );
+
+            return this._node;
+        }
+
         // Rest is just text
 
         this._index = index + buffer.length;

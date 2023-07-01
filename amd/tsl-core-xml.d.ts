@@ -137,6 +137,11 @@ declare module "XMLRegExp" {
          */
         Definition: RegExp;
         /**
+         * RegExp pattern for incomplete XML tag.
+         * - Group 1: Incomplete tag name.
+         */
+        IncompleteTag: RegExp;
+        /**
          * RegExp pattern for regular XML tag.
          * - Group 1: Tag name.
          * - Group 2: Space of attributes.

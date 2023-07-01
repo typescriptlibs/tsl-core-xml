@@ -112,6 +112,11 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          */
         Definition: /<(!\w[\w\-.:]*)(\b[^>]*)?>/su,
         /**
+         * RegExp pattern for incomplete XML tag.
+         * - Group 1: Incomplete tag name.
+         */
+        IncompleteTag: /<$|<([\/:!?]?[\w\-.:]*)\b(?:'[^']*'?|"[^"]*"?|[^'"<>]+)*$/su,
+        /**
          * RegExp pattern for regular XML tag.
          * - Group 1: Tag name.
          * - Group 2: Space of attributes.
@@ -295,6 +300,14 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
             }
             // Return leading text before match in next round
             if (nextIndex > 0 && nextIndex < Infinity) {
+                this._index = index + nextIndex;
+                this._node = buffer.substring(0, nextIndex);
+                return this._node;
+            }
+            // Handle incomplete tag on the buffer edge
+            match = buffer.match(XMLRegExp_js_1.default.IncompleteTag);
+            if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
+                nextIndex = match.index;
                 this._index = index + nextIndex;
                 this._node = buffer.substring(0, nextIndex);
                 return this._node;
