@@ -36,7 +36,7 @@ export const XMLRegExp = {
      * RegExp pattern for XML close tag.
      * - Group 1: Tag name.
      */
-    CloseTag: /<(\/\w[\w\-.:]*)>/su,
+    CloseTag: /<(\/[\w:][\w\-.:]*)>/su,
 
     /**
      * RegExp pattern for XML comment.
@@ -45,32 +45,16 @@ export const XMLRegExp = {
     Comment: /<!--((?:[^<]|<(?!!))*?)-->/su,
 
     /**
-     * RegExp pattern for XML declaration.
-     * - Group 1: Declaration name.
-     * - Group 2: Attributes separated by space.
-     */
-    Declaration: /<(\?\w[\w\-.:]*)(\b[^>]*)?\?>/su,
-
-    /**
-     * RegExp pattern for XML definition.
-     * - Group 1: Definition name.
-     * - Group 2: Attributes separated by space.
-     */
-    Definition: /<(!\w[\w\-.:]*)(\b[^>]*)?>/su,
-
-    /**
-     * RegExp pattern for incomplete XML tag.
+     * RegExp pattern for incomplete XML tag on buffer edge.
      * - Group 1: Incomplete tag name.
      */
-    IncompleteTag: /<$|<([\/:!?]?[\w\-.:]*)\b(?:'[^']*'?|"[^"]*"?|[^'"<>]+)*$/su,
+    IncompleteTag: /<$|<([\/!?]?[\w\-.:]*)\b[^<]*$/su,
 
     /**
-     * RegExp pattern for regular XML tag.
+     * RegExp pattern for XML tag begin.
      * - Group 1: Tag name.
-     * - Group 2: Space of attributes.
-     * - Group 3: Self-closing character.
      */
-    Tag: /<([\w:][\w\-.:]*)(\b(?:'[^']*'|"[^"]*"|[^'"<>]+)*)?>/su
+    OpenTag: /<([!?]?[\w:][\w\-.:]*)\b/su,
 
 };
 

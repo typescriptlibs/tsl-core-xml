@@ -47,7 +47,28 @@ export declare class XMLScanner {
      * Found XML node; or `undefined`, if reached the end.
      */
     scan(): (XMLNode | undefined);
+    /**
+     * Extracts attribute singles and pairs.
+     *
+     * @param snippet
+     * Text snippet to extract attributes from.
+     *
+     * @return
+     * Dictionary of attributes, or `undefined`. Attribute singles will have an
+     * empty value.
+     */
     private scanAttributes;
+    /**
+     * Search the index of the ending tag character outside of attribute
+     * strings.
+     *
+     * @param snippet
+     * Text snippet to search in.
+     *
+     * @return
+     * Index of ending tag in snippet.
+     */
+    private indexOfTagEnd;
     /**
      * Sets the text used by the scan process.
      *

@@ -117,9 +117,9 @@ export class XMLScanner {
             return;
         }
 
-        // Search tag
+        // Search close tag
 
-        let match = buffer.match( XMLRegExp.Tag );
+        let match = buffer.match( XMLRegExp.CloseTag );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -130,45 +130,53 @@ export class XMLScanner {
                 this._node = {
                     tag: match[1]
                 };
-
-                if ( match[2] ) {
-                    let rest = match[2]
-
-                    // Self-closing tags are marked empty
-
-                    if ( rest.endsWith( '/' ) ) {
-                        this._node.empty = true;
-                        rest.substring( 0, rest.length - 1 );
-                    }
-
-                    // Search for attributes
-
-                    const attributes = this.scanAttributes( rest );
-
-                    if ( attributes ) {
-                        this._node.attributes = attributes;
-                    }
-                }
 
                 return this._node;
             }
         }
 
-        // Search close tag
+        // Search open tag
 
-        match = buffer.match( XMLRegExp.CloseTag );
+        match = buffer.match( XMLRegExp.OpenTag );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
                 nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
             }
             else {
-                this._index = index + match[0].length;
-                this._node = {
-                    tag: match[1]
-                };
+                const restIndex = match[0].length;
+                const endIndex = this.indexOfTagEnd( buffer.substring( restIndex ) );
 
-                return this._node;
+                if ( endIndex > -1 ) {
+                    let rest = buffer.substring( restIndex, ( restIndex + endIndex - 1 ) );
+
+                    this._index = index + restIndex + endIndex;
+                    this._node = {
+                        tag: match[1]
+                    };
+
+                    // Self-closing tags are marked empty
+
+                    if (
+                        rest.endsWith( '/' ) ||
+                        rest.endsWith( '?' )
+                    ) {
+                        this._node.empty = true;
+                        rest = rest.substring( 0, rest.length - 1 );
+                    }
+
+                    // Search for attributes
+
+                    if ( rest ) {
+                        const attributes = this.scanAttributes( rest );
+
+                        if ( attributes ) {
+                            this._node.attributes = attributes;
+                        }
+                    }
+
+                    return this._node;
+                }
             }
         }
 
@@ -190,66 +198,12 @@ export class XMLScanner {
             }
         }
 
-        // Search definition
-
-        match = buffer.match( XMLRegExp.Definition );
-
-        if ( typeof match?.index === 'number' ) {
-            if ( match.index > 0 ) {
-                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
-            }
-            else {
-                this._index = index + match[0].length;
-                this._node = {
-                    tag: match[1]
-                };
-
-                // Search for attributes
-
-                if ( match[2] ) {
-                    const attributes = this.scanAttributes( match[2] );
-
-                    if ( attributes ) {
-                        this._node.attributes = attributes;
-                    }
-                }
-
-                return this._node;
-            }
-        }
-
-        // Search declaration
-
-        match = buffer.match( XMLRegExp.Declaration );
-
-        if ( typeof match?.index === 'number' ) {
-            if ( match.index > 0 ) {
-                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
-            }
-            else {
-                this._index = index + match[0].length;
-                this._node = {
-                    tag: match[1],
-                    empty: true
-                };
-
-                // Search for attributes
-
-                if ( match[2] ) {
-                    const attributes = this.scanAttributes( match[2] );
-
-                    if ( attributes ) {
-                        this._node.attributes = attributes;
-                    }
-                }
-
-                return this._node;
-            }
-        }
-
         // Return leading text before match in next round
 
-        if ( nextIndex > 0 && nextIndex < Infinity ) {
+        if (
+            nextIndex > 0 &&
+            nextIndex < Infinity
+        ) {
             this._index = index + nextIndex;
             this._node = buffer.substring( 0, nextIndex );
 
@@ -260,7 +214,10 @@ export class XMLScanner {
 
         match = buffer.match( XMLRegExp.IncompleteTag );
 
-        if ( typeof match?.index === 'number' ) {
+        if (
+            typeof match?.index === 'number' &&
+            match.index > 0
+        ) {
             nextIndex = match.index;
 
             this._index = index + nextIndex;
@@ -278,6 +235,16 @@ export class XMLScanner {
     }
 
 
+    /**
+     * Extracts attribute singles and pairs.
+     *
+     * @param snippet
+     * Text snippet to extract attributes from.
+     *
+     * @return
+     * Dictionary of attributes, or `undefined`. Attribute singles will have an
+     * empty value.
+     */
     private scanAttributes (
         snippet: string
     ): ( Record<string, string> | undefined ) {
@@ -298,6 +265,49 @@ export class XMLScanner {
         if ( Object.keys( attributes ).length ) {
             return attributes;
         }
+    }
+
+
+    /**
+     * Search the index of the ending tag character outside of attribute
+     * strings.
+     *
+     * @param snippet
+     * Text snippet to search in.
+     *
+     * @return
+     * Index of ending tag in snippet.
+     */
+    private indexOfTagEnd (
+        snippet: string
+    ): number {
+        let char = '';
+        let index = 0;
+        let openQuote = '';
+
+        loop: while ( char = snippet[index++] ) {
+
+            if ( openQuote ) {
+                if ( char === openQuote ) {
+                    openQuote = '';
+                }
+                continue;
+            }
+
+            switch ( char ) {
+                case '\'':
+                case '"':
+                    openQuote = char;
+                    break;
+                case '<':
+                    break loop;
+                case '>':
+                    return index;
+            }
+
+        }
+
+        return -1;
     }
 
 
