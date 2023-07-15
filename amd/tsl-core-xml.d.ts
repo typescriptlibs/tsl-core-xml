@@ -125,24 +125,15 @@ declare module "XMLRegExp" {
          */
         Comment: RegExp;
         /**
-         * RegExp pattern for XML declaration.
-         * - Group 1: Declaration name.
-         * - Group 2: Attributes separated by space.
+         * RegExp pattern for incomplete XML tag on buffer edge.
+         * - Group 1: Incomplete tag name.
          */
-        Declaration: RegExp;
+        IncompleteTag: RegExp;
         /**
-         * RegExp pattern for XML definition.
-         * - Group 1: Definition name.
-         * - Group 2: Attributes separated by space.
-         */
-        Definition: RegExp;
-        /**
-         * RegExp pattern for regular XML tag.
+         * RegExp pattern for XML tag begin.
          * - Group 1: Tag name.
-         * - Group 2: Space of attributes.
-         * - Group 3: Self-closing character.
          */
-        Tag: RegExp;
+        OpenTag: RegExp;
     };
     export default XMLRegExp;
 }
@@ -185,7 +176,28 @@ declare module "XMLScanner" {
          * Found XML node; or `undefined`, if reached the end.
          */
         scan(): (XMLNode | undefined);
+        /**
+         * Extracts attribute singles and pairs.
+         *
+         * @param snippet
+         * Text snippet to extract attributes from.
+         *
+         * @return
+         * Dictionary of attributes, or `undefined`. Attribute singles will have an
+         * empty value.
+         */
         private scanAttributes;
+        /**
+         * Search the index of the ending tag character outside of attribute
+         * strings.
+         *
+         * @param snippet
+         * Text snippet to search in.
+         *
+         * @return
+         * Index of ending tag in snippet.
+         */
+        private indexOfTagEnd;
         /**
          * Sets the text used by the scan process.
          *

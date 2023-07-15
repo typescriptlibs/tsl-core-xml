@@ -93,31 +93,22 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          * RegExp pattern for XML close tag.
          * - Group 1: Tag name.
          */
-        CloseTag: /<(\/\w[\w\-.:]*)>/su,
+        CloseTag: /<(\/[\w:][\w\-.:]*)>/su,
         /**
          * RegExp pattern for XML comment.
          * - Group 1: Comment.
          */
         Comment: /<!--((?:[^<]|<(?!!))*?)-->/su,
         /**
-         * RegExp pattern for XML declaration.
-         * - Group 1: Declaration name.
-         * - Group 2: Attributes separated by space.
+         * RegExp pattern for incomplete XML tag on buffer edge.
+         * - Group 1: Incomplete tag name.
          */
-        Declaration: /<(\?\w[\w\-.:]*)(\b[^>]*)?\?>/su,
+        IncompleteTag: /<$|<([\/!?]?[\w\-.:]*)\b[^<]*$/su,
         /**
-         * RegExp pattern for XML definition.
-         * - Group 1: Definition name.
-         * - Group 2: Attributes separated by space.
-         */
-        Definition: /<(!\w[\w\-.:]*)(\b[^>]*)?>/su,
-        /**
-         * RegExp pattern for regular XML tag.
+         * RegExp pattern for XML tag begin.
          * - Group 1: Tag name.
-         * - Group 2: Space of attributes.
-         * - Group 3: Self-closing character.
          */
-        Tag: /<([\w:][\w\-.:]*)(\b(?:'[^']*'|"[^"]*"|[^'"<>]+)*)?>/su
+        OpenTag: /<([!?]?[\w:][\w\-.:]*)\b/su,
     };
     /* *
      *
@@ -195,8 +186,8 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
             if (!buffer) {
                 return;
             }
-            // Search tag
-            let match = buffer.match(XMLRegExp_js_1.default.Tag);
+            // Search close tag
+            let match = buffer.match(XMLRegExp_js_1.default.CloseTag);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -206,34 +197,39 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                     this._node = {
                         tag: match[1]
                     };
-                    if (match[2]) {
-                        let rest = match[2];
-                        // Self-closing tags are marked empty
-                        if (rest.endsWith('/')) {
-                            this._node.empty = true;
-                            rest.substring(0, rest.length - 1);
-                        }
-                        // Search for attributes
-                        const attributes = this.scanAttributes(rest);
-                        if (attributes) {
-                            this._node.attributes = attributes;
-                        }
-                    }
                     return this._node;
                 }
             }
-            // Search close tag
-            match = buffer.match(XMLRegExp_js_1.default.CloseTag);
+            // Search open tag
+            match = buffer.match(XMLRegExp_js_1.default.OpenTag);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
                 }
                 else {
-                    this._index = index + match[0].length;
-                    this._node = {
-                        tag: match[1]
-                    };
-                    return this._node;
+                    const restIndex = match[0].length;
+                    const endIndex = this.indexOfTagEnd(buffer.substring(restIndex));
+                    if (endIndex > -1) {
+                        let rest = buffer.substring(restIndex, (restIndex + endIndex - 1));
+                        this._index = index + restIndex + endIndex;
+                        this._node = {
+                            tag: match[1]
+                        };
+                        // Self-closing tags are marked empty
+                        if (rest.endsWith('/') ||
+                            rest.endsWith('?')) {
+                            this._node.empty = true;
+                            rest = rest.substring(0, rest.length - 1);
+                        }
+                        // Search for attributes
+                        if (rest) {
+                            const attributes = this.scanAttributes(rest);
+                            if (attributes) {
+                                this._node.attributes = attributes;
+                            }
+                        }
+                        return this._node;
+                    }
                 }
             }
             // Search comment
@@ -250,51 +246,18 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
                     return this._node;
                 }
             }
-            // Search definition
-            match = buffer.match(XMLRegExp_js_1.default.Definition);
-            if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
-                if (match.index > 0) {
-                    nextIndex = (match.index < nextIndex ? match.index : nextIndex);
-                }
-                else {
-                    this._index = index + match[0].length;
-                    this._node = {
-                        tag: match[1]
-                    };
-                    // Search for attributes
-                    if (match[2]) {
-                        const attributes = this.scanAttributes(match[2]);
-                        if (attributes) {
-                            this._node.attributes = attributes;
-                        }
-                    }
-                    return this._node;
-                }
-            }
-            // Search declaration
-            match = buffer.match(XMLRegExp_js_1.default.Declaration);
-            if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
-                if (match.index > 0) {
-                    nextIndex = (match.index < nextIndex ? match.index : nextIndex);
-                }
-                else {
-                    this._index = index + match[0].length;
-                    this._node = {
-                        tag: match[1],
-                        empty: true
-                    };
-                    // Search for attributes
-                    if (match[2]) {
-                        const attributes = this.scanAttributes(match[2]);
-                        if (attributes) {
-                            this._node.attributes = attributes;
-                        }
-                    }
-                    return this._node;
-                }
-            }
             // Return leading text before match in next round
-            if (nextIndex > 0 && nextIndex < Infinity) {
+            if (nextIndex > 0 &&
+                nextIndex < Infinity) {
+                this._index = index + nextIndex;
+                this._node = buffer.substring(0, nextIndex);
+                return this._node;
+            }
+            // Handle incomplete tag on the buffer edge
+            match = buffer.match(XMLRegExp_js_1.default.IncompleteTag);
+            if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number' &&
+                match.index > 0) {
+                nextIndex = match.index;
                 this._index = index + nextIndex;
                 this._node = buffer.substring(0, nextIndex);
                 return this._node;
@@ -304,6 +267,16 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
             this._node = buffer;
             return this._node;
         }
+        /**
+         * Extracts attribute singles and pairs.
+         *
+         * @param snippet
+         * Text snippet to extract attributes from.
+         *
+         * @return
+         * Dictionary of attributes, or `undefined`. Attribute singles will have an
+         * empty value.
+         */
         scanAttributes(snippet) {
             const attributes = {};
             let matchAttribute;
@@ -317,6 +290,40 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
             if (Object.keys(attributes).length) {
                 return attributes;
             }
+        }
+        /**
+         * Search the index of the ending tag character outside of attribute
+         * strings.
+         *
+         * @param snippet
+         * Text snippet to search in.
+         *
+         * @return
+         * Index of ending tag in snippet.
+         */
+        indexOfTagEnd(snippet) {
+            let char = '';
+            let index = 0;
+            let openQuote = '';
+            loop: while (char = snippet[index++]) {
+                if (openQuote) {
+                    if (char === openQuote) {
+                        openQuote = '';
+                    }
+                    continue;
+                }
+                switch (char) {
+                    case '\'':
+                    case '"':
+                        openQuote = char;
+                        break;
+                    case '<':
+                        break loop;
+                    case '>':
+                        return index;
+                }
+            }
+            return -1;
         }
         /**
          * Sets the text used by the scan process.

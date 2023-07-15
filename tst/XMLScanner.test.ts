@@ -169,3 +169,151 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
     );
 
 } );
+
+
+test( 'Test XMLScanner on Incomplete Tag', async ( assert: test.Assert ) => {
+
+
+    // Scan tag in middle of buffer edge
+
+    let scanner = new XMLScanner( '<br/>'.padStart( 1000003, '<' ) );
+
+    let result = await scanner.scan();
+    assert.strictEqual(
+        typeof result === 'string' && result.length,
+        999998,
+        'XMLScanner should return a text string with 999998 characters.'
+    );
+
+    result = await scanner.scan();
+    assert.deepStrictEqual(
+        typeof result === 'object' && result,
+        {
+            tag: 'br',
+            empty: true
+        },
+        'XMLScanner should return a BR tag with empty flag.'
+    );
+
+
+    // Scan tag right before buffer edge
+
+    scanner = new XMLScanner( '<br />'.padStart( 1000005, '>' ) );
+
+    result = await scanner.scan();
+    assert.strictEqual(
+        typeof result === 'string' && result.length,
+        999999,
+        'XMLScanner should return a text string with 999999 characters.'
+    );
+
+    result = await scanner.scan();
+    assert.deepStrictEqual(
+        typeof result === 'object' && result,
+        {
+            tag: 'br',
+            empty: true
+        },
+        'XMLScanner should return a BR tag with empty flag.'
+    );
+
+
+    // Scan buffer edge without tag
+
+    scanner = new XMLScanner( ''.padEnd( 1000000, '<' ) + '<br/>' );
+
+    result = await scanner.scan();
+    assert.strictEqual(
+        typeof result === 'string' && result.length,
+        999999,
+        'XMLScanner should return a text string with 999999 characters.'
+    );
+
+    result = await scanner.scan();
+    assert.deepStrictEqual(
+        typeof result === 'string' && result.length,
+        1,
+        'XMLScanner should return a text string with 1 character.'
+    );
+
+    result = await scanner.scan();
+    assert.deepStrictEqual(
+        typeof result === 'object' && result,
+        {
+            tag: 'br',
+            empty: true
+        },
+        'XMLScanner should return a BR tag with empty flag.'
+    );
+
+
+    // Scan attribute right before buffer edge
+
+    scanner = new XMLScanner( ''.padStart( 999990, '<a ' ) + '<a href="abc">' );
+
+    result = await scanner.scan();
+    assert.strictEqual(
+        typeof result === 'string' && result.length,
+        999990,
+        'XMLScanner should return a text string with 999990 characters.'
+    );
+
+    result = await scanner.scan();
+    assert.deepStrictEqual(
+        typeof result === 'object' && result,
+        {
+            tag: 'a',
+            attributes: {
+                href: 'abc'
+            }
+        },
+        'XMLScanner should return a A tag with href attribute.'
+    );
+
+
+    // Scan maximum size of a tag
+    scanner = new XMLScanner( ' <b'.padEnd( 1000000, ' ' ) + '>' );
+
+    result = await scanner.scan();
+    assert.strictEqual(
+        result,
+        ' ',
+        'XMLScanner should return a text string with 1 space character.'
+    );
+
+    result = await scanner.scan();
+    assert.deepStrictEqual(
+        typeof result === 'object' && result,
+        {
+            tag: 'b'
+        },
+        'XMLScanner should return a B tag.'
+    );
+
+
+    // Scan oversized tag
+
+    scanner = new XMLScanner( ' <b'.padEnd( 1000001, ' ' ) + '>' );
+
+    result = await scanner.scan();
+    assert.strictEqual(
+        result,
+        ' ',
+        'XMLScanner should return a text string with 1 space character.'
+    );
+
+    result = await scanner.scan();
+    assert.strictEqual(
+        typeof result === 'string' && result.length,
+        1000000,
+        'XMLScanner should return oversized tag in two text string. (1)'
+    );
+
+    result = await scanner.scan();
+    assert.strictEqual(
+        result,
+        '>',
+        'XMLScanner should return oversized tag in two text string. (2)'
+    );
+
+} );
