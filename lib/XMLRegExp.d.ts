@@ -32,23 +32,14 @@ export declare const XMLRegExp: {
      */
     Comment: RegExp;
     /**
-     * RegExp pattern for XML declaration.
-     * - Group 1: Declaration name.
-     * - Group 2: Attributes separated by space.
+     * RegExp pattern for incomplete XML tag on buffer edge.
+     * - Group 1: Incomplete tag name.
      */
-    Declaration: RegExp;
+    IncompleteTag: RegExp;
     /**
-     * RegExp pattern for XML definition.
-     * - Group 1: Definition name.
-     * - Group 2: Attributes separated by space.
-     */
-    Definition: RegExp;
-    /**
-     * RegExp pattern for regular XML tag.
+     * RegExp pattern for XML tag begin.
      * - Group 1: Tag name.
-     * - Group 2: Space of attributes.
-     * - Group 3: Self-closing character.
      */
-    Tag: RegExp;
+    OpenTag: RegExp;
 };
 export default XMLRegExp;
