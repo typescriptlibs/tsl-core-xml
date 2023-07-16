@@ -43,6 +43,20 @@ export type XMLNode = (
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+
+export function isString (
+    xmlNode: XMLNode
+): xmlNode is string {
+    return typeof xmlNode === 'string';
+}
+
+
+/* *
+ *
  *  Default Export
  *
  * */

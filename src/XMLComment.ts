@@ -13,6 +13,16 @@
 
 /* *
  *
+ *  Imports
+ *
+ * */
+
+
+import XMLNode from './XMLNode.js';
+
+
+/* *
+ *
  *  Declarations
  *
  * */
@@ -34,6 +44,23 @@ export interface XMLComment {
      */
     tag?: undefined;
 
+}
+
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+
+export function isXMLComment (
+    xmlNode: XMLNode
+): xmlNode is XMLComment {
+    return (
+        typeof xmlNode === 'object' &&
+        typeof xmlNode.comment === 'string'
+    );
 }
 
 

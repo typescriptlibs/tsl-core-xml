@@ -63,6 +63,23 @@ export interface XMLTag {
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+
+export function isXMLTag (
+    xmlNode: XMLNode
+): xmlNode is XMLTag {
+    return (
+        typeof xmlNode === 'object' &&
+        typeof xmlNode.tag === 'string'
+    );
+}
+
+
+/* *
+ *
  *  Default Export
  *
  * */
