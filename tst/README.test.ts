@@ -42,7 +42,7 @@ test( 'Test README example for XMLScanner', async ( assert: test.Assert ) => {
 
     // Example Start
 
-    const xml = new XMLScanner(
+    const scanner = new XMLScanner(
         '<!DOCTYPE html>' +
         '<html lang="en"><head><title>My Webpage</title></head>' +
         '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
@@ -50,7 +50,7 @@ test( 'Test README example for XMLScanner', async ( assert: test.Assert ) => {
 
     let node: ( XMLNode | undefined );
 
-    while ( node = xml.scan() ) {
+    while ( node = scanner.scan() ) {
         console.log( node );
     }
 
@@ -87,13 +87,13 @@ test( 'Test README example for XMLTree', async ( assert: test.Assert ) => {
 
     // Example Start
 
-    const xml = new XMLTree(
+    const tree = new XMLTree(
         '<!DOCTYPE html>' +
         '<html lang="en"><head><title>My Webpage</title></head>' +
         '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
     );
 
-    let roots = xml.grow();
+    let roots = tree.grow();
 
     console.log( JSON.stringify( roots, null, '  ' ) );
 

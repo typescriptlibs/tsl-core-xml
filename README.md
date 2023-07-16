@@ -19,7 +19,7 @@ Examples
 ### XMLScanner
 
 ``` TypeScript
-const xml = new XMLScanner(
+const scanner = new XMLScanner(
     '<!DOCTYPE html>' +
     '<html lang="en"><head><title>My Webpage</title></head>' +
     '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
@@ -27,47 +27,46 @@ const xml = new XMLScanner(
 
 let node: ( XMLNode | undefined );
 
-while ( node = xml.scan() ) {
+while ( node = scanner.scan() ) {
     console.log( node );
 }
-
-// console.log:
-// { tag: "!DOCTYPE", attributes: { html: "" } }
-// { tag: "html", attributes: { lang: "en" } }
-// { tag: "head" }
-// { tag: "title" }
-// "My Webpage"
-// { tag: "/title" }
-// { tag: "/head" }
-// { tag: "body", attributes: { style: "background:#9CF" } }
-// { tag: "h1" }
-// "My Webpage"
-// { tag: "/h1" }
-// { tag: "hr", empty: true }
-// { tag: "/body" }
-// { tag: "/html" }
+```
+``` JavaScript
+{ tag: "!DOCTYPE", attributes: { html: "" } }
+{ tag: "html", attributes: { lang: "en" } }
+{ tag: "head" }
+{ tag: "title" }
+"My Webpage"
+{ tag: "/title" }
+{ tag: "/head" }
+{ tag: "body", attributes: { style: "background:#9CF" } }
+{ tag: "h1" }
+"My Webpage"
+{ tag: "/h1" }
+{ tag: "hr", empty: true }
+{ tag: "/body" }
+{ tag: "/html" }
 ```
 
 
 ### XMLTree
 
 ``` TypeScript
-const xml = new XMLTree(
+const tree = new XMLTree(
     '<!DOCTYPE html>' +
     '<html lang="en"><head><title>My Webpage</title></head>' +
     '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
 );
 
-let roots = xml.grow();
+let roots = tree.grow();
 
 console.log( JSON.stringify( roots, null, '  ' ) );
 ```
 ``` JSON
-/* console.log: */
 [{
   "tag": "!DOCTYPE",
   "attributes": {
-     "html": ""
+    "html": ""
   }
 }, {
   "tag": "html",
