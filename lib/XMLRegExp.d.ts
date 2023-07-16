@@ -32,6 +32,13 @@ export declare const XMLRegExp: {
      */
     Comment: RegExp;
     /**
+     * RegExp pattern for XML escape entity.
+     * - Group 1: Character name.
+     * - Group 2: Character decimal code.
+     * - Group 3: Character hexadecimal code.
+     */
+    EscapeEntity: RegExp;
+    /**
      * RegExp pattern for incomplete XML tag on buffer edge.
      * - Group 1: Incomplete tag name.
      */

@@ -49,7 +49,7 @@ export type XMLNode = (
 
 
 export function isString (
-    xmlNode: XMLNode
+    xmlNode: unknown
 ): xmlNode is string {
     return typeof xmlNode === 'string';
 }

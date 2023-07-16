@@ -1,4 +1,33 @@
-declare module "XMLComment" {
+declare module "EscapeEntities/XMLEscapeEntities" {
+    /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+    
+      XML TypeScript Library
+    
+      Copyright (c) TypeScriptLibs and Contributors
+    
+      Licensed under the MIT License; you may not use this file except in
+      compliance with the License. You may obtain a copy of the MIT License at
+      https://typescriptlibs.org/LICENSE.txt
+    
+    \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+    export const XMLEscapeEntities: Record<string, string>;
+    export default XMLEscapeEntities;
+}
+declare module "EscapeEntities/index" {
+    /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+    
+      XML TypeScript Library
+    
+      Copyright (c) TypeScriptLibs and Contributors
+    
+      Licensed under the MIT License; you may not use this file except in
+      compliance with the License. You may obtain a copy of the MIT License at
+      https://typescriptlibs.org/LICENSE.txt
+    
+    \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+    export * from "EscapeEntities/XMLEscapeEntities";
+}
+declare module "XMLRegExp" {
     /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
     
       XML TypeScript Library
@@ -11,19 +40,55 @@ declare module "XMLComment" {
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     /**
-     * Represents an XML comment node.
+     * Regular expressions used to detect and extract XML tags in text.
      */
-    export interface XMLComment {
+    export const XMLRegExp: {
         /**
-         * Text of the comment.
+         * RegExp pattern for XML attribute.
+         * - Group 1: Attribute name.
+         * - Group 2: Single quote encapsuled value.
+         * - Group 3: Double quote encapsuled value.
+         * - Group 4: None encapsuled value.
          */
-        comment: string;
+        Attribute: RegExp;
         /**
-         * Use this property to determine, if the object is a tag node.
+         * RegExp pattern for XML close tag.
+         * - Group 1: Tag name.
          */
-        tag?: undefined;
-    }
-    export default XMLComment;
+        CloseTag: RegExp;
+        /**
+         * RegExp pattern for XML comment.
+         * - Group 1: Comment.
+         */
+        Comment: RegExp;
+        /**
+         * RegExp pattern for XML escape entity.
+         * - Group 1: Character name.
+         * - Group 2: Character decimal code.
+         * - Group 3: Character hexadecimal code.
+         */
+        EscapeEntity: RegExp;
+        /**
+         * RegExp pattern for incomplete XML tag on buffer edge.
+         * - Group 1: Incomplete tag name.
+         */
+        IncompleteTag: RegExp;
+        /**
+         * RegExp pattern for XML tag begin.
+         * - Group 1: Tag name.
+         */
+        OpenTag: RegExp;
+    };
+    export default XMLRegExp;
+}
+declare module "Escaping" {
+    export function escapeXML(str: string): string;
+    export function unescapeXML(str: string): string;
+    const _default: {
+        escapeXML: typeof escapeXML;
+        unescapeXML: typeof unescapeXML;
+    };
+    export default _default;
 }
 declare module "XMLTag" {
     /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
@@ -63,6 +128,7 @@ declare module "XMLTag" {
          */
         tag: string;
     }
+    export function isXMLTag(xmlNode: XMLNode): xmlNode is XMLTag;
     export default XMLTag;
 }
 declare module "XMLNode" {
@@ -84,9 +150,10 @@ declare module "XMLNode" {
      * string.
      */
     export type XMLNode = (string | XMLComment | XMLTag);
+    export function isString(xmlNode: unknown): xmlNode is string;
     export default XMLNode;
 }
-declare module "XMLRegExp" {
+declare module "XMLComment" {
     /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
     
       XML TypeScript Library
@@ -98,40 +165,22 @@ declare module "XMLRegExp" {
       https://typescriptlibs.org/LICENSE.txt
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+    import XMLNode from "XMLNode";
     /**
-     * Regular expressions used to detect and extract XML tags in text.
+     * Represents an XML comment node.
      */
-    export const XMLRegExp: {
+    export interface XMLComment {
         /**
-         * RegExp pattern for XML attribute.
-         * - Group 1: Attribute name.
-         * - Group 2: Single quote encapsuled value.
-         * - Group 3: Double quote encapsuled value.
-         * - Group 4: None encapsuled value.
+         * Text of the comment.
          */
-        Attribute: RegExp;
+        comment: string;
         /**
-         * RegExp pattern for XML close tag.
-         * - Group 1: Tag name.
+         * Use this property to determine, if the object is a tag node.
          */
-        CloseTag: RegExp;
-        /**
-         * RegExp pattern for XML comment.
-         * - Group 1: Comment.
-         */
-        Comment: RegExp;
-        /**
-         * RegExp pattern for incomplete XML tag on buffer edge.
-         * - Group 1: Incomplete tag name.
-         */
-        IncompleteTag: RegExp;
-        /**
-         * RegExp pattern for XML tag begin.
-         * - Group 1: Tag name.
-         */
-        OpenTag: RegExp;
-    };
-    export default XMLRegExp;
+        tag?: undefined;
+    }
+    export function isXMLComment(xmlNode: XMLNode): xmlNode is XMLComment;
+    export default XMLComment;
 }
 declare module "XMLScanner" {
     import XMLNode from "XMLNode";
@@ -270,6 +319,7 @@ declare module "index" {
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     import XMLScanner from "XMLScanner";
+    export * from "Escaping";
     export * from "XMLComment";
     export * from "XMLNode";
     export * from "XMLRegExp";

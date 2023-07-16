@@ -12,6 +12,7 @@
 
 import XMLScanner from './XMLScanner.js';
 
+export * from './Escaping.js';
 export * from './XMLComment.js';
 export * from './XMLNode.js';
 export * from './XMLRegExp.js';

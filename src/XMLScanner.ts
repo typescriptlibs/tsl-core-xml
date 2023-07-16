@@ -18,6 +18,8 @@
  * */
 
 
+import { unescapeXML } from "./Escaping.js";
+
 import XMLRegExp from "./XMLRegExp.js";
 
 import XMLNode from './XMLNode.js';
@@ -205,7 +207,7 @@ export class XMLScanner {
             nextIndex < Infinity
         ) {
             this._index = index + nextIndex;
-            this._node = buffer.substring( 0, nextIndex );
+            this._node = unescapeXML( buffer.substring( 0, nextIndex ) );
 
             return this._node;
         }
@@ -221,7 +223,7 @@ export class XMLScanner {
             nextIndex = match.index;
 
             this._index = index + nextIndex;
-            this._node = buffer.substring( 0, nextIndex );
+            this._node = unescapeXML( buffer.substring( 0, nextIndex ) );
 
             return this._node;
         }
@@ -229,7 +231,7 @@ export class XMLScanner {
         // Rest is just text
 
         this._index = index + buffer.length;
-        this._node = buffer;
+        this._node = unescapeXML( buffer );
 
         return this._node;
     }
@@ -254,7 +256,7 @@ export class XMLScanner {
         let scanner = new RegExp( XMLRegExp.Attribute.source, XMLRegExp.Attribute.flags );
 
         while ( matchAttribute = scanner.exec( snippet ) ) {
-            attributes[matchAttribute[1]] = (
+            attributes[matchAttribute[1]] = unescapeXML(
                 matchAttribute[2] ||
                 matchAttribute[3] ||
                 matchAttribute[4] ||

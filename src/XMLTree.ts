@@ -18,9 +18,11 @@
  * */
 
 
-import XMLNode from './XMLNode.js';
+import XMLNode, { isString } from './XMLNode.js';
 
 import XMLScanner from './XMLScanner.js';
+
+import { isXMLTag } from './XMLTag.js';
 
 
 /* *
@@ -105,16 +107,17 @@ export class XMLTree {
 
         scan: while ( node = scanner.scan() ) {
 
-            // Check for closing tag, then search for opening tag
+            // First check for closing tag, then search for opening tag
 
             if (
-                typeof node === 'object' &&
+                isXMLTag( node ) &&
                 node.tag?.[0] === '/'
             ) {
                 const openTag = node.tag.substring( 1 );
                 const openStack: Array<XMLNode> = [];
 
-                // Search opening tag and build stack with nodes in-between
+                // Search backwards for opening tag and build stack with nodes
+                // in-between
 
                 for ( let i = roots.length - 1, node2: XMLNode; i >= 0; --i ) {
                     node2 = roots[i];
@@ -122,7 +125,7 @@ export class XMLTree {
                     // Find opening tag and remove openStack from roots
 
                     if (
-                        typeof node2 === 'object' &&
+                        isXMLTag( node2 ) &&
                         node2.tag === openTag &&
                         !node2.empty &&
                         !closeStack.includes( node2 )
@@ -151,7 +154,7 @@ export class XMLTree {
 
             if (
                 !allStringNodes &&
-                typeof node === 'string' &&
+                isString( node ) &&
                 !node.trim()
             ) {
                 continue scan;
