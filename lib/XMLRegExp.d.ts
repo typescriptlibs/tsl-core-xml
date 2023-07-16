@@ -37,9 +37,18 @@ export declare const XMLRegExp: {
      */
     IncompleteTag: RegExp;
     /**
-     * RegExp pattern for XML tag begin.
+     * RegExp pattern for XML open tag.
      * - Group 1: Tag name.
      */
     OpenTag: RegExp;
+    /**
+     * RegExp pattern for XMLTree selector.
+     * - Group 1: Tag name.
+     * - Group 2: CSS class.
+     * - Group 3: HTML ID attribute.
+     * - Group 4: Attribute name.
+     * - Group 5: Attribute value
+     */
+    Selector: RegExp;
 };
 export default XMLRegExp;

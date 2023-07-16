@@ -23,24 +23,20 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("XMLComment", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-});
-/*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
-
-  XML TypeScript Library
-
-  Copyright (c) TypeScriptLibs and Contributors
-
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
-
-\*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("XMLTag", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.isXMLTag = void 0;
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    function isXMLTag(xmlNode) {
+        return (typeof xmlNode === 'object' &&
+            typeof xmlNode.tag === 'string');
+    }
+    exports.isXMLTag = isXMLTag;
 });
 /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
 
@@ -56,6 +52,42 @@ define("XMLTag", ["require", "exports"], function (require, exports) {
 define("XMLNode", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.isString = void 0;
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    function isString(xmlNode) {
+        return typeof xmlNode === 'string';
+    }
+    exports.isString = isString;
+});
+/*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+
+  XML TypeScript Library
+
+  Copyright (c) TypeScriptLibs and Contributors
+
+  Licensed under the MIT License; you may not use this file except in
+  compliance with the License. You may obtain a copy of the MIT License at
+  https://typescriptlibs.org/LICENSE.txt
+
+\*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+define("XMLComment", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.isXMLComment = void 0;
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    function isXMLComment(xmlNode) {
+        return (typeof xmlNode === 'object' &&
+            typeof xmlNode.comment === 'string');
+    }
+    exports.isXMLComment = isXMLComment;
 });
 /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
 
@@ -103,12 +135,21 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          * RegExp pattern for incomplete XML tag on buffer edge.
          * - Group 1: Incomplete tag name.
          */
-        IncompleteTag: /<$|<([\/!?]?[\w\-.:]*)\b[^<]*$/su,
+        IncompleteTag: /<$|<([\w:\/!?][\w\-.:]*)\b[^<]*$/su,
         /**
-         * RegExp pattern for XML tag begin.
+         * RegExp pattern for XML open tag.
          * - Group 1: Tag name.
          */
         OpenTag: /<([!?]?[\w:][\w\-.:]*)\b/su,
+        /**
+         * RegExp pattern for XMLTree selector.
+         * - Group 1: Tag name.
+         * - Group 2: CSS class.
+         * - Group 3: HTML ID attribute.
+         * - Group 4: Attribute name.
+         * - Group 5: Attribute value
+         */
+        Selector: /([\w\-|]*|\*)(\.[\w\-\.]+)?(#[\w\-]*)?(\[([^=\]]+)([~|^$*]?=[^\]])\])?/gsu,
     };
     /* *
      *
@@ -371,7 +412,103 @@ define("XMLScanner", ["require", "exports", "XMLRegExp"], function (require, exp
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("XMLTree", ["require", "exports", "XMLScanner"], function (require, exports, XMLScanner_js_1) {
+define("XMLSelector", ["require", "exports", "XMLTag"], function (require, exports, XMLTag_js_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.XMLSelector = void 0;
+    /* *
+     *
+     *  Class
+     *
+     * */
+    /**
+     * Creates a selector to search in a list of XML nodes.
+     */
+    class XMLSelector {
+        /* *
+         *
+         *  Static Functions
+         *
+         * */
+        static parse(selector) {
+            // @todo implement
+            return;
+        }
+        /* *
+         *
+         *  Constructor
+         *
+         * */
+        /**
+         * @param selector
+         * Selector to match against.
+         */
+        constructor(selector) {
+            this.selector = selector;
+        }
+        /* *
+         *
+         *  Functions
+         *
+         * */
+        /**
+         * Creates a list of XML tags matching the specified conditions.
+         *
+         * @param nodes
+         * List of nodes to search in.
+         *
+         * @param conditions
+         * Conditions to search for.
+         *
+         * @return
+         * List of matching XML tags, or `undefined`.
+         */
+        find(nodes, conditions) {
+            const findings = [];
+            for (const node of nodes) {
+                if ((0, XMLTag_js_1.isXMLTag)(node)) {
+                    // @todo implement
+                }
+            }
+            if (findings.length) {
+                return findings;
+            }
+        }
+        /**
+         * Creates a list of XML tags matching the selector conditions.  The
+         * matching is done using depth-first pre-order traversal of the XML nodes.
+         *
+         * @param nodes
+         * Array of nodes to search in.
+         *
+         * @return
+         * List of matching XML tags, or `undefined`.
+         */
+        query(nodes) {
+            // @todo implement
+            return;
+        }
+    }
+    exports.XMLSelector = XMLSelector;
+    /* *
+     *
+     *  Default Export
+     *
+     * */
+    exports.default = XMLSelector;
+});
+/*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+
+  XML TypeScript Library
+
+  Copyright (c) TypeScriptLibs and Contributors
+
+  Licensed under the MIT License; you may not use this file except in
+  compliance with the License. You may obtain a copy of the MIT License at
+  https://typescriptlibs.org/LICENSE.txt
+
+\*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+define("XMLTree", ["require", "exports", "XMLSelector", "XMLScanner"], function (require, exports, XMLSelector_js_1, XMLScanner_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.XMLTree = void 0;
@@ -410,7 +547,8 @@ define("XMLTree", ["require", "exports", "XMLScanner"], function (require, expor
          *
          * @return
          * Tree roots, usually the last one is the main root. Malformatted XML might
-         * have different roots.
+         * have different roots. These roots are also available in the `roots`
+         * property.
          */
         grow(text = this.scanner.getText(), allStringNodes) {
             var _a;
@@ -457,6 +595,23 @@ define("XMLTree", ["require", "exports", "XMLScanner"], function (require, expor
             }
             return roots;
         }
+        /**
+         * Searches for XML nodes matching the specified selector.  If the selector
+         * contains the `#` character, only the first machting XML node will be
+         * returned.
+         *
+         * @param selector
+         * Selector to match against.
+         *
+         * @return
+         * List of XML nodes matching the selector, or `undefined`.
+         */
+        query(selector) {
+            const xmlSelector = XMLSelector_js_1.default.parse(selector);
+            if (xmlSelector) {
+                return xmlSelector.query(this.roots);
+            }
+        }
     }
     exports.XMLTree = XMLTree;
     /* *
@@ -477,14 +632,14 @@ define("XMLTree", ["require", "exports", "XMLScanner"], function (require, expor
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("index", ["require", "exports", "XMLScanner", "XMLComment", "XMLNode", "XMLRegExp", "XMLScanner", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, XMLComment_js_1, XMLNode_js_1, XMLRegExp_js_2, XMLScanner_js_3, XMLTag_js_1, XMLTree_js_1) {
+define("index", ["require", "exports", "XMLScanner", "XMLComment", "XMLNode", "XMLRegExp", "XMLScanner", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, XMLComment_js_1, XMLNode_js_1, XMLRegExp_js_2, XMLScanner_js_3, XMLTag_js_2, XMLTree_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     __exportStar(XMLComment_js_1, exports);
     __exportStar(XMLNode_js_1, exports);
     __exportStar(XMLRegExp_js_2, exports);
     __exportStar(XMLScanner_js_3, exports);
-    __exportStar(XMLTag_js_1, exports);
+    __exportStar(XMLTag_js_2, exports);
     __exportStar(XMLTree_js_1, exports);
     exports.default = XMLScanner_js_2.default;
 });

@@ -1,30 +1,3 @@
-declare module "XMLComment" {
-    /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
-    
-      XML TypeScript Library
-    
-      Copyright (c) TypeScriptLibs and Contributors
-    
-      Licensed under the MIT License; you may not use this file except in
-      compliance with the License. You may obtain a copy of the MIT License at
-      https://typescriptlibs.org/LICENSE.txt
-    
-    \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-    /**
-     * Represents an XML comment node.
-     */
-    export interface XMLComment {
-        /**
-         * Text of the comment.
-         */
-        comment: string;
-        /**
-         * Use this property to determine, if the object is a tag node.
-         */
-        tag?: undefined;
-    }
-    export default XMLComment;
-}
 declare module "XMLTag" {
     /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
     
@@ -63,6 +36,7 @@ declare module "XMLTag" {
          */
         tag: string;
     }
+    export function isXMLTag(xmlNode: XMLNode): xmlNode is XMLTag;
     export default XMLTag;
 }
 declare module "XMLNode" {
@@ -84,7 +58,37 @@ declare module "XMLNode" {
      * string.
      */
     export type XMLNode = (string | XMLComment | XMLTag);
+    export function isString(xmlNode: XMLNode): xmlNode is string;
     export default XMLNode;
+}
+declare module "XMLComment" {
+    /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+    
+      XML TypeScript Library
+    
+      Copyright (c) TypeScriptLibs and Contributors
+    
+      Licensed under the MIT License; you may not use this file except in
+      compliance with the License. You may obtain a copy of the MIT License at
+      https://typescriptlibs.org/LICENSE.txt
+    
+    \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+    import XMLNode from "XMLNode";
+    /**
+     * Represents an XML comment node.
+     */
+    export interface XMLComment {
+        /**
+         * Text of the comment.
+         */
+        comment: string;
+        /**
+         * Use this property to determine, if the object is a tag node.
+         */
+        tag?: undefined;
+    }
+    export function isXMLComment(xmlNode: XMLNode): xmlNode is XMLComment;
+    export default XMLComment;
 }
 declare module "XMLRegExp" {
     /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
@@ -126,10 +130,19 @@ declare module "XMLRegExp" {
          */
         IncompleteTag: RegExp;
         /**
-         * RegExp pattern for XML tag begin.
+         * RegExp pattern for XML open tag.
          * - Group 1: Tag name.
          */
         OpenTag: RegExp;
+        /**
+         * RegExp pattern for XMLTree selector.
+         * - Group 1: Tag name.
+         * - Group 2: CSS class.
+         * - Group 3: HTML ID attribute.
+         * - Group 4: Attribute name.
+         * - Group 5: Attribute value
+         */
+        Selector: RegExp;
     };
     export default XMLRegExp;
 }
@@ -211,6 +224,66 @@ declare module "XMLScanner" {
     }
     export default XMLScanner;
 }
+declare module "XMLSelector" {
+    /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+    
+      XML TypeScript Library
+    
+      Copyright (c) TypeScriptLibs and Contributors
+    
+      Licensed under the MIT License; you may not use this file except in
+      compliance with the License. You may obtain a copy of the MIT License at
+      https://typescriptlibs.org/LICENSE.txt
+    
+    \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+    import XMLNode from "XMLNode";
+    import XMLTag from "XMLTag";
+    export interface SelectorConditions {
+        attribute?: string;
+        attributeMatch?: string;
+        cssClass: string;
+        htmlID?: string;
+        tag: string;
+    }
+    /**
+     * Creates a selector to search in a list of XML nodes.
+     */
+    export class XMLSelector {
+        static parse(selector: string): (XMLSelector | undefined);
+        /**
+         * @param selector
+         * Selector to match against.
+         */
+        private constructor();
+        containsID?: boolean;
+        private selector;
+        /**
+         * Creates a list of XML tags matching the specified conditions.
+         *
+         * @param nodes
+         * List of nodes to search in.
+         *
+         * @param conditions
+         * Conditions to search for.
+         *
+         * @return
+         * List of matching XML tags, or `undefined`.
+         */
+        find(nodes: Exclude<XMLTag['innerXML'], undefined>, conditions: SelectorConditions): (Array<XMLTag> | undefined);
+        /**
+         * Creates a list of XML tags matching the selector conditions.  The
+         * matching is done using depth-first pre-order traversal of the XML nodes.
+         *
+         * @param nodes
+         * Array of nodes to search in.
+         *
+         * @return
+         * List of matching XML tags, or `undefined`.
+         */
+        query(nodes: Array<XMLNode>): (Array<XMLTag> | undefined);
+    }
+    export default XMLSelector;
+}
 declare module "XMLTree" {
     /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
     
@@ -225,6 +298,7 @@ declare module "XMLTree" {
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     import XMLNode from "XMLNode";
     import XMLScanner from "XMLScanner";
+    import XMLTag from "XMLTag";
     /**
      * Scans text sources for XML tags and build a tree.
      */
@@ -251,9 +325,22 @@ declare module "XMLTree" {
          *
          * @return
          * Tree roots, usually the last one is the main root. Malformatted XML might
-         * have different roots.
+         * have different roots. These roots are also available in the `roots`
+         * property.
          */
         grow(text?: string, allStringNodes?: boolean): Array<XMLNode>;
+        /**
+         * Searches for XML nodes matching the specified selector.  If the selector
+         * contains the `#` character, only the first machting XML node will be
+         * returned.
+         *
+         * @param selector
+         * Selector to match against.
+         *
+         * @return
+         * List of XML nodes matching the selector, or `undefined`.
+         */
+        query(selector: string): (Array<XMLTag> | undefined);
     }
     export default XMLTree;
 }

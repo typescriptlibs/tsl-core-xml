@@ -20,7 +20,11 @@
 
 import XMLNode from './XMLNode.js';
 
+import XMLSelector from './XMLSelector.js';
+
 import XMLScanner from './XMLScanner.js';
+
+import XMLTag, { isXMLTag } from './XMLTag.js';
 
 
 /* *
@@ -88,7 +92,8 @@ export class XMLTree {
      *
      * @return
      * Tree roots, usually the last one is the main root. Malformatted XML might
-     * have different roots.
+     * have different roots. These roots are also available in the `roots`
+     * property.
      */
     public grow (
         text: string = this.scanner.getText(),
@@ -161,6 +166,28 @@ export class XMLTree {
         }
 
         return roots;
+    }
+
+
+    /**
+     * Searches for XML nodes matching the specified selector.  If the selector
+     * contains the `#` character, only the first machting XML node will be
+     * returned.
+     *
+     * @param selector
+     * Selector to match against.
+     *
+     * @return
+     * List of XML nodes matching the selector, or `undefined`.
+     */
+    public query (
+        selector: string
+    ): ( Array<XMLTag> | undefined ) {
+        const xmlSelector = XMLSelector.parse( selector );
+
+        if ( xmlSelector ) {
+            return xmlSelector.query( this.roots );
+        }
     }
 
 

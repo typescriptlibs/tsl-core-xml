@@ -23,6 +23,7 @@
  */
 export const XMLRegExp = {
 
+
     /**
      * RegExp pattern for XML attribute.
      * - Group 1: Attribute name.
@@ -32,11 +33,13 @@ export const XMLRegExp = {
      */
     Attribute: /([^'"\s\/<=>]+)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
 
+
     /**
      * RegExp pattern for XML close tag.
      * - Group 1: Tag name.
      */
     CloseTag: /<(\/[\w:][\w\-.:]*)>/su,
+
 
     /**
      * RegExp pattern for XML comment.
@@ -44,17 +47,31 @@ export const XMLRegExp = {
      */
     Comment: /<!--((?:[^<]|<(?!!))*?)-->/su,
 
+
     /**
      * RegExp pattern for incomplete XML tag on buffer edge.
      * - Group 1: Incomplete tag name.
      */
-    IncompleteTag: /<$|<([\/!?]?[\w\-.:]*)\b[^<]*$/su,
+    IncompleteTag: /<$|<([\w:\/!?][\w\-.:]*)\b[^<]*$/su,
+
 
     /**
-     * RegExp pattern for XML tag begin.
+     * RegExp pattern for XML open tag.
      * - Group 1: Tag name.
      */
     OpenTag: /<([!?]?[\w:][\w\-.:]*)\b/su,
+
+
+    /**
+     * RegExp pattern for XMLTree selector.
+     * - Group 1: Tag name.
+     * - Group 2: CSS class.
+     * - Group 3: HTML ID attribute.
+     * - Group 4: Attribute name.
+     * - Group 5: Attribute value
+     */
+    Selector: /([\w\-|]*|\*)(\.[\w\-\.]+)?(#[\w\-]*)?(\[([^=\]]+)([~|^$*]?=[^\]])\])?/gsu,
+
 
 };
 
