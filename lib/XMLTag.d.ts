@@ -31,10 +31,6 @@ export interface XMLTag {
      */
     innerXML?: Array<XMLNode>;
     /**
-     * Encapsuled inner text, if the XML tag is part of an XMLTree.
-     */
-    innerText?: string;
-    /**
      * Name of the XML tag. The name might include a namespace.
      */
     tag: string;

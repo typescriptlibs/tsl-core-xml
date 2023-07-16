@@ -33,7 +33,7 @@ import { XMLScanner } from 'tsl-core-xml';
 
 
 test( 'Test XMLScanner on Atom RSS', async ( assert: test.Assert ) => {
-    const text = await FS.readFile( 'tst/xml-files/nrkno.xml', { encoding: 'utf8' } );
+    const text = await FS.readFile( 'tst-data/nrkno.xml', { encoding: 'utf8' } );
     const xml = new XMLScanner( text );
 
     assert.deepStrictEqual(

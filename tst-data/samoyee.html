@@ -1,0 +1,22 @@
+<div>
+    <el-dialog :visible="visible" />
+    <!-- test -->
+    <div v-if="show" class="clazz" :class="myClass" :visible="visible" v-html="innerHtml" @click="
+    show = false
+    name = 'xxx'
+    $refs.input.focus()
+    " style="display: block"></div>
+    <div v-else-if="show2" :style="{ display: 'block', textAlign: show ? 'center' : 'left' }">
+        <div v-for="item in list" :key="item.id">{{ item.title }}</div>
+    </div>
+    <template v-else>
+        <div class="else-clazz" :class="{ show }" @click="show = false">{{ name }}</div>
+    </template>
+    <input ref="input" :value="name" class="input" :style="'display:' + (show ? 'block' : 'none')" />
+    <div id="name" @touch.stop @click="
+    () => {
+        show = false
+        $refs.input.focus()
+    }
+    "> </div>
+</div>
