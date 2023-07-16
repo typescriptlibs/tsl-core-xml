@@ -9,6 +9,7 @@
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+import XMLNode from './XMLNode.js';
 /**
  * Represents an XML comment node.
  */
@@ -22,4 +23,5 @@ export interface XMLComment {
      */
     tag?: undefined;
 }
+export declare function isXMLComment(xmlNode: XMLNode): xmlNode is XMLComment;
 export default XMLComment;
