@@ -35,4 +35,5 @@ export interface XMLTag {
      */
     tag: string;
 }
+export declare function isXMLTag(xmlNode: XMLNode): xmlNode is XMLTag;
 export default XMLTag;
