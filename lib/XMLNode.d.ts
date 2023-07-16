@@ -16,5 +16,5 @@ import XMLTag from './XMLTag.js';
  * string.
  */
 export type XMLNode = (string | XMLComment | XMLTag);
-export declare function isString(xmlNode: XMLNode): xmlNode is string;
+export declare function isString(xmlNode: unknown): xmlNode is string;
 export default XMLNode;
