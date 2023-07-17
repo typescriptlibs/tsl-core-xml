@@ -32,14 +32,14 @@ import { XMLRegExp } from 'tsl-core-xml';
 
 test( 'Test XMLRegExp.Comment ReDOS limitations', async ( assert: test.Assert ) => {
 
-    const text = '<!--'.padEnd( 1000004, '<!--a' ) + '-->';
-
     // Positive: Excessive repitition of `<!--a` after `<!--`.
+    const text = '<!--'.padEnd( 1000004, '<!--a' ) + '-->';
 
     let timestamp = Date.now();
 
+    let match = text.match( XMLRegExp.Comment );
     assert.ok(
-        text.match( XMLRegExp.Comment )![0].length < 10,
+        match && match[0].length < 10,
         'Regular expression for comment should not match whole text, because of quantify limitations. (#2)'
     );
 

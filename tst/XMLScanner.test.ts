@@ -88,19 +88,44 @@ test( 'Test XMLScanner on Atom RSS', async ( assert: test.Assert ) => {
 } );
 
 
+test( 'Test XMLScanner on XMLCdata', async ( assert: test.Assert ) => {
+    let scanner = new XMLScanner( [
+        '<![CDATA[<]]>',
+        '<![CDATA[<]<]]>',
+    ].join( '' ) );
+
+    assert.deepStrictEqual(
+        scanner.scan(),
+        {
+            cdata: '<'
+        },
+        'Regular expression for CDATA should match single character.'
+    );
+
+    assert.deepStrictEqual(
+        scanner.scan(),
+        {
+            cdata: '<]<'
+        },
+        'Regular expression for CDATA should match with one closing bracket.'
+    );
+
+} );
+
+
 test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
-    let xml = new XMLScanner( [
+    let scanner = new XMLScanner( [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<!DOCTYPE html>',
         '<!TEST:TEST.TEST-TEST#ENTITY>',
         '<!---->',
         '<!--3-->',
         '<hr />',
-        '<br/>'
+        '<br/>',
     ].join( '' ) );
 
     assert.deepStrictEqual(
-        await xml.scan(),
+        await scanner.scan(),
         {
             tag: '?xml',
             empty: true,
@@ -113,7 +138,7 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
     );
 
     assert.deepStrictEqual(
-        await xml.scan(),
+        await scanner.scan(),
         {
             tag: '!DOCTYPE',
             attributes: {
@@ -124,7 +149,7 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
     );
 
     assert.deepStrictEqual(
-        await xml.scan(),
+        await scanner.scan(),
         {
             tag: '!TEST:TEST.TEST-TEST',
             attributes: {
@@ -135,7 +160,7 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
     );
 
     assert.deepStrictEqual(
-        await xml.scan(),
+        await scanner.scan(),
         {
             comment: ''
         },
@@ -143,7 +168,7 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
     );
 
     assert.deepStrictEqual(
-        await xml.scan(),
+        await scanner.scan(),
         {
             comment: '3'
         },
@@ -151,7 +176,7 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
     );
 
     assert.deepStrictEqual(
-        await xml.scan(),
+        await scanner.scan(),
         {
             tag: 'hr',
             empty: true
@@ -160,7 +185,7 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
     );
 
     assert.deepStrictEqual(
-        await xml.scan(),
+        await scanner.scan(),
         {
             tag: 'br',
             empty: true

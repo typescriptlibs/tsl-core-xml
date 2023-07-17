@@ -34,10 +34,10 @@ import { XMLTree } from 'tsl-core-xml';
 
 test( 'Test XMLTree on Atom RSS', async ( assert: test.Assert ) => {
     const text = await FS.readFile( 'tst-data/nrkno.xml', { encoding: 'utf8' } );
-    const xml = new XMLTree( text.match( /<item>.*?<\/item>/su )![0] );
+    const tree = new XMLTree( text.match( /<item>.*?<\/item>/su )![0] );
 
     assert.deepStrictEqual(
-        xml.grow(),
+        tree.grow(),
         [{
             "tag": "item",
             "innerXML": [{
@@ -98,13 +98,35 @@ test( 'Test XMLTree on Atom RSS', async ( assert: test.Assert ) => {
 } );
 
 
+test( 'Test XMLTree on CDATA', async ( assert: test.Assert ) => {
+    const tree = new XMLTree( [
+        '<script>',
+        '<![CDATA[',
+        '20<[4]',
+        '//]]>',
+        '</script>',
+    ].join( '' ) );
+
+    assert.deepStrictEqual(
+        tree.grow(),
+        [{
+            "tag": "script",
+            "innerXML": [
+                "20<[4]//"
+            ]
+        }],
+        'XMLTree should convert CDATA to unescaped string.'
+    );
+
+} );
+
 
 test( 'Test XMLTree on HTML', async ( assert: test.Assert ) => {
     const text = await FS.readFile( 'tst-data/samoyee.html', { encoding: 'utf8' } );
-    const xml = new XMLTree( text );
+    const tree = new XMLTree( text );
 
     assert.deepStrictEqual(
-        xml.grow(),
+        tree.grow(),
         [{
             "tag": "div",
             "innerXML": [{

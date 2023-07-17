@@ -182,6 +182,24 @@ export class XMLScanner {
             }
         }
 
+        // Search character data
+
+        match = buffer.match( XMLRegExp.Cdata );
+
+        if ( typeof match?.index === 'number' ) {
+            if ( match.index > 0 ) {
+                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
+            }
+            else {
+                this._index = index + match[0].length;
+                this._node = {
+                    cdata: match[1]
+                };
+
+                return this._node;
+            }
+        }
+
         // Search comment
 
         match = buffer.match( XMLRegExp.Comment );

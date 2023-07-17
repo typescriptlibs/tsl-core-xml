@@ -95,6 +95,11 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          */
         Attribute: /([^'"\s\/<=>]+)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
         /**
+         * RegExp pattern for XML character data.
+         * - Group 1: CDATA.
+         */
+        Cdata: /<!\[CDATA\[((?:[^\]]|\][^\]])*?)\]\]>/su,
+        /**
          * RegExp pattern for XML close tag.
          * - Group 1: Tag name.
          */
@@ -103,7 +108,7 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          * RegExp pattern for XML comment.
          * - Group 1: Comment.
          */
-        Comment: /<!--((?:[^<]|<(?!!))*?)-->/su,
+        Comment: /<!--((?:[^<]|<[^!])*?)-->/su,
         /**
          * RegExp pattern for XML escape entity.
          * - Group 1: Character name.
@@ -208,6 +213,32 @@ define("Escaping", ["require", "exports", "EscapeEntities/index", "XMLRegExp"], 
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+define("XMLComment", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.isXMLComment = void 0;
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    function isXMLComment(xmlNode) {
+        return (typeof xmlNode === 'object' &&
+            typeof xmlNode.comment === 'string');
+    }
+    exports.isXMLComment = isXMLComment;
+});
+/*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+
+  XML TypeScript Library
+
+  Copyright (c) TypeScriptLibs and Contributors
+
+  Licensed under the MIT License; you may not use this file except in
+  compliance with the License. You may obtain a copy of the MIT License at
+  https://typescriptlibs.org/LICENSE.txt
+
+\*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("XMLTag", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -259,20 +290,20 @@ define("XMLNode", ["require", "exports"], function (require, exports) {
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("XMLComment", ["require", "exports"], function (require, exports) {
+define("XMLCdata", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.isXMLComment = void 0;
+    exports.isXMLCdata = void 0;
     /* *
      *
      *  Functions
      *
      * */
-    function isXMLComment(xmlNode) {
+    function isXMLCdata(xmlNode) {
         return (typeof xmlNode === 'object' &&
-            typeof xmlNode.comment === 'string');
+            typeof xmlNode.cdata === 'string');
     }
-    exports.isXMLComment = isXMLComment;
+    exports.isXMLCdata = isXMLCdata;
 });
 /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
 
@@ -387,6 +418,20 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
                         }
                         return this._node;
                     }
+                }
+            }
+            // Search character data
+            match = buffer.match(XMLRegExp_js_2.default.Cdata);
+            if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
+                if (match.index > 0) {
+                    nextIndex = (match.index < nextIndex ? match.index : nextIndex);
+                }
+                else {
+                    this._index = index + match[0].length;
+                    this._node = {
+                        cdata: match[1]
+                    };
+                    return this._node;
                 }
             }
             // Search comment
@@ -528,7 +573,7 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("XMLTree", ["require", "exports", "XMLNode", "XMLScanner", "XMLTag"], function (require, exports, XMLNode_js_1, XMLScanner_js_1, XMLTag_js_1) {
+define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLScanner", "XMLTag"], function (require, exports, XMLCdata_js_1, XMLNode_js_1, XMLScanner_js_1, XMLTag_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.XMLTree = void 0;
@@ -605,6 +650,11 @@ define("XMLTree", ["require", "exports", "XMLNode", "XMLScanner", "XMLTag"], fun
                     // Continue and ignore closing tag
                     continue scan;
                 }
+                // Add CDATA as raw string
+                if ((0, XMLCdata_js_1.isXMLCdata)(node)) {
+                    roots.push(node.cdata);
+                    continue scan;
+                }
                 // Skip empty string nodes
                 if (!allStringNodes &&
                     (0, XMLNode_js_1.isString)(node) &&
@@ -635,10 +685,11 @@ define("XMLTree", ["require", "exports", "XMLNode", "XMLScanner", "XMLTag"], fun
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("index", ["require", "exports", "XMLScanner", "Escaping", "XMLComment", "XMLNode", "XMLRegExp", "XMLScanner", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, Escaping_js_2, XMLComment_js_1, XMLNode_js_2, XMLRegExp_js_3, XMLScanner_js_3, XMLTag_js_2, XMLTree_js_1) {
+define("index", ["require", "exports", "XMLScanner", "Escaping", "XMLCdata", "XMLComment", "XMLNode", "XMLRegExp", "XMLScanner", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, Escaping_js_2, XMLCdata_js_2, XMLComment_js_1, XMLNode_js_2, XMLRegExp_js_3, XMLScanner_js_3, XMLTag_js_2, XMLTree_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     __exportStar(Escaping_js_2, exports);
+    __exportStar(XMLCdata_js_2, exports);
     __exportStar(XMLComment_js_1, exports);
     __exportStar(XMLNode_js_2, exports);
     __exportStar(XMLRegExp_js_3, exports);
