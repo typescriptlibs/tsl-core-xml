@@ -74,11 +74,12 @@ export interface XMLTag {
 
 
 export function isXMLTag (
-    xmlNode: XMLNode
+    xmlNode: unknown
 ): xmlNode is XMLTag {
     return (
+        xmlNode !== null &&
         typeof xmlNode === 'object' &&
-        typeof xmlNode.tag === 'string'
+        typeof ( xmlNode as XMLTag ).tag === 'string'
     );
 }
 

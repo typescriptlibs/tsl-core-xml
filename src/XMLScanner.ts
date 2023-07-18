@@ -24,6 +24,8 @@ import XMLRegExp from "./XMLRegExp.js";
 
 import XMLNode from './XMLNode.js';
 
+import XMLTag from './XMLTag.js';
+
 
 /* *
  *
@@ -48,7 +50,9 @@ export class XMLScanner {
     public constructor (
         text: string = ''
     ) {
+        this._scanSize = 1e6;
         this._text = text;
+        this.cdataTags = ['script', 'style'];
     }
 
     /* *
@@ -59,19 +63,52 @@ export class XMLScanner {
 
 
     /**
+     * Last tag scan with implicit character data.
+     */
+    private _cdataTag?: XMLTag;
+
+
+    /**
      * Index for the next scan.
      */
     private _index?: number;
+
 
     /**
      * Node result of the last scan.
      */
     private _node?: XMLNode;
 
+
+    /**
+     * Maximum size of a scan for XMLNode.
+     */
+    private _scanSize: number;
+
+
     /**
      * Text to scan.
      */
     private _text: string;
+
+
+    /**
+     * Tags that contain implicitly character data.  Only the close tag will end
+     * the inner text.  Default tags are `script` and `style`.
+     */
+    public readonly cdataTags: Array<string>;
+
+
+    /**
+     * Maximum size during a scan.  This limits the size of XMLNode to the given
+     * number of characters.
+     */
+    public get scanSize (): number {
+        return this._scanSize;
+    }
+    public set scanSize ( value: number ) {
+        this._scanSize = ( value > 0 ? value : 1e6 );
+    }
 
     /**
      * Node result of the last scan.
@@ -100,6 +137,49 @@ export class XMLScanner {
 
 
     /**
+     * Search the index of the ending tag character outside of attribute
+     * strings.
+     *
+     * @param snippet
+     * Text snippet to search in.
+     *
+     * @return
+     * Index of ending tag in snippet.
+     */
+    private indexOfTagEnd (
+        snippet: string
+    ): number {
+        let char = '';
+        let index = 0;
+        let openQuote = '';
+
+        loop: while ( char = snippet[index++] ) {
+
+            if ( openQuote ) {
+                if ( char === openQuote ) {
+                    openQuote = '';
+                }
+                continue;
+            }
+
+            switch ( char ) {
+                case '\'':
+                case '"':
+                    openQuote = char;
+                    break;
+                case '<':
+                    break loop;
+                case '>':
+                    return index;
+            }
+
+        }
+
+        return -1;
+    }
+
+
+    /**
      * Scans the text for the next XML node. It will return a string, if no XML
      * tag can be found in the next 1 million characters. Returns `undefined` if
      * the scan process has reached the end of the text.
@@ -113,15 +193,52 @@ export class XMLScanner {
 
         // Restore buffer
 
-        const buffer = this._text.substring( index, index + 1e6 );
+        const buffer = this._text.substring( index, index + this._scanSize );
 
         if ( !buffer ) {
             return;
         }
 
+        // Search character data
+
+        let match = buffer.match( XMLRegExp.Cdata );
+
+        if ( typeof match?.index === 'number' ) {
+            if ( match.index > 0 ) {
+                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
+            }
+            else {
+                delete this._cdataTag;
+                this._index = index + match[0].length;
+                this._node = {
+                    cdata: match[1]
+                };
+
+                return this._node;
+            }
+        }
+
+        // Search for implicit character data from the previous tag
+
+        if ( this._cdataTag ) {
+            let endIndex = buffer.indexOf( `</${this._cdataTag.tag}>` );
+
+            if ( endIndex > -1 ) {
+                delete this._cdataTag;
+                this._index = index + endIndex;
+                this._node = buffer.substring( 0, endIndex );
+            }
+            else {
+                this._index = index + buffer.length;
+                this._node = buffer;
+            }
+
+            return this._node;
+        }
+
         // Search close tag
 
-        let match = buffer.match( XMLRegExp.CloseTag );
+        match = buffer.match( XMLRegExp.CloseTag );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -177,26 +294,12 @@ export class XMLScanner {
                         }
                     }
 
+                    if ( this.cdataTags.includes( this._node.tag.toLowerCase() ) ) {
+                        this._cdataTag = this._node;
+                    }
+
                     return this._node;
                 }
-            }
-        }
-
-        // Search character data
-
-        match = buffer.match( XMLRegExp.Cdata );
-
-        if ( typeof match?.index === 'number' ) {
-            if ( match.index > 0 ) {
-                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
-            }
-            else {
-                this._index = index + match[0].length;
-                this._node = {
-                    cdata: match[1]
-                };
-
-                return this._node;
             }
         }
 
@@ -285,49 +388,6 @@ export class XMLScanner {
         if ( Object.keys( attributes ).length ) {
             return attributes;
         }
-    }
-
-
-    /**
-     * Search the index of the ending tag character outside of attribute
-     * strings.
-     *
-     * @param snippet
-     * Text snippet to search in.
-     *
-     * @return
-     * Index of ending tag in snippet.
-     */
-    private indexOfTagEnd (
-        snippet: string
-    ): number {
-        let char = '';
-        let index = 0;
-        let openQuote = '';
-
-        loop: while ( char = snippet[index++] ) {
-
-            if ( openQuote ) {
-                if ( char === openQuote ) {
-                    openQuote = '';
-                }
-                continue;
-            }
-
-            switch ( char ) {
-                case '\'':
-                case '"':
-                    openQuote = char;
-                    break;
-                case '<':
-                    break loop;
-                case '>':
-                    return index;
-            }
-
-        }
-
-        return -1;
     }
 
 

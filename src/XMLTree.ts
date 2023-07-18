@@ -60,7 +60,6 @@ export class XMLTree {
      *
      * */
 
-
     /**
      * Tree roots after the last grow process.
      */

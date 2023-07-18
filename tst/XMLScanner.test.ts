@@ -92,22 +92,50 @@ test( 'Test XMLScanner on XMLCdata', async ( assert: test.Assert ) => {
     let scanner = new XMLScanner( [
         '<![CDATA[<]]>',
         '<![CDATA[<]<]]>',
+        '<script>1<2&"3">""</script>',
+        '<CUSTOM><script><![CDATA[&]]></script></CUSTOM>'
     ].join( '' ) );
+
+    scanner.cdataTags.push( 'custom' );
 
     assert.deepStrictEqual(
         scanner.scan(),
-        {
-            cdata: '<'
-        },
-        'Regular expression for CDATA should match single character.'
+        { cdata: '<' },
+        'Scan of CDATA should match single character.'
     );
 
     assert.deepStrictEqual(
         scanner.scan(),
-        {
-            cdata: '<]<'
-        },
-        'Regular expression for CDATA should match with one closing bracket.'
+        { cdata: '<]<' },
+        'Scan of CDATA should match with one closing bracket.'
+    );
+
+    assert.deepStrictEqual(
+        [
+            scanner.scan(),
+            scanner.scan(),
+            scanner.scan(),
+        ],
+        [
+            { tag: 'script' },
+            '1<2&"3">""',
+            { tag: '/script' },
+        ],
+        'Scan of implicit CDATA should match unescaped script.'
+    );
+
+    assert.deepStrictEqual(
+        [
+            scanner.scan(),
+            scanner.scan(),
+            scanner.scan(),
+        ],
+        [
+            { tag: 'CUSTOM' },
+            '<script><![CDATA[&]]></script>',
+            { tag: '/CUSTOM' },
+        ],
+        'Scan of implicit CDATA should match custom tag only.'
     );
 
 } );
@@ -197,17 +225,20 @@ test( 'Test XMLScanner on XMLComment', async ( assert: test.Assert ) => {
 
 
 test( 'Test XMLScanner on Incomplete Tag', async ( assert: test.Assert ) => {
+    let scanner = new XMLScanner();
+
+    scanner.scanSize = 1e3;
 
 
     // Scan tag in middle of buffer edge
 
-    let scanner = new XMLScanner( '<br/>'.padStart( 1000003, '<' ) );
+    scanner.setText( '<br/>'.padStart( 1003, '<' ) );
 
     let result = await scanner.scan();
     assert.strictEqual(
         typeof result === 'string' && result.length,
-        999998,
-        'XMLScanner should return a text string with 999998 characters.'
+        998,
+        'XMLScanner should return a text string with 998 characters.'
     );
 
     result = await scanner.scan();
@@ -223,13 +254,13 @@ test( 'Test XMLScanner on Incomplete Tag', async ( assert: test.Assert ) => {
 
     // Scan tag right before buffer edge
 
-    scanner = new XMLScanner( '<br />'.padStart( 1000005, '>' ) );
+    scanner.setText( '<br />'.padStart( 1005, '>' ) );
 
     result = await scanner.scan();
     assert.strictEqual(
         typeof result === 'string' && result.length,
-        999999,
-        'XMLScanner should return a text string with 999999 characters.'
+        999,
+        'XMLScanner should return a text string with 999 characters.'
     );
 
     result = await scanner.scan();
@@ -245,13 +276,13 @@ test( 'Test XMLScanner on Incomplete Tag', async ( assert: test.Assert ) => {
 
     // Scan buffer edge without tag
 
-    scanner = new XMLScanner( ''.padEnd( 1000000, '<' ) + '<br/>' );
+    scanner.setText( ''.padEnd( 1000, '<' ) + '<br/>' );
 
     result = await scanner.scan();
     assert.strictEqual(
         typeof result === 'string' && result.length,
-        999999,
-        'XMLScanner should return a text string with 999999 characters.'
+        999,
+        'XMLScanner should return a text string with 999 characters.'
     );
 
     result = await scanner.scan();
@@ -274,13 +305,13 @@ test( 'Test XMLScanner on Incomplete Tag', async ( assert: test.Assert ) => {
 
     // Scan attribute right before buffer edge
 
-    scanner = new XMLScanner( ''.padStart( 999990, '<a ' ) + '<a href="abc">' );
+    scanner.setText( ''.padStart( 990, '<a ' ) + '<a href="abc">' );
 
     result = await scanner.scan();
     assert.strictEqual(
         typeof result === 'string' && result.length,
-        999990,
-        'XMLScanner should return a text string with 999990 characters.'
+        990,
+        'XMLScanner should return a text string with 990 characters.'
     );
 
     result = await scanner.scan();
@@ -297,7 +328,7 @@ test( 'Test XMLScanner on Incomplete Tag', async ( assert: test.Assert ) => {
 
 
     // Scan maximum size of a tag
-    scanner = new XMLScanner( ' <b'.padEnd( 1000000, ' ' ) + '>' );
+    scanner.setText( ' <b'.padEnd( 1000, ' ' ) + '>' );
 
     result = await scanner.scan();
     assert.strictEqual(
@@ -318,7 +349,7 @@ test( 'Test XMLScanner on Incomplete Tag', async ( assert: test.Assert ) => {
 
     // Scan oversized tag
 
-    scanner = new XMLScanner( ' <b'.padEnd( 1000001, ' ' ) + '>' );
+    scanner.setText( ' <b'.padEnd( 1001, ' ' ) + '>' );
 
     result = await scanner.scan();
     assert.strictEqual(
@@ -330,7 +361,7 @@ test( 'Test XMLScanner on Incomplete Tag', async ( assert: test.Assert ) => {
     result = await scanner.scan();
     assert.strictEqual(
         typeof result === 'string' && result.length,
-        1000000,
+        1000,
         'XMLScanner should return oversized tag in two text string. (1)'
     );
 

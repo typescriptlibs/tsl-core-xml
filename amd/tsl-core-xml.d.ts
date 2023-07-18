@@ -170,7 +170,7 @@ declare module "XMLTag" {
          */
         tag: string;
     }
-    export function isXMLTag(xmlNode: XMLNode): xmlNode is XMLTag;
+    export function isXMLTag(xmlNode: unknown): xmlNode is XMLTag;
     export default XMLTag;
 }
 declare module "XMLNode" {
@@ -237,6 +237,10 @@ declare module "XMLScanner" {
     export class XMLScanner {
         constructor(text?: string);
         /**
+         * Last tag scan with implicit character data.
+         */
+        private _cdataTag?;
+        /**
          * Index for the next scan.
          */
         private _index?;
@@ -245,9 +249,24 @@ declare module "XMLScanner" {
          */
         private _node?;
         /**
+         * Maximum size of a scan for XMLNode.
+         */
+        private _scanSize;
+        /**
          * Text to scan.
          */
         private _text;
+        /**
+         * Tags that contain implicitly character data.  Only the close tag will end
+         * the inner text.  Default tags are `script` and `style`.
+         */
+        readonly cdataTags: Array<string>;
+        /**
+         * Maximum size during a scan.  This limits the size of XMLNode to the given
+         * number of characters.
+         */
+        get scanSize(): number;
+        set scanSize(value: number);
         /**
          * Node result of the last scan.
          */
@@ -259,6 +278,17 @@ declare module "XMLScanner" {
          * Text used for the scan process.
          */
         getText(): string;
+        /**
+         * Search the index of the ending tag character outside of attribute
+         * strings.
+         *
+         * @param snippet
+         * Text snippet to search in.
+         *
+         * @return
+         * Index of ending tag in snippet.
+         */
+        private indexOfTagEnd;
         /**
          * Scans the text for the next XML node. It will return a string, if no XML
          * tag can be found in the next 1 million characters. Returns `undefined` if
@@ -279,17 +309,6 @@ declare module "XMLScanner" {
          * empty value.
          */
         private scanAttributes;
-        /**
-         * Search the index of the ending tag character outside of attribute
-         * strings.
-         *
-         * @param snippet
-         * Text snippet to search in.
-         *
-         * @return
-         * Index of ending tag in snippet.
-         */
-        private indexOfTagEnd;
         /**
          * Sets the text used by the scan process.
          *
