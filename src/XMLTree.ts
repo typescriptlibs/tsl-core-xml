@@ -18,6 +18,8 @@
  * */
 
 
+import { isXMLCdata } from './XMLCdata.js';
+
 import XMLNode, { isString } from './XMLNode.js';
 
 import XMLScanner from './XMLScanner.js';
@@ -57,7 +59,6 @@ export class XMLTree {
      *  Properties
      *
      * */
-
 
     /**
      * Tree roots after the last grow process.
@@ -146,6 +147,15 @@ export class XMLTree {
                 }
 
                 // Continue and ignore closing tag
+
+                continue scan;
+            }
+
+            // Add CDATA as raw string
+
+            if ( isXMLCdata( node ) ) {
+
+                roots.push( node.cdata );
 
                 continue scan;
             }

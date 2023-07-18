@@ -18,6 +18,8 @@
  * */
 
 
+import XMLCdata from './XMLCdata.js';
+
 import XMLComment from './XMLComment.js';
 
 import XMLTag from './XMLTag.js';
@@ -36,6 +38,7 @@ import XMLTag from './XMLTag.js';
  */
 export type XMLNode = (
     | string
+    | XMLCdata
     | XMLComment
     | XMLTag
 );

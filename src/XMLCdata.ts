@@ -9,23 +9,71 @@
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+
 import XMLNode from './XMLNode.js';
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+
+
 /**
- * Represents an XML comment node.
+ * Represents an XML character data node.
  */
-export interface XMLComment {
+export interface XMLCdata {
+
     /**
-     * Use this property to determine, if the object is a character data node.
+     * Text of the character data.
      */
-    cdata?: undefined;
+    cdata: string;
+
     /**
-     * Text of the comment.
+     * Use this property to determine, if the object is a comment node.
      */
-    comment: string;
+    comment?: undefined;
+
     /**
      * Use this property to determine, if the object is a tag node.
      */
     tag?: undefined;
+
 }
-export declare function isXMLComment(xmlNode: XMLNode): xmlNode is XMLComment;
-export default XMLComment;
+
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+
+export function isXMLCdata (
+    xmlNode: XMLNode
+): xmlNode is XMLCdata {
+    return (
+        typeof xmlNode === 'object' &&
+        typeof xmlNode.cdata === 'string'
+    );
+}
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+
+export default XMLCdata;

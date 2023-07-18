@@ -22,6 +22,11 @@ export declare const XMLRegExp: {
      */
     Attribute: RegExp;
     /**
+     * RegExp pattern for XML character data.
+     * - Group 1: CDATA.
+     */
+    Cdata: RegExp;
+    /**
      * RegExp pattern for XML close tag.
      * - Group 1: Tag name.
      */

@@ -35,6 +35,11 @@ import XMLNode from './XMLNode.js';
 export interface XMLComment {
 
     /**
+     * Use this property to determine, if the object is a character data node.
+     */
+    cdata?: undefined;
+
+    /**
      * Text of the comment.
      */
     comment: string;

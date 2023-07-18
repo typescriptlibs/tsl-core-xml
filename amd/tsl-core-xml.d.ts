@@ -52,6 +52,11 @@ declare module "XMLRegExp" {
          */
         Attribute: RegExp;
         /**
+         * RegExp pattern for XML character data.
+         * - Group 1: CDATA.
+         */
+        Cdata: RegExp;
+        /**
          * RegExp pattern for XML close tag.
          * - Group 1: Tag name.
          */
@@ -90,6 +95,39 @@ declare module "Escaping" {
     };
     export default _default;
 }
+declare module "XMLComment" {
+    /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+    
+      XML TypeScript Library
+    
+      Copyright (c) TypeScriptLibs and Contributors
+    
+      Licensed under the MIT License; you may not use this file except in
+      compliance with the License. You may obtain a copy of the MIT License at
+      https://typescriptlibs.org/LICENSE.txt
+    
+    \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+    import XMLNode from "XMLNode";
+    /**
+     * Represents an XML comment node.
+     */
+    export interface XMLComment {
+        /**
+         * Use this property to determine, if the object is a character data node.
+         */
+        cdata?: undefined;
+        /**
+         * Text of the comment.
+         */
+        comment: string;
+        /**
+         * Use this property to determine, if the object is a tag node.
+         */
+        tag?: undefined;
+    }
+    export function isXMLComment(xmlNode: XMLNode): xmlNode is XMLComment;
+    export default XMLComment;
+}
 declare module "XMLTag" {
     /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
     
@@ -112,6 +150,10 @@ declare module "XMLTag" {
          */
         attributes?: Record<string, string>;
         /**
+         * Use this property to determine, if the object is a character data node.
+         */
+        cdata?: undefined;
+        /**
          * Use this property to determine, if the object is a comment node.
          */
         comment?: undefined;
@@ -128,7 +170,7 @@ declare module "XMLTag" {
          */
         tag: string;
     }
-    export function isXMLTag(xmlNode: XMLNode): xmlNode is XMLTag;
+    export function isXMLTag(xmlNode: unknown): xmlNode is XMLTag;
     export default XMLTag;
 }
 declare module "XMLNode" {
@@ -143,17 +185,18 @@ declare module "XMLNode" {
       https://typescriptlibs.org/LICENSE.txt
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+    import XMLCdata from "XMLCdata";
     import XMLComment from "XMLComment";
     import XMLTag from "XMLTag";
     /**
      * Represents a node in an XML source. This can be either a comment, a tag, or a
      * string.
      */
-    export type XMLNode = (string | XMLComment | XMLTag);
+    export type XMLNode = (string | XMLCdata | XMLComment | XMLTag);
     export function isString(xmlNode: unknown): xmlNode is string;
     export default XMLNode;
 }
-declare module "XMLComment" {
+declare module "XMLCdata" {
     /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
     
       XML TypeScript Library
@@ -167,20 +210,24 @@ declare module "XMLComment" {
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     import XMLNode from "XMLNode";
     /**
-     * Represents an XML comment node.
+     * Represents an XML character data node.
      */
-    export interface XMLComment {
+    export interface XMLCdata {
         /**
-         * Text of the comment.
+         * Text of the character data.
          */
-        comment: string;
+        cdata: string;
+        /**
+         * Use this property to determine, if the object is a comment node.
+         */
+        comment?: undefined;
         /**
          * Use this property to determine, if the object is a tag node.
          */
         tag?: undefined;
     }
-    export function isXMLComment(xmlNode: XMLNode): xmlNode is XMLComment;
-    export default XMLComment;
+    export function isXMLCdata(xmlNode: XMLNode): xmlNode is XMLCdata;
+    export default XMLCdata;
 }
 declare module "XMLScanner" {
     import XMLNode from "XMLNode";
@@ -190,6 +237,10 @@ declare module "XMLScanner" {
     export class XMLScanner {
         constructor(text?: string);
         /**
+         * Last tag scan with implicit character data.
+         */
+        private _cdataTag?;
+        /**
          * Index for the next scan.
          */
         private _index?;
@@ -198,9 +249,24 @@ declare module "XMLScanner" {
          */
         private _node?;
         /**
+         * Maximum size of a scan for XMLNode.
+         */
+        private _scanSize;
+        /**
          * Text to scan.
          */
         private _text;
+        /**
+         * Tags that contain implicitly character data.  Only the close tag will end
+         * the inner text.  Default tags are `script` and `style`.
+         */
+        readonly cdataTags: Array<string>;
+        /**
+         * Maximum size during a scan.  This limits the size of XMLNode to the given
+         * number of characters.
+         */
+        get scanSize(): number;
+        set scanSize(value: number);
         /**
          * Node result of the last scan.
          */
@@ -212,6 +278,17 @@ declare module "XMLScanner" {
          * Text used for the scan process.
          */
         getText(): string;
+        /**
+         * Search the index of the ending tag character outside of attribute
+         * strings.
+         *
+         * @param snippet
+         * Text snippet to search in.
+         *
+         * @return
+         * Index of ending tag in snippet.
+         */
+        private indexOfTagEnd;
         /**
          * Scans the text for the next XML node. It will return a string, if no XML
          * tag can be found in the next 1 million characters. Returns `undefined` if
@@ -233,17 +310,6 @@ declare module "XMLScanner" {
          */
         private scanAttributes;
         /**
-         * Search the index of the ending tag character outside of attribute
-         * strings.
-         *
-         * @param snippet
-         * Text snippet to search in.
-         *
-         * @return
-         * Index of ending tag in snippet.
-         */
-        private indexOfTagEnd;
-        /**
          * Sets the text used by the scan process.
          *
          * @param text
@@ -261,17 +327,6 @@ declare module "XMLScanner" {
     export default XMLScanner;
 }
 declare module "XMLTree" {
-    /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
-    
-      XML TypeScript Library
-    
-      Copyright (c) TypeScriptLibs and Contributors
-    
-      Licensed under the MIT License; you may not use this file except in
-      compliance with the License. You may obtain a copy of the MIT License at
-      https://typescriptlibs.org/LICENSE.txt
-    
-    \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     import XMLNode from "XMLNode";
     import XMLScanner from "XMLScanner";
     /**
@@ -320,6 +375,7 @@ declare module "index" {
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     import XMLScanner from "XMLScanner";
     export * from "Escaping";
+    export * from "XMLCdata";
     export * from "XMLComment";
     export * from "XMLNode";
     export * from "XMLRegExp";

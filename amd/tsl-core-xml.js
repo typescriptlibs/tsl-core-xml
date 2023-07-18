@@ -95,6 +95,11 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          */
         Attribute: /([^'"\s\/<=>]+)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
         /**
+         * RegExp pattern for XML character data.
+         * - Group 1: CDATA.
+         */
+        Cdata: /<!\[CDATA\[((?:[^\]]|\][^\]])*?)\]\]>/su,
+        /**
          * RegExp pattern for XML close tag.
          * - Group 1: Tag name.
          */
@@ -103,7 +108,7 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          * RegExp pattern for XML comment.
          * - Group 1: Comment.
          */
-        Comment: /<!--((?:[^<]|<(?!!))*?)-->/su,
+        Comment: /<!--((?:[^<]|<[^!])*?)-->/su,
         /**
          * RegExp pattern for XML escape entity.
          * - Group 1: Character name.
@@ -208,6 +213,32 @@ define("Escaping", ["require", "exports", "EscapeEntities/index", "XMLRegExp"], 
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+define("XMLComment", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.isXMLComment = void 0;
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    function isXMLComment(xmlNode) {
+        return (typeof xmlNode === 'object' &&
+            typeof xmlNode.comment === 'string');
+    }
+    exports.isXMLComment = isXMLComment;
+});
+/*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+
+  XML TypeScript Library
+
+  Copyright (c) TypeScriptLibs and Contributors
+
+  Licensed under the MIT License; you may not use this file except in
+  compliance with the License. You may obtain a copy of the MIT License at
+  https://typescriptlibs.org/LICENSE.txt
+
+\*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("XMLTag", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -218,7 +249,8 @@ define("XMLTag", ["require", "exports"], function (require, exports) {
      *
      * */
     function isXMLTag(xmlNode) {
-        return (typeof xmlNode === 'object' &&
+        return (xmlNode !== null &&
+            typeof xmlNode === 'object' &&
             typeof xmlNode.tag === 'string');
     }
     exports.isXMLTag = isXMLTag;
@@ -259,20 +291,20 @@ define("XMLNode", ["require", "exports"], function (require, exports) {
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("XMLComment", ["require", "exports"], function (require, exports) {
+define("XMLCdata", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.isXMLComment = void 0;
+    exports.isXMLCdata = void 0;
     /* *
      *
      *  Functions
      *
      * */
-    function isXMLComment(xmlNode) {
+    function isXMLCdata(xmlNode) {
         return (typeof xmlNode === 'object' &&
-            typeof xmlNode.comment === 'string');
+            typeof xmlNode.cdata === 'string');
     }
-    exports.isXMLComment = isXMLComment;
+    exports.isXMLCdata = isXMLCdata;
 });
 /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
 
@@ -304,7 +336,19 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
          *
          * */
         constructor(text = '') {
+            this._scanSize = 1e6;
             this._text = text;
+            this.cdataTags = ['script', 'style'];
+        }
+        /**
+         * Maximum size during a scan.  This limits the size of XMLNode to the given
+         * number of characters.
+         */
+        get scanSize() {
+            return this._scanSize;
+        }
+        set scanSize(value) {
+            this._scanSize = (value > 0 ? value : 1e6);
         }
         /**
          * Node result of the last scan.
@@ -328,6 +372,40 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
             return this._text;
         }
         /**
+         * Search the index of the ending tag character outside of attribute
+         * strings.
+         *
+         * @param snippet
+         * Text snippet to search in.
+         *
+         * @return
+         * Index of ending tag in snippet.
+         */
+        indexOfTagEnd(snippet) {
+            let char = '';
+            let index = 0;
+            let openQuote = '';
+            loop: while (char = snippet[index++]) {
+                if (openQuote) {
+                    if (char === openQuote) {
+                        openQuote = '';
+                    }
+                    continue;
+                }
+                switch (char) {
+                    case '\'':
+                    case '"':
+                        openQuote = char;
+                        break;
+                    case '<':
+                        break loop;
+                    case '>':
+                        return index;
+                }
+            }
+            return -1;
+        }
+        /**
          * Scans the text for the next XML node. It will return a string, if no XML
          * tag can be found in the next 1 million characters. Returns `undefined` if
          * the scan process has reached the end of the text.
@@ -339,12 +417,41 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
             let index = (this._index || 0);
             let nextIndex = Infinity;
             // Restore buffer
-            const buffer = this._text.substring(index, index + 1e6);
+            const buffer = this._text.substring(index, index + this._scanSize);
             if (!buffer) {
                 return;
             }
+            // Search character data
+            let match = buffer.match(XMLRegExp_js_2.default.Cdata);
+            if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
+                if (match.index > 0) {
+                    nextIndex = (match.index < nextIndex ? match.index : nextIndex);
+                }
+                else {
+                    delete this._cdataTag;
+                    this._index = index + match[0].length;
+                    this._node = {
+                        cdata: match[1]
+                    };
+                    return this._node;
+                }
+            }
+            // Search for implicit character data from the previous tag
+            if (this._cdataTag) {
+                let endIndex = buffer.indexOf(`</${this._cdataTag.tag}>`);
+                if (endIndex > -1) {
+                    delete this._cdataTag;
+                    this._index = index + endIndex;
+                    this._node = buffer.substring(0, endIndex);
+                }
+                else {
+                    this._index = index + buffer.length;
+                    this._node = buffer;
+                }
+                return this._node;
+            }
             // Search close tag
-            let match = buffer.match(XMLRegExp_js_2.default.CloseTag);
+            match = buffer.match(XMLRegExp_js_2.default.CloseTag);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -384,6 +491,9 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
                             if (attributes) {
                                 this._node.attributes = attributes;
                             }
+                        }
+                        if (this.cdataTags.includes(this._node.tag.toLowerCase())) {
+                            this._cdataTag = this._node;
                         }
                         return this._node;
                     }
@@ -449,40 +559,6 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
             }
         }
         /**
-         * Search the index of the ending tag character outside of attribute
-         * strings.
-         *
-         * @param snippet
-         * Text snippet to search in.
-         *
-         * @return
-         * Index of ending tag in snippet.
-         */
-        indexOfTagEnd(snippet) {
-            let char = '';
-            let index = 0;
-            let openQuote = '';
-            loop: while (char = snippet[index++]) {
-                if (openQuote) {
-                    if (char === openQuote) {
-                        openQuote = '';
-                    }
-                    continue;
-                }
-                switch (char) {
-                    case '\'':
-                    case '"':
-                        openQuote = char;
-                        break;
-                    case '<':
-                        break loop;
-                    case '>':
-                        return index;
-                }
-            }
-            return -1;
-        }
-        /**
          * Sets the text used by the scan process.
          *
          * @param text
@@ -528,7 +604,7 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("XMLTree", ["require", "exports", "XMLNode", "XMLScanner", "XMLTag"], function (require, exports, XMLNode_js_1, XMLScanner_js_1, XMLTag_js_1) {
+define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLScanner", "XMLTag"], function (require, exports, XMLCdata_js_1, XMLNode_js_1, XMLScanner_js_1, XMLTag_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.XMLTree = void 0;
@@ -605,6 +681,11 @@ define("XMLTree", ["require", "exports", "XMLNode", "XMLScanner", "XMLTag"], fun
                     // Continue and ignore closing tag
                     continue scan;
                 }
+                // Add CDATA as raw string
+                if ((0, XMLCdata_js_1.isXMLCdata)(node)) {
+                    roots.push(node.cdata);
+                    continue scan;
+                }
                 // Skip empty string nodes
                 if (!allStringNodes &&
                     (0, XMLNode_js_1.isString)(node) &&
@@ -635,10 +716,11 @@ define("XMLTree", ["require", "exports", "XMLNode", "XMLScanner", "XMLTag"], fun
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("index", ["require", "exports", "XMLScanner", "Escaping", "XMLComment", "XMLNode", "XMLRegExp", "XMLScanner", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, Escaping_js_2, XMLComment_js_1, XMLNode_js_2, XMLRegExp_js_3, XMLScanner_js_3, XMLTag_js_2, XMLTree_js_1) {
+define("index", ["require", "exports", "XMLScanner", "Escaping", "XMLCdata", "XMLComment", "XMLNode", "XMLRegExp", "XMLScanner", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, Escaping_js_2, XMLCdata_js_2, XMLComment_js_1, XMLNode_js_2, XMLRegExp_js_3, XMLScanner_js_3, XMLTag_js_2, XMLTree_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     __exportStar(Escaping_js_2, exports);
+    __exportStar(XMLCdata_js_2, exports);
     __exportStar(XMLComment_js_1, exports);
     __exportStar(XMLNode_js_2, exports);
     __exportStar(XMLRegExp_js_3, exports);

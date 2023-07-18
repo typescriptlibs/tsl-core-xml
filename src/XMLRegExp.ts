@@ -33,6 +33,12 @@ export const XMLRegExp = {
     Attribute: /([^'"\s\/<=>]+)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
 
     /**
+     * RegExp pattern for XML character data.
+     * - Group 1: CDATA.
+     */
+    Cdata: /<!\[CDATA\[((?:[^\]]|\][^\]])*?)\]\]>/su,
+
+    /**
      * RegExp pattern for XML close tag.
      * - Group 1: Tag name.
      */
@@ -42,7 +48,7 @@ export const XMLRegExp = {
      * RegExp pattern for XML comment.
      * - Group 1: Comment.
      */
-    Comment: /<!--((?:[^<]|<(?!!))*?)-->/su,
+    Comment: /<!--((?:[^<]|<[^!])*?)-->/su,
 
     /**
      * RegExp pattern for XML escape entity.
