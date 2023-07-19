@@ -91,7 +91,7 @@ test( 'Test XMLScanner on Atom RSS', async ( assert: test.Assert ) => {
 test( 'Test XMLScanner on XMLCdata', async ( assert: test.Assert ) => {
     let scanner = new XMLScanner( [
         '<![CDATA[<]]>',
-        '<![CDATA[<]<]]>',
+        '<![CDATA[]>]]]>',
         '<script>1<2&"3">""</script>',
         '<CUSTOM><script><![CDATA[&]]></script></CUSTOM>'
     ].join( '' ) );
@@ -106,7 +106,7 @@ test( 'Test XMLScanner on XMLCdata', async ( assert: test.Assert ) => {
 
     assert.deepStrictEqual(
         scanner.scan(),
-        { cdata: '<]<' },
+        { cdata: ']>]' },
         'Scan of CDATA should match with one closing bracket.'
     );
 

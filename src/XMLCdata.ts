@@ -60,11 +60,12 @@ export interface XMLCdata {
 
 
 export function isXMLCdata (
-    xmlNode: XMLNode
+    xmlNode: unknown
 ): xmlNode is XMLCdata {
     return (
+        xmlNode !== null &&
         typeof xmlNode === 'object' &&
-        typeof xmlNode.cdata === 'string'
+        typeof ( xmlNode as XMLCdata ).cdata === 'string'
     );
 }
 

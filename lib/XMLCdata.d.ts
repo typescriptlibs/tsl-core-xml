@@ -9,7 +9,6 @@
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-import XMLNode from './XMLNode.js';
 /**
  * Represents an XML character data node.
  */
@@ -27,5 +26,5 @@ export interface XMLCdata {
      */
     tag?: undefined;
 }
-export declare function isXMLCdata(xmlNode: XMLNode): xmlNode is XMLCdata;
+export declare function isXMLCdata(xmlNode: unknown): xmlNode is XMLCdata;
 export default XMLCdata;

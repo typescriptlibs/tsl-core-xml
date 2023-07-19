@@ -96,18 +96,6 @@ declare module "Escaping" {
     export default _default;
 }
 declare module "XMLComment" {
-    /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
-    
-      XML TypeScript Library
-    
-      Copyright (c) TypeScriptLibs and Contributors
-    
-      Licensed under the MIT License; you may not use this file except in
-      compliance with the License. You may obtain a copy of the MIT License at
-      https://typescriptlibs.org/LICENSE.txt
-    
-    \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-    import XMLNode from "XMLNode";
     /**
      * Represents an XML comment node.
      */
@@ -125,7 +113,7 @@ declare module "XMLComment" {
          */
         tag?: undefined;
     }
-    export function isXMLComment(xmlNode: XMLNode): xmlNode is XMLComment;
+    export function isXMLComment(xmlNode: unknown): xmlNode is XMLComment;
     export default XMLComment;
 }
 declare module "XMLTag" {
@@ -197,18 +185,6 @@ declare module "XMLNode" {
     export default XMLNode;
 }
 declare module "XMLCdata" {
-    /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
-    
-      XML TypeScript Library
-    
-      Copyright (c) TypeScriptLibs and Contributors
-    
-      Licensed under the MIT License; you may not use this file except in
-      compliance with the License. You may obtain a copy of the MIT License at
-      https://typescriptlibs.org/LICENSE.txt
-    
-    \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-    import XMLNode from "XMLNode";
     /**
      * Represents an XML character data node.
      */
@@ -226,7 +202,7 @@ declare module "XMLCdata" {
          */
         tag?: undefined;
     }
-    export function isXMLCdata(xmlNode: XMLNode): xmlNode is XMLCdata;
+    export function isXMLCdata(xmlNode: unknown): xmlNode is XMLCdata;
     export default XMLCdata;
 }
 declare module "XMLScanner" {

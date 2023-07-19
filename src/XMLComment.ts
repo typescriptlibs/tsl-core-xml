@@ -60,11 +60,12 @@ export interface XMLComment {
 
 
 export function isXMLComment (
-    xmlNode: XMLNode
+    xmlNode: unknown
 ): xmlNode is XMLComment {
     return (
+        xmlNode !== null &&
         typeof xmlNode === 'object' &&
-        typeof xmlNode.comment === 'string'
+        typeof ( xmlNode as XMLComment ).comment === 'string'
     );
 }
 
