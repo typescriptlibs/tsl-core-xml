@@ -36,7 +36,7 @@ export const XMLRegExp = {
      * RegExp pattern for XML character data.
      * - Group 1: CDATA.
      */
-    Cdata: /<!\[CDATA\[((?:[^\]]|\][^\]])*?)\]\]>/su,
+    Cdata: /<!\[CDATA\[(.*?)\]\]>/su,
 
     /**
      * RegExp pattern for XML close tag.

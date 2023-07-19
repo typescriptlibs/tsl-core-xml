@@ -98,7 +98,7 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          * RegExp pattern for XML character data.
          * - Group 1: CDATA.
          */
-        Cdata: /<!\[CDATA\[((?:[^\]]|\][^\]])*?)\]\]>/su,
+        Cdata: /<!\[CDATA\[(.*?)\]\]>/su,
         /**
          * RegExp pattern for XML close tag.
          * - Group 1: Tag name.
@@ -223,7 +223,8 @@ define("XMLComment", ["require", "exports"], function (require, exports) {
      *
      * */
     function isXMLComment(xmlNode) {
-        return (typeof xmlNode === 'object' &&
+        return (xmlNode !== null &&
+            typeof xmlNode === 'object' &&
             typeof xmlNode.comment === 'string');
     }
     exports.isXMLComment = isXMLComment;
@@ -301,7 +302,8 @@ define("XMLCdata", ["require", "exports"], function (require, exports) {
      *
      * */
     function isXMLCdata(xmlNode) {
-        return (typeof xmlNode === 'object' &&
+        return (xmlNode !== null &&
+            typeof xmlNode === 'object' &&
             typeof xmlNode.cdata === 'string');
     }
     exports.isXMLCdata = isXMLCdata;
