@@ -156,14 +156,17 @@ XML has 7 different types of nodes.
 
 ### Walk On The XML Tree
 
-The XML tree, often also called the DOM (Document Object Model), is the
-natural representation of XML. The `XMLTree` class can have multiple root
-elements, if the XML is incomplete or malformed. Usually the last root is the
-one that contains most data.
+The XML tree, often also called the DOM (Document Object Model), is the natural
+representation of XML. The `XMLTree` class can have multiple root nodes in the
+`XMLTree.roots` property.
 
-Usually you check each root in `XMLTree.roots`, if it is a tag by using the
-`isXMLTag` helper. Then you check the `XMLTag.innerXML` property for child
-nodes.
+Usually the last root is the one that contains most data. Or you check each root
+if it is a tag by using the `isXMLTag` helper function. Afterwards you can check
+the `XMLTag.innerXML` property for child nodes.
+
+The `XMLTree` uses the `XMLScanner`, which is available via the
+`XMLTree.scanner` property. There you can adjust the `XMLScanner.cdataTags`
+property or the `XMLScanner.scanSize` property for special use cases.
 
 
 ### Scan Raw XML
