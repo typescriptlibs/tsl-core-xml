@@ -12,11 +12,26 @@ This package provides simple ways to parse any XML-like text.
 
 
 
+Table Of Content
+----------------
+
+
+
+- [Examples](#examples)
+  - [XMLScanner Example](#xmlscanner-example)
+  - [XMLTree Example](#xmltree-example)
+- [Use Cases](#use-cases)
+  - [Types Of XML Nodes](#types-of-xml-nodes)
+  - [Walk On The XML Tree](#walk-on-the-xml-tree)
+  - [Scan Raw XML](#scan-raw-xml)
+
+
+
 Examples
 --------
 
 
-### XMLScanner
+### XMLScanner Example
 
 ``` TypeScript
 const scanner = new XMLScanner(
@@ -49,7 +64,7 @@ while ( node = scanner.scan() ) {
 ```
 
 
-### XMLTree
+### XMLTree Example
 
 ``` TypeScript
 const tree = new XMLTree(
@@ -98,3 +113,67 @@ console.log( JSON.stringify( roots, null, '  ' ) );
   }]
 }]
 ```
+
+
+
+Use Cases
+---------
+
+
+In the following you find a list of typical use cases for this library. They
+give you an idea how to use the library and how to work around edge cases.
+
+
+### Types Of XML Nodes
+
+XML has 7 different types of nodes.
+
+- `string`: Text strings are the regular escaped text between tags. Use the
+  `isString` helper function to test for this node type.
+
+- `XMLCdata`: Character data is unescaped text, that contains raw data like
+  JavaScript. Use the `isXMLCdata` helper function to test for this node type.
+
+- `XMLComment`: A comment is a special form of tag, that has not impact on the
+  content of the XML. Use the `isXMLComment` helper function to test for this
+  node type.
+
+- `XMLTag`: Tags are nodes with a name and attributes. Use the `isXMLTag` helper
+  function to test for this node type. There exists 4 subtypes of tags.
+
+  - Empty tag: This tag is self-closing and has the `XMLTag.empty` property set
+    to `true`. Typical empty tags are `img`, `meta`, and `path`.
+
+  - Regular tag: This tag often contains child nodes in the `XMLTag.innerXML`
+    property. Typical regular tags are `a`, `p`, and `text`.
+
+  - Document Type Definition: This tag is similar to a regular tag, but has a
+    name starting with a `!` character. A typical definition tag is `!DOCTYPE`.
+
+  - Processing Instruction: This tag is similar to an empty tag, but has a name
+    starting with a `?` character. A typical instruction tag is `?xml`.
+
+
+### Walk On The XML Tree
+
+The XML tree, often also called the DOM (Document Object Model), is the
+natural representation of XML. The `XMLTree` class can have multiple root
+elements, if the XML is incomplete or malformed. Usually the last root is the
+one that contains most data.
+
+Usually you check each root in `XMLTree.roots`, if it is a tag by using the
+`isXMLTag` helper. Then you check the `XMLTag.innerXML` property for child
+nodes.
+
+
+### Scan Raw XML
+
+If XML should be read exactly like it is written, then `XMLScanner` is the class
+to go with. It keeps every linebreak and every variant of a closing tag. The
+only things not preserved by the scanner are the surrounding quote characters
+for attribute values.
+
+If you expect text between XML tags or an XML tag itself to be larger than 1 MB,
+then you should increase the value of the `XMLScanner.scanSize` property
+accordingly. If you like to save memory during a scan, you can also decrease the
+scan size.
