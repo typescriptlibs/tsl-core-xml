@@ -23,7 +23,7 @@ Table Of Content
 - [Use Cases](#use-cases)
   - [Types Of XML Nodes](#types-of-xml-nodes)
   - [Walk On The XML Tree](#walk-on-the-xml-tree)
-  - [Scan Raw XML](#scan-raw-xml)
+  - [Read Raw XML](#read-raw-xml)
 
 
 
@@ -169,7 +169,7 @@ The `XMLTree` uses the `XMLScanner`, which is available via the
 property or the `XMLScanner.scanSize` property for special use cases.
 
 
-### Scan Raw XML
+### Read Raw XML
 
 If XML should be read exactly like it is written, then `XMLScanner` is the class
 to go with. It keeps every linebreak and every variant of a closing tag. The
