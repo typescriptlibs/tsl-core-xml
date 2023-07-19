@@ -141,10 +141,10 @@ XML has 7 different types of nodes.
 - `XMLTag`: Tags are nodes with a name and attributes. Use the `isXMLTag` helper
   function to test for this node type. There exists 4 subtypes of tags.
 
-  - Empty tag: This tag is self-closing and has the `XMLTag.empty` property set
+  - Empty Tag: This tag is self-closing and has the `XMLTag.empty` property set
     to `true`. Typical empty tags are `img`, `meta`, and `path`.
 
-  - Regular tag: This tag often contains child nodes in the `XMLTag.innerXML`
+  - Regular Tag: This tag often contains child nodes in the `XMLTag.innerXML`
     property. Typical regular tags are `a`, `p`, and `text`.
 
   - Document Type Definition: This tag is similar to a regular tag, but has a
