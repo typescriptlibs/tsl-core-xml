@@ -98,7 +98,7 @@ export function escapeXML (
 export function unescapeXML (
     str: string
 ): string {
-    return str.replace( XMLRegExp.EscapeEntity, escapeToCharacter );
+    return str.replace( XMLRegExp.escapeEntity, escapeToCharacter );
 }
 
 

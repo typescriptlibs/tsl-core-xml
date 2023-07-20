@@ -37,7 +37,7 @@ test( 'Test XMLRegExp.Comment ReDOS limitations', async ( assert: test.Assert ) 
 
     let timestamp = Date.now();
 
-    let match = text.match( XMLRegExp.Comment );
+    let match = text.match( XMLRegExp.comment );
     assert.ok(
         match && match[0].length < 10,
         'Regular expression for comment should not match whole text, because of quantify limitations. (#2)'

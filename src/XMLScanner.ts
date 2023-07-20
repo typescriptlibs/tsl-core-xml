@@ -201,7 +201,7 @@ export class XMLScanner {
 
         // Search character data
 
-        let match = buffer.match( XMLRegExp.Cdata );
+        let match = buffer.match( XMLRegExp.cdata );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -226,11 +226,15 @@ export class XMLScanner {
             if ( endIndex > -1 ) {
                 delete this._cdataTag;
                 this._index = index + endIndex;
-                this._node = buffer.substring( 0, endIndex );
+                this._node = {
+                    cdata: buffer.substring( 0, endIndex )
+                };
             }
             else {
                 this._index = index + buffer.length;
-                this._node = buffer;
+                this._node = {
+                    cdata: buffer
+                };
             }
 
             return this._node;
@@ -238,7 +242,7 @@ export class XMLScanner {
 
         // Search close tag
 
-        match = buffer.match( XMLRegExp.CloseTag );
+        match = buffer.match( XMLRegExp.closeTag );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -256,7 +260,7 @@ export class XMLScanner {
 
         // Search open tag
 
-        match = buffer.match( XMLRegExp.OpenTag );
+        match = buffer.match( XMLRegExp.openTag );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -305,7 +309,7 @@ export class XMLScanner {
 
         // Search comment
 
-        match = buffer.match( XMLRegExp.Comment );
+        match = buffer.match( XMLRegExp.comment );
 
         if ( typeof match?.index === 'number' ) {
             if ( match.index > 0 ) {
@@ -335,7 +339,7 @@ export class XMLScanner {
 
         // Handle incomplete tag on the buffer edge
 
-        match = buffer.match( XMLRegExp.IncompleteTag );
+        match = buffer.match( XMLRegExp.incompleteTag );
 
         if (
             typeof match?.index === 'number' &&
@@ -374,7 +378,7 @@ export class XMLScanner {
         const attributes: Record<string, string> = {};
 
         let matchAttribute: ( RegExpExecArray | null );
-        let scanner = new RegExp( XMLRegExp.Attribute.source, XMLRegExp.Attribute.flags );
+        let scanner = new RegExp( XMLRegExp.attribute.source, XMLRegExp.attribute.flags );
 
         while ( matchAttribute = scanner.exec( snippet ) ) {
             attributes[matchAttribute[1]] = unescapeXML(

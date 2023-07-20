@@ -50,39 +50,39 @@ declare module "XMLRegExp" {
          * - Group 3: Double quote encapsuled value.
          * - Group 4: None encapsuled value.
          */
-        Attribute: RegExp;
+        attribute: RegExp;
         /**
          * RegExp pattern for XML character data.
          * - Group 1: CDATA.
          */
-        Cdata: RegExp;
+        cdata: RegExp;
         /**
          * RegExp pattern for XML close tag.
          * - Group 1: Tag name.
          */
-        CloseTag: RegExp;
+        closeTag: RegExp;
         /**
          * RegExp pattern for XML comment.
          * - Group 1: Comment.
          */
-        Comment: RegExp;
+        comment: RegExp;
         /**
          * RegExp pattern for XML escape entity.
          * - Group 1: Character name.
          * - Group 2: Character decimal code.
          * - Group 3: Character hexadecimal code.
          */
-        EscapeEntity: RegExp;
+        escapeEntity: RegExp;
         /**
          * RegExp pattern for incomplete XML tag on buffer edge.
          * - Group 1: Incomplete tag name.
          */
-        IncompleteTag: RegExp;
+        incompleteTag: RegExp;
         /**
          * RegExp pattern for XML tag begin.
          * - Group 1: Tag name.
          */
-        OpenTag: RegExp;
+        openTag: RegExp;
     };
     export default XMLRegExp;
 }

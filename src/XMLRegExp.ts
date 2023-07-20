@@ -30,25 +30,25 @@ export const XMLRegExp = {
      * - Group 3: Double quote encapsuled value.
      * - Group 4: None encapsuled value.
      */
-    Attribute: /([^'"\s\/<=>]+)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
+    attribute: /([^'"\s\/<=>]+)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
 
     /**
      * RegExp pattern for XML character data.
      * - Group 1: CDATA.
      */
-    Cdata: /<!\[CDATA\[(.*?)\]\]>/su,
+    cdata: /<!\[CDATA\[(.*?)\]\]>/su,
 
     /**
      * RegExp pattern for XML close tag.
      * - Group 1: Tag name.
      */
-    CloseTag: /<(\/[\w:][\w\-.:]*)>/su,
+    closeTag: /<(\/[\w:][\w\-.:]*)>/su,
 
     /**
      * RegExp pattern for XML comment.
      * - Group 1: Comment.
      */
-    Comment: /<!--((?:[^<]|<[^!])*?)-->/su,
+    comment: /<!--((?:[^<]|<[^!])*?)-->/su,
 
     /**
      * RegExp pattern for XML escape entity.
@@ -56,19 +56,19 @@ export const XMLRegExp = {
      * - Group 2: Character decimal code.
      * - Group 3: Character hexadecimal code.
      */
-    EscapeEntity: /&(?:(\w+)|#(\d+)|#x([0-9A-F]+));/gisu,
+    escapeEntity: /&(?:(\w+)|#(\d+)|#x([0-9A-F]+));/gisu,
 
     /**
      * RegExp pattern for incomplete XML tag on buffer edge.
      * - Group 1: Incomplete tag name.
      */
-    IncompleteTag: /<$|<([\/!?]?[\w\-.:]*)\b[^<]*$/su,
+    incompleteTag: /<$|<([\/!?]?[\w\-.:]*)\b[^<]*$/su,
 
     /**
      * RegExp pattern for XML tag begin.
      * - Group 1: Tag name.
      */
-    OpenTag: /<([!?]?[\w:][\w\-.:]*)\b/su,
+    openTag: /<([!?]?[\w:][\w\-.:]*)\b/su,
 
 };
 

@@ -89,27 +89,25 @@ test( 'Test XMLScanner on Atom RSS', async ( assert: test.Assert ) => {
 
 
 test( 'Test XMLScanner on XMLCdata', async ( assert: test.Assert ) => {
-    let scanner = new XMLScanner( [
-        '<![CDATA[<]]>',
-        '<![CDATA[]>]]]>',
-        '<script>1<2&"3">""</script>',
-        '<CUSTOM><script><![CDATA[&]]></script></CUSTOM>'
-    ].join( '' ) );
+    let scanner = new XMLScanner();
 
     scanner.cdataTags.push( 'custom' );
 
+    scanner.setText( '<![CDATA[<]]>' );
     assert.deepStrictEqual(
         scanner.scan(),
         { cdata: '<' },
         'Scan of CDATA should match single character.'
     );
 
+    scanner.setText( '<![CDATA[]>]]]>' );
     assert.deepStrictEqual(
         scanner.scan(),
         { cdata: ']>]' },
         'Scan of CDATA should match with one closing bracket.'
     );
 
+    scanner.setText( '<script>1<2&"3">""</script>' );
     assert.deepStrictEqual(
         [
             scanner.scan(),
@@ -118,12 +116,13 @@ test( 'Test XMLScanner on XMLCdata', async ( assert: test.Assert ) => {
         ],
         [
             { tag: 'script' },
-            '1<2&"3">""',
+            { cdata: '1<2&"3">""' },
             { tag: '/script' },
         ],
         'Scan of implicit CDATA should match unescaped script.'
     );
 
+    scanner.setText( '<CUSTOM><script><![CDATA[&]]></script></CUSTOM>' );
     assert.deepStrictEqual(
         [
             scanner.scan(),
@@ -132,7 +131,7 @@ test( 'Test XMLScanner on XMLCdata', async ( assert: test.Assert ) => {
         ],
         [
             { tag: 'CUSTOM' },
-            '<script><![CDATA[&]]></script>',
+            { cdata: '<script><![CDATA[&]]></script>' },
             { tag: '/CUSTOM' },
         ],
         'Scan of implicit CDATA should match custom tag only.'

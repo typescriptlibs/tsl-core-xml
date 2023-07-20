@@ -93,39 +93,39 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          * - Group 3: Double quote encapsuled value.
          * - Group 4: None encapsuled value.
          */
-        Attribute: /([^'"\s\/<=>]+)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
+        attribute: /([^'"\s\/<=>]+)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
         /**
          * RegExp pattern for XML character data.
          * - Group 1: CDATA.
          */
-        Cdata: /<!\[CDATA\[(.*?)\]\]>/su,
+        cdata: /<!\[CDATA\[(.*?)\]\]>/su,
         /**
          * RegExp pattern for XML close tag.
          * - Group 1: Tag name.
          */
-        CloseTag: /<(\/[\w:][\w\-.:]*)>/su,
+        closeTag: /<(\/[\w:][\w\-.:]*)>/su,
         /**
          * RegExp pattern for XML comment.
          * - Group 1: Comment.
          */
-        Comment: /<!--((?:[^<]|<[^!])*?)-->/su,
+        comment: /<!--((?:[^<]|<[^!])*?)-->/su,
         /**
          * RegExp pattern for XML escape entity.
          * - Group 1: Character name.
          * - Group 2: Character decimal code.
          * - Group 3: Character hexadecimal code.
          */
-        EscapeEntity: /&(?:(\w+)|#(\d+)|#x([0-9A-F]+));/gisu,
+        escapeEntity: /&(?:(\w+)|#(\d+)|#x([0-9A-F]+));/gisu,
         /**
          * RegExp pattern for incomplete XML tag on buffer edge.
          * - Group 1: Incomplete tag name.
          */
-        IncompleteTag: /<$|<([\/!?]?[\w\-.:]*)\b[^<]*$/su,
+        incompleteTag: /<$|<([\/!?]?[\w\-.:]*)\b[^<]*$/su,
         /**
          * RegExp pattern for XML tag begin.
          * - Group 1: Tag name.
          */
-        OpenTag: /<([!?]?[\w:][\w\-.:]*)\b/su,
+        openTag: /<([!?]?[\w:][\w\-.:]*)\b/su,
     };
     /* *
      *
@@ -189,7 +189,7 @@ define("Escaping", ["require", "exports", "EscapeEntities/index", "XMLRegExp"], 
     }
     exports.escapeXML = escapeXML;
     function unescapeXML(str) {
-        return str.replace(XMLRegExp_js_1.default.EscapeEntity, escapeToCharacter);
+        return str.replace(XMLRegExp_js_1.default.escapeEntity, escapeToCharacter);
     }
     exports.unescapeXML = unescapeXML;
     /* *
@@ -424,7 +424,7 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
                 return;
             }
             // Search character data
-            let match = buffer.match(XMLRegExp_js_2.default.Cdata);
+            let match = buffer.match(XMLRegExp_js_2.default.cdata);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -444,16 +444,20 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
                 if (endIndex > -1) {
                     delete this._cdataTag;
                     this._index = index + endIndex;
-                    this._node = buffer.substring(0, endIndex);
+                    this._node = {
+                        cdata: buffer.substring(0, endIndex)
+                    };
                 }
                 else {
                     this._index = index + buffer.length;
-                    this._node = buffer;
+                    this._node = {
+                        cdata: buffer
+                    };
                 }
                 return this._node;
             }
             // Search close tag
-            match = buffer.match(XMLRegExp_js_2.default.CloseTag);
+            match = buffer.match(XMLRegExp_js_2.default.closeTag);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -467,7 +471,7 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
                 }
             }
             // Search open tag
-            match = buffer.match(XMLRegExp_js_2.default.OpenTag);
+            match = buffer.match(XMLRegExp_js_2.default.openTag);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -502,7 +506,7 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
                 }
             }
             // Search comment
-            match = buffer.match(XMLRegExp_js_2.default.Comment);
+            match = buffer.match(XMLRegExp_js_2.default.comment);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number') {
                 if (match.index > 0) {
                     nextIndex = (match.index < nextIndex ? match.index : nextIndex);
@@ -523,7 +527,7 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
                 return this._node;
             }
             // Handle incomplete tag on the buffer edge
-            match = buffer.match(XMLRegExp_js_2.default.IncompleteTag);
+            match = buffer.match(XMLRegExp_js_2.default.incompleteTag);
             if (typeof (match === null || match === void 0 ? void 0 : match.index) === 'number' &&
                 match.index > 0) {
                 nextIndex = match.index;
@@ -549,7 +553,7 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
         scanAttributes(snippet) {
             const attributes = {};
             let matchAttribute;
-            let scanner = new RegExp(XMLRegExp_js_2.default.Attribute.source, XMLRegExp_js_2.default.Attribute.flags);
+            let scanner = new RegExp(XMLRegExp_js_2.default.attribute.source, XMLRegExp_js_2.default.attribute.flags);
             while (matchAttribute = scanner.exec(snippet)) {
                 attributes[matchAttribute[1]] = (0, Escaping_js_1.unescapeXML)(matchAttribute[2] ||
                     matchAttribute[3] ||
