@@ -18,7 +18,9 @@
  * */
 
 
-import XMLNode from './XMLNode.js';
+import { isXMLCdata } from './XMLCdata.js';
+
+import XMLNode, { isString } from './XMLNode.js';
 
 import XMLSelector from './XMLSelector.js';
 
@@ -59,7 +61,6 @@ export class XMLTree {
      *  Properties
      *
      * */
-
 
     /**
      * Tree roots after the last grow process.
@@ -110,16 +111,17 @@ export class XMLTree {
 
         scan: while ( node = scanner.scan() ) {
 
-            // Check for closing tag, then search for opening tag
+            // First check for closing tag, then search for opening tag
 
             if (
-                typeof node === 'object' &&
+                isXMLTag( node ) &&
                 node.tag?.[0] === '/'
             ) {
                 const openTag = node.tag.substring( 1 );
                 const openStack: Array<XMLNode> = [];
 
-                // Search opening tag and build stack with nodes in-between
+                // Search backwards for opening tag and build stack with nodes
+                // in-between
 
                 for ( let i = roots.length - 1, node2: XMLNode; i >= 0; --i ) {
                     node2 = roots[i];
@@ -127,7 +129,7 @@ export class XMLTree {
                     // Find opening tag and remove openStack from roots
 
                     if (
-                        typeof node2 === 'object' &&
+                        isXMLTag( node2 ) &&
                         node2.tag === openTag &&
                         !node2.empty &&
                         !closeStack.includes( node2 )
@@ -152,11 +154,20 @@ export class XMLTree {
                 continue scan;
             }
 
+            // Add CDATA as raw string
+
+            if ( isXMLCdata( node ) ) {
+
+                roots.push( node.cdata );
+
+                continue scan;
+            }
+
             // Skip empty string nodes
 
             if (
                 !allStringNodes &&
-                typeof node === 'string' &&
+                isString( node ) &&
                 !node.trim()
             ) {
                 continue scan;

@@ -30,19 +30,19 @@ import XMLNode from './XMLNode.js';
 
 
 /**
- * Represents an XML comment node.
+ * Represents an XML character data node.
  */
-export interface XMLComment {
+export interface XMLCdata {
 
     /**
-     * Use this property to determine, if the object is a character data node.
+     * Text of the character data.
      */
-    cdata?: undefined;
+    cdata: string;
 
     /**
-     * Text of the comment.
+     * Use this property to determine, if the object is a comment node.
      */
-    comment: string;
+    comment?: undefined;
 
     /**
      * Use this property to determine, if the object is a tag node.
@@ -59,13 +59,13 @@ export interface XMLComment {
  * */
 
 
-export function isXMLComment (
+export function isXMLCdata (
     xmlNode: unknown
-): xmlNode is XMLComment {
+): xmlNode is XMLCdata {
     return (
         xmlNode !== null &&
         typeof xmlNode === 'object' &&
-        typeof ( xmlNode as XMLComment ).comment === 'string'
+        typeof ( xmlNode as XMLCdata ).cdata === 'string'
     );
 }
 
@@ -77,4 +77,4 @@ export function isXMLComment (
  * */
 
 
-export default XMLComment;
+export default XMLCdata;

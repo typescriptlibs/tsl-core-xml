@@ -18,6 +18,8 @@
  * */
 
 
+import XMLCdata from './XMLCdata.js';
+
 import XMLComment from './XMLComment.js';
 
 import XMLTag from './XMLTag.js';
@@ -36,6 +38,7 @@ import XMLTag from './XMLTag.js';
  */
 export type XMLNode = (
     | string
+    | XMLCdata
     | XMLComment
     | XMLTag
 );
@@ -49,7 +52,7 @@ export type XMLNode = (
 
 
 export function isString (
-    xmlNode: XMLNode
+    xmlNode: unknown
 ): xmlNode is string {
     return typeof xmlNode === 'string';
 }

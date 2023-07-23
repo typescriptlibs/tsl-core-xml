@@ -19,6 +19,10 @@ export interface XMLTag {
      */
     attributes?: Record<string, string>;
     /**
+     * Use this property to determine, if the object is a character data node.
+     */
+    cdata?: undefined;
+    /**
      * Use this property to determine, if the object is a comment node.
      */
     comment?: undefined;
@@ -35,5 +39,5 @@ export interface XMLTag {
      */
     tag: string;
 }
-export declare function isXMLTag(xmlNode: XMLNode): xmlNode is XMLTag;
+export declare function isXMLTag(xmlNode: unknown): xmlNode is XMLTag;
 export default XMLTag;

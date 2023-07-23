@@ -18,9 +18,13 @@
  * */
 
 
+import { unescapeXML } from "./Escaping.js";
+
 import XMLRegExp from "./XMLRegExp.js";
 
 import XMLNode from './XMLNode.js';
+
+import XMLTag from './XMLTag.js';
 
 
 /* *
@@ -46,7 +50,9 @@ export class XMLScanner {
     public constructor (
         text: string = ''
     ) {
+        this._scanSize = 1e6;
         this._text = text;
+        this.cdataTags = ['script', 'style'];
     }
 
     /* *
@@ -57,19 +63,52 @@ export class XMLScanner {
 
 
     /**
+     * Last tag scan with implicit character data.
+     */
+    private _cdataTag?: XMLTag;
+
+
+    /**
      * Index for the next scan.
      */
     private _index?: number;
+
 
     /**
      * Node result of the last scan.
      */
     private _node?: XMLNode;
 
+
+    /**
+     * Maximum size of a scan for XMLNode.
+     */
+    private _scanSize: number;
+
+
     /**
      * Text to scan.
      */
     private _text: string;
+
+
+    /**
+     * Tags that contain implicitly character data.  Only the close tag will end
+     * the inner text.  Default tags are `script` and `style`.
+     */
+    public readonly cdataTags: Array<string>;
+
+
+    /**
+     * Maximum size during a scan.  This limits the size of XMLNode to the given
+     * number of characters.
+     */
+    public get scanSize (): number {
+        return this._scanSize;
+    }
+    public set scanSize ( value: number ) {
+        this._scanSize = ( value > 0 ? value : 1e6 );
+    }
 
     /**
      * Node result of the last scan.
@@ -94,177 +133,6 @@ export class XMLScanner {
      */
     public getText (): string {
         return this._text;
-    }
-
-
-    /**
-     * Scans the text for the next XML node. It will return a string, if no XML
-     * tag can be found in the next 1 million characters. Returns `undefined` if
-     * the scan process has reached the end of the text.
-     *
-     * @return
-     * Found XML node; or `undefined`, if reached the end.
-     */
-    public scan (): ( XMLNode | undefined ) {
-        let index = ( this._index || 0 );
-        let nextIndex = Infinity;
-
-        // Restore buffer
-
-        const buffer = this._text.substring( index, index + 1e6 );
-
-        if ( !buffer ) {
-            return;
-        }
-
-        // Search close tag
-
-        let match = buffer.match( XMLRegExp.CloseTag );
-
-        if ( typeof match?.index === 'number' ) {
-            if ( match.index > 0 ) {
-                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
-            }
-            else {
-                this._index = index + match[0].length;
-                this._node = {
-                    tag: match[1]
-                };
-
-                return this._node;
-            }
-        }
-
-        // Search open tag
-
-        match = buffer.match( XMLRegExp.OpenTag );
-
-        if ( typeof match?.index === 'number' ) {
-            if ( match.index > 0 ) {
-                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
-            }
-            else {
-                const restIndex = match[0].length;
-                const endIndex = this.indexOfTagEnd( buffer.substring( restIndex ) );
-
-                if ( endIndex > -1 ) {
-                    let rest = buffer.substring( restIndex, ( restIndex + endIndex - 1 ) );
-
-                    this._index = index + restIndex + endIndex;
-                    this._node = {
-                        tag: match[1]
-                    };
-
-                    // Self-closing tags are marked empty
-
-                    if (
-                        rest.endsWith( '/' ) ||
-                        rest.endsWith( '?' )
-                    ) {
-                        this._node.empty = true;
-                        rest = rest.substring( 0, rest.length - 1 );
-                    }
-
-                    // Search for attributes
-
-                    if ( rest ) {
-                        const attributes = this.scanAttributes( rest );
-
-                        if ( attributes ) {
-                            this._node.attributes = attributes;
-                        }
-                    }
-
-                    return this._node;
-                }
-            }
-        }
-
-        // Search comment
-
-        match = buffer.match( XMLRegExp.Comment );
-
-        if ( typeof match?.index === 'number' ) {
-            if ( match.index > 0 ) {
-                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
-            }
-            else {
-                this._index = index + match[0].length;
-                this._node = {
-                    comment: match[1]
-                };
-
-                return this._node;
-            }
-        }
-
-        // Return leading text before match in next round
-
-        if (
-            nextIndex > 0 &&
-            nextIndex < Infinity
-        ) {
-            this._index = index + nextIndex;
-            this._node = buffer.substring( 0, nextIndex );
-
-            return this._node;
-        }
-
-        // Handle incomplete tag on the buffer edge
-
-        match = buffer.match( XMLRegExp.IncompleteTag );
-
-        if (
-            typeof match?.index === 'number' &&
-            match.index > 0
-        ) {
-            nextIndex = match.index;
-
-            this._index = index + nextIndex;
-            this._node = buffer.substring( 0, nextIndex );
-
-            return this._node;
-        }
-
-        // Rest is just text
-
-        this._index = index + buffer.length;
-        this._node = buffer;
-
-        return this._node;
-    }
-
-
-    /**
-     * Extracts attribute singles and pairs.
-     *
-     * @param snippet
-     * Text snippet to extract attributes from.
-     *
-     * @return
-     * Dictionary of attributes, or `undefined`. Attribute singles will have an
-     * empty value.
-     */
-    private scanAttributes (
-        snippet: string
-    ): ( Record<string, string> | undefined ) {
-        const attributes: Record<string, string> = {};
-
-        let matchAttribute: ( RegExpExecArray | null );
-        let scanner = new RegExp( XMLRegExp.Attribute.source, XMLRegExp.Attribute.flags );
-
-        while ( matchAttribute = scanner.exec( snippet ) ) {
-            attributes[matchAttribute[1]] = (
-                matchAttribute[2] ||
-                matchAttribute[3] ||
-                matchAttribute[4] ||
-                ''
-            );
-        }
-
-        if ( Object.keys( attributes ).length ) {
-            return attributes;
-        }
     }
 
 
@@ -308,6 +176,222 @@ export class XMLScanner {
         }
 
         return -1;
+    }
+
+
+    /**
+     * Scans the text for the next XML node. It will return a string, if no XML
+     * tag can be found in the next 1 million characters. Returns `undefined` if
+     * the scan process has reached the end of the text.
+     *
+     * @return
+     * Found XML node; or `undefined`, if reached the end.
+     */
+    public scan (): ( XMLNode | undefined ) {
+        let index = ( this._index || 0 );
+        let nextIndex = Infinity;
+
+        // Restore buffer
+
+        const buffer = this._text.substring( index, index + this._scanSize );
+
+        if ( !buffer ) {
+            return;
+        }
+
+        // Search character data
+
+        let match = buffer.match( XMLRegExp.cdata );
+
+        if ( typeof match?.index === 'number' ) {
+            if ( match.index > 0 ) {
+                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
+            }
+            else {
+                delete this._cdataTag;
+                this._index = index + match[0].length;
+                this._node = {
+                    cdata: match[1]
+                };
+
+                return this._node;
+            }
+        }
+
+        // Search for implicit character data from the previous tag
+
+        if ( this._cdataTag ) {
+            let endIndex = buffer.indexOf( `</${this._cdataTag.tag}>` );
+
+            if ( endIndex > -1 ) {
+                delete this._cdataTag;
+                this._index = index + endIndex;
+                this._node = {
+                    cdata: buffer.substring( 0, endIndex )
+                };
+            }
+            else {
+                this._index = index + buffer.length;
+                this._node = {
+                    cdata: buffer
+                };
+            }
+
+            return this._node;
+        }
+
+        // Search close tag
+
+        match = buffer.match( XMLRegExp.closeTag );
+
+        if ( typeof match?.index === 'number' ) {
+            if ( match.index > 0 ) {
+                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
+            }
+            else {
+                this._index = index + match[0].length;
+                this._node = {
+                    tag: match[1]
+                };
+
+                return this._node;
+            }
+        }
+
+        // Search open tag
+
+        match = buffer.match( XMLRegExp.openTag );
+
+        if ( typeof match?.index === 'number' ) {
+            if ( match.index > 0 ) {
+                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
+            }
+            else {
+                const restIndex = match[0].length;
+                const endIndex = this.indexOfTagEnd( buffer.substring( restIndex ) );
+
+                if ( endIndex > -1 ) {
+                    let rest = buffer.substring( restIndex, ( restIndex + endIndex - 1 ) );
+
+                    this._index = index + restIndex + endIndex;
+                    this._node = {
+                        tag: match[1]
+                    };
+
+                    // Self-closing tags are marked empty
+
+                    if (
+                        rest.endsWith( '/' ) ||
+                        rest.endsWith( '?' )
+                    ) {
+                        this._node.empty = true;
+                        rest = rest.substring( 0, rest.length - 1 );
+                    }
+
+                    // Search for attributes
+
+                    if ( rest ) {
+                        const attributes = this.scanAttributes( rest );
+
+                        if ( attributes ) {
+                            this._node.attributes = attributes;
+                        }
+                    }
+
+                    if ( this.cdataTags.includes( this._node.tag.toLowerCase() ) ) {
+                        this._cdataTag = this._node;
+                    }
+
+                    return this._node;
+                }
+            }
+        }
+
+        // Search comment
+
+        match = buffer.match( XMLRegExp.comment );
+
+        if ( typeof match?.index === 'number' ) {
+            if ( match.index > 0 ) {
+                nextIndex = ( match.index < nextIndex ? match.index : nextIndex );
+            }
+            else {
+                this._index = index + match[0].length;
+                this._node = {
+                    comment: match[1]
+                };
+
+                return this._node;
+            }
+        }
+
+        // Return leading text before match in next round
+
+        if (
+            nextIndex > 0 &&
+            nextIndex < Infinity
+        ) {
+            this._index = index + nextIndex;
+            this._node = unescapeXML( buffer.substring( 0, nextIndex ) );
+
+            return this._node;
+        }
+
+        // Handle incomplete tag on the buffer edge
+
+        match = buffer.match( XMLRegExp.incompleteTag );
+
+        if (
+            typeof match?.index === 'number' &&
+            match.index > 0
+        ) {
+            nextIndex = match.index;
+
+            this._index = index + nextIndex;
+            this._node = unescapeXML( buffer.substring( 0, nextIndex ) );
+
+            return this._node;
+        }
+
+        // Rest is just text
+
+        this._index = index + buffer.length;
+        this._node = unescapeXML( buffer );
+
+        return this._node;
+    }
+
+
+    /**
+     * Extracts attribute singles and pairs.
+     *
+     * @param snippet
+     * Text snippet to extract attributes from.
+     *
+     * @return
+     * Dictionary of attributes, or `undefined`. Attribute singles will have an
+     * empty value.
+     */
+    private scanAttributes (
+        snippet: string
+    ): ( Record<string, string> | undefined ) {
+        const attributes: Record<string, string> = {};
+
+        let matchAttribute: ( RegExpExecArray | null );
+        let scanner = new RegExp( XMLRegExp.attribute.source, XMLRegExp.attribute.flags );
+
+        while ( matchAttribute = scanner.exec( snippet ) ) {
+            attributes[matchAttribute[1]] = unescapeXML(
+                matchAttribute[2] ||
+                matchAttribute[3] ||
+                matchAttribute[4] ||
+                ''
+            );
+        }
+
+        if ( Object.keys( attributes ).length ) {
+            return attributes;
+        }
     }
 
 

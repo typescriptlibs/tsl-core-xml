@@ -10,21 +10,21 @@
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 /**
- * Represents an XML comment node.
+ * Represents an XML character data node.
  */
-export interface XMLComment {
+export interface XMLCdata {
     /**
-     * Use this property to determine, if the object is a character data node.
+     * Text of the character data.
      */
-    cdata?: undefined;
+    cdata: string;
     /**
-     * Text of the comment.
+     * Use this property to determine, if the object is a comment node.
      */
-    comment: string;
+    comment?: undefined;
     /**
      * Use this property to determine, if the object is a tag node.
      */
     tag?: undefined;
 }
-export declare function isXMLComment(xmlNode: unknown): xmlNode is XMLComment;
-export default XMLComment;
+export declare function isXMLCdata(xmlNode: unknown): xmlNode is XMLCdata;
+export default XMLCdata;
