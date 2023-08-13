@@ -32,12 +32,18 @@ import XMLTag, { isXMLTag } from './XMLTag.js';
  * */
 
 
-export interface SelectorConditions {
+export interface AttributeTerm {
     attribute?: string;
-    attributeMatch?: string;
-    cssClass: string;
-    htmlID?: string;
-    tag: string;
+    logic?: string;
+    value?: string;
+}
+
+
+export interface SelectorTerms {
+    attributes?: Array<AttributeTerm>;
+    classes?: Array<string>;
+    id?: string;
+    tag?: string;
 }
 
 
@@ -62,10 +68,69 @@ export class XMLSelector {
 
 
     public static parse (
-        selector: string
+        selectorString: string
     ): ( XMLSelector | undefined ) {
-        // @todo implement
-        return;
+        const selectorsStrings = selectorString.split( /\s+/su );
+        const selectors: Array<SelectorTerms> = [];
+        const selector = new XMLSelector( selectors );
+
+        let match: ( RegExpMatchArray | null );
+        let terms: SelectorTerms;
+
+        for ( let i = 0, iEnd = selectorsStrings.length; i < iEnd; ++i ) {
+            match = selectorsStrings[i].match( XMLRegExp.selector );
+
+            if ( !match ) {
+                continue;
+            } console.log( match );
+
+            terms = {};
+
+            if (
+                match[1] &&
+                match[1] !== '*'
+            ) {
+                terms.tag = match[1].replace( '|', ':' );
+            }
+
+            if ( match[2] ) {
+                const classesStrings = match[2].split( /\.+/g );
+                const classes: Array<string> = [];
+
+                for ( let j = 0, jEnd = classesStrings.length; j < jEnd; ++j ) {
+                    if ( classesStrings[j] ) {
+                        classes.push( classesStrings[j] );
+                    }
+                }
+
+                terms.classes = classes;
+            }
+
+            if ( match[3] ) {
+                terms.id = match[3].substring( 1 );
+            }
+
+            if ( match[4] ) {
+                const attributes: Array<AttributeTerm> = [];
+                const scanner = new RegExp( XMLRegExp.attributeSelector.source, XMLRegExp.attributeSelector.flags );
+
+                let matchAttribute: ( RegExpExecArray | null );
+
+                while ( matchAttribute = scanner.exec( match[4] ) ) {
+                    attributes.push( {
+                        attribute: matchAttribute[1].replace( '|', ':' ),
+                        logic: matchAttribute[2],
+                        value: matchAttribute[3]
+                    } );
+                }
+
+                terms.attributes = attributes;
+            }
+
+            selectors.push( terms );
+        }
+
+        return selector;
     }
 
 
@@ -80,10 +145,10 @@ export class XMLSelector {
      * @param selector
      * Selector to match against.
      */
-    private constructor (
-        selector: Array<SelectorConditions>
+    public constructor (
+        selectors: Array<SelectorTerms>
     ) {
-        this.selector = selector;
+        this.selectors = selectors;
     }
 
 
@@ -96,7 +161,7 @@ export class XMLSelector {
 
     public containsID?: boolean;
 
-    private selector: Array<SelectorConditions>;
+    public selectors: Array<SelectorTerms>;
 
 
     /* *
@@ -107,20 +172,20 @@ export class XMLSelector {
 
 
     /**
-     * Creates a list of XML tags matching the specified conditions.
+     * Creates a list of XML tags matching the specified terms.
      *
      * @param nodes
      * List of nodes to search in.
      *
-     * @param conditions
-     * Conditions to search for.
+     * @param terms
+     * Matching terms to search for.
      *
      * @return
      * List of matching XML tags, or `undefined`.
      */
     public find (
         nodes: Exclude<XMLTag['innerXML'], undefined>,
-        conditions: SelectorConditions
+        terms: SelectorTerms
     ): ( Array<XMLTag> | undefined ) {
         const findings: Array<XMLTag> = [];
 

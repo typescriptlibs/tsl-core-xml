@@ -13,7 +13,7 @@
     "repository": "https://github.com/typescriptlibs/tsl-core-xml.git",
     "devDependencies": {
         "@types/node": "~18.6.0",
-        "@typescriptlibs/tst": "^0.0.5",
+        "@typescriptlibs/tst": "^0.1.0",
         "husky": "~8.0.3",
         "tsl-core-xml": "./",
         "typescript": "~5.1.6"

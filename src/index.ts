@@ -18,6 +18,7 @@ export * from './XMLComment.js';
 export * from './XMLNode.js';
 export * from './XMLRegExp.js';
 export * from './XMLScanner.js';
+export * from './XMLSelector.js';
 export * from './XMLTag.js';
 export * from './XMLTree.js';
 

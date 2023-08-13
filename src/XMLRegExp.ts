@@ -33,6 +33,15 @@ export const XMLRegExp = {
      */
     attribute: /([^'"\s\/<=>]+)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
 
+
+    /**
+     * RegExp pattern for XML attribute selector.
+     * - Group 1: Attribute key.
+     * - Group 2: Match operation.
+     * - Group 3: Match value.
+     */
+    attributeSelector: /\[([\w\-|]+?)(=|~=|\|=|\^=|\$=|\*=)([^\[\]]*)\]/gsu,
+
     /**
      * RegExp pattern for XML character data.
      * - Group 1: CDATA.
@@ -53,6 +62,7 @@ export const XMLRegExp = {
      */
     comment: /<!--((?:[^<]|<[^!])*?)-->/su,
 
+
     /**
      * RegExp pattern for XML escape entity.
      * - Group 1: Character name.
@@ -68,6 +78,7 @@ export const XMLRegExp = {
      */
     incompleteTag: /<$|<([\/!?]?[\w\-.:]*)\b[^<]*$/su,
 
+
     /**
      * RegExp pattern for XML open tag.
      * - Group 1: Tag name.
@@ -76,14 +87,13 @@ export const XMLRegExp = {
 
 
     /**
-     * RegExp pattern for XMLTree selector.
+     * RegExp pattern for XML selector.
      * - Group 1: Tag name.
-     * - Group 2: CSS class.
-     * - Group 3: HTML ID attribute.
-     * - Group 4: Attribute name.
-     * - Group 5: Attribute value
+     * - Group 2: Class attribute.
+     * - Group 3: ID attribute.
+     * - Group 4: Other attributes.
      */
-    Selector: /([\w\-|]*|\*)(\.[\w\-\.]+)?(#[\w\-]*)?(\[([^=\]]+)([~|^$*]?=[^\]])\])?/gsu,
+    selector: /(\*|[\w\-|]+)(\.[\w\-\.]+)?(#[\w\-]*)?((?:\[[^\[\]]+\])+)?/su,
 
 
 };
