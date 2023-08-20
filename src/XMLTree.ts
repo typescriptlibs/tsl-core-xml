@@ -56,19 +56,22 @@ export class XMLTree {
         this.scanner = new XMLScanner( text );
     }
 
+
     /* *
      *
      *  Properties
      *
      * */
 
+
     /**
      * Tree roots after the last grow process.
      */
     public readonly roots: Array<XMLNode>;
 
+
     /**
-     * Underlying scanner to process text. Can be used to access the last
+     * Underlying scanner to process text.  Can be used to access the last
      * processed text and raw XML.
      */
     public readonly scanner: XMLScanner;
@@ -88,13 +91,13 @@ export class XMLTree {
      * Text to grow tree from.
      *
      * @param allStringNodes
-     * Whether to keep all empty string nodes. This might be necessary for
+     * Whether to keep all empty string nodes.  This might be necessary for
      * pre-formatted text like scripts.
      *
      * @return
-     * Tree roots, usually the last one is the main root. Malformatted XML might
-     * have different roots. These roots are also available in the `roots`
-     * property.
+     * Tree roots, usually the last one is the main root.  Malformatted XML
+     * might have different roots.  These roots are also available in the
+     * `roots` property.
      */
     public grow (
         text: string = this.scanner.getText(),

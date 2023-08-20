@@ -214,8 +214,21 @@ export class XMLSelector {
     public query (
         nodes: Array<XMLNode>
     ): ( Array<XMLTag> | undefined ) {
-        // @todo implement
-        return;
+        const selectors = this.selectors;
+
+        let findings: ( Array<XMLTag> | undefined );
+
+        for ( let i = 0, iEnd = selectors.length; i < iEnd; ++i ) {
+            findings = this.find( nodes, selectors[i] );
+
+            if ( !findings ) {
+                return;
+            }
+
+            nodes = findings;
+        }
+
+        return findings;
     }
 
 
