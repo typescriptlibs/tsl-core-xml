@@ -3,6 +3,18 @@ XML TypeScript Library: Changelog
 
 
 
+v0.2.0
+------
+
+* XMLTree
+* XMLNode helper functions
+* CDATA support
+* Fix Escape entities
+
+**Full Changelog**: https://github.com/typescriptlibs/tsl-core-xml/compare/v0.1.2...v0.2.0
+
+
+
 v0.1.2
 ------
 
