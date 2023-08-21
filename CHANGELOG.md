@@ -1,5 +1,5 @@
-XML TypeScript Library: Changelog
-=================================
+Changelog
+=========
 
 
 
