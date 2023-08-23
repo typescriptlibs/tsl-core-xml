@@ -33,9 +33,9 @@ import XMLTag, { isXMLTag } from './XMLTag.js';
 
 
 export interface AttributeTerm {
-    attribute?: string;
-    logic?: string;
-    value?: string;
+    attribute: string;
+    logic: string;
+    value: string;
 }
 
 
@@ -44,6 +44,84 @@ export interface SelectorTerms {
     classes?: Array<string>;
     id?: string;
     tag?: string;
+}
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+
+const spaceRegExp = /\s+/g;
+
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+
+function matchAttributes (
+    attributes?: Record<string, string>,
+    attributeTerms: Array<AttributeTerm> = []
+): boolean {
+
+    if ( !attributes ) {
+        return attributeTerms.length === 0;
+    }
+
+    let attributeValue: string;
+    let termValue: string;
+
+    for ( const attributeTerm of attributeTerms ) {
+        attributeValue = attributes[attributeTerm.attribute];
+        termValue = attributeTerm.value;
+
+        switch ( attributeTerm.logic ) {
+            case '=':
+                return attributeValue === termValue;
+            case '~=':
+                return matchClasses( attributeValue, [termValue] );
+            case '|=':
+                return (
+                    attributeValue === termValue ||
+                    attributeValue.startsWith( termValue + '-' )
+                );
+            case '^=':
+                return attributeValue.startsWith( termValue );
+            case '$=':
+                return attributeValue.endsWith( termValue );
+            case '*=':
+                return attributeValue.includes( termValue );
+            default:
+                return false;
+        }
+    }
+
+    return true;
+}
+
+function matchClasses (
+    className?: string,
+    classNeedles: Array<string> = []
+): boolean {
+
+    if ( !className ) {
+        return classNeedles.length === 0;
+    }
+
+    const classes = className.split( spaceRegExp );
+
+    for ( let i = 0, iEnd = classNeedles.length; i < iEnd; ++i ) {
+        if ( !classes.includes( classNeedles[i] ) ) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 
@@ -82,7 +160,7 @@ export class XMLSelector {
 
             if ( !match ) {
                 continue;
-            } console.log( match );
+            }
 
             terms = {};
 
@@ -184,14 +262,37 @@ export class XMLSelector {
      * List of matching XML tags, or `undefined`.
      */
     public find (
-        nodes: Exclude<XMLTag['innerXML'], undefined>,
+        nodes: Array<XMLNode>,
         terms: SelectorTerms
     ): ( Array<XMLTag> | undefined ) {
         const findings: Array<XMLTag> = [];
 
         for ( const node of nodes ) {
-            if ( isXMLTag( node ) ) {
-                // @todo implement
+            if ( !isXMLTag( node ) ) {
+                continue;
+            }
+            if (
+                (
+                    node.tag === terms.tag ||
+                    terms.tag === '*'
+                ) &&
+                (
+                    !terms.id ||
+                    node.attributes?.id === terms.id
+                ) &&
+                matchClasses( node.attributes?.className, terms.classes ) &&
+                matchAttributes( node.attributes, terms.attributes )
+            ) {
+                findings.push( node );
+            }
+            else if ( node.innerXML ) {
+                const subFindings = this.find( node.innerXML, terms );
+
+                if ( subFindings ) {
+                    for ( const subFinding of subFindings ) {
+                        findings.push( subFinding );
+                    }
+                }
             }
         }
 

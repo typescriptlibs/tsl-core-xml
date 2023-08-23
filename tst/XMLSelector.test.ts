@@ -18,9 +18,11 @@
  * */
 
 
+import { promises as FS } from 'node:fs';
+
 import test from '@typescriptlibs/tst';
 
-import { XMLSelector } from 'tsl-core-xml';
+import { isXMLTag, XMLSelector, XMLNode, XMLTag, XMLTree } from 'tsl-core-xml';
 
 
 /* *
@@ -59,6 +61,31 @@ test( 'Test XMLSelector parse', async ( assert: test.Assert ) => {
                 tag: 'item'
             }
         ]
+    );
+
+} );
+
+
+test( 'Test XMLSelector query', async ( assert: test.Assert ) => {
+    const text = await FS.readFile( 'tst-data/nrkno.xml', { encoding: 'utf8' } );
+    const tree = new XMLTree( text );
+
+    tree.grow();
+
+    const expected: Array<XMLNode> = [];
+    const selector = XMLSelector.parse( 'channel item title' );
+
+    for ( const item of ( tree.roots[1] as any ).innerXML[0].innerXML ) {
+        if ( isXMLTag( item ) && item.tag === 'item' && item.innerXML ) {
+            expected.push( item.innerXML[0] );
+        }
+    }
+
+    assert.ok( selector );
+
+    assert.deepStrictEqual(
+        selector.query( tree.roots ),
+        expected
     );
 
 } );
