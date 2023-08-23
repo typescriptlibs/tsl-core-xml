@@ -66,6 +66,58 @@ test( 'Test XMLSelector parse', async ( assert: test.Assert ) => {
 } );
 
 
+test( 'Test XMLSelector find', async ( assert: test.Assert ) => {
+    const text = await FS.readFile( 'tst-data/samoyee.html', { encoding: 'utf8' } );
+    const tree = new XMLTree( text );
+
+    tree.grow();
+
+    const selector = XMLSelector.parse( 'div#idee.clazz[|class~=myClass][v-html=innerHtml]' );
+
+    assert.ok( selector );
+
+    const selectorTerm = selector.selectors[0];
+
+    assert.deepStrictEqual(
+        selectorTerm,
+        {
+            attributes: [{
+                attribute: ':class',
+                logic: '~=',
+                value: 'myClass'
+            }, {
+                attribute: 'v-html',
+                logic: '=',
+                value: 'innerHtml'
+            }],
+            classes: [
+                'clazz'
+            ],
+            id: 'idee',
+            tag: 'div'
+        }
+    );
+
+    assert.deepStrictEqual(
+        selector.find( tree.roots, selectorTerm ),
+        [{
+            attributes: {
+                ':class': 'myClass',
+                ':visible': 'visible',
+                '@click': "\n    show = false\n    name = 'xxx'\n    $refs.input.focus()\n    ",
+                'v-html': 'innerHtml',
+                'v-if': 'show',
+                class: 'clazz',
+                id: 'idee',
+                style: 'display: block'
+            },
+            tag: 'div'
+        }]
+    );
+
+} );
+
+
 test( 'Test XMLSelector query', async ( assert: test.Assert ) => {
     const text = await FS.readFile( 'tst-data/nrkno.xml', { encoding: 'utf8' } );
     const tree = new XMLTree( text );

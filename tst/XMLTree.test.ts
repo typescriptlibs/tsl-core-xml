@@ -143,6 +143,7 @@ test( 'Test XMLTree on HTML', async ( assert: test.Assert ) => {
                     "v-if": "show",
                     "class": "clazz",
                     ":class": "myClass",
+                    "id": "idee",
                     ":visible": "visible",
                     "v-html": "innerHtml",
                     "@click": "\n    show = false\n    name = 'xxx'\n    $refs.input.focus()\n    ",

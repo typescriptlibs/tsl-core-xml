@@ -105,15 +105,15 @@ function matchAttributes (
 }
 
 function matchClasses (
-    className?: string,
+    classValue?: string,
     classNeedles: Array<string> = []
 ): boolean {
 
-    if ( !className ) {
+    if ( !classValue ) {
         return classNeedles.length === 0;
     }
 
-    const classes = className.split( spaceRegExp );
+    const classes = classValue.split( spaceRegExp );
 
     for ( let i = 0, iEnd = classNeedles.length; i < iEnd; ++i ) {
         if ( !classes.includes( classNeedles[i] ) ) {
@@ -172,7 +172,11 @@ export class XMLSelector {
             }
 
             if ( match[2] ) {
-                const classesStrings = match[2].split( /\.+/g );
+                terms.id = match[2].substring( 1 );
+            }
+
+            if ( match[3] ) {
+                const classesStrings = match[3].split( /\.+/g );
                 const classes: Array<string> = [];
 
                 for ( let j = 0, jEnd = classesStrings.length; j < jEnd; ++j ) {
@@ -182,10 +186,6 @@ export class XMLSelector {
                 }
 
                 terms.classes = classes;
-            }
-
-            if ( match[3] ) {
-                terms.id = match[3].substring( 1 );
             }
 
             if ( match[4] ) {
@@ -280,7 +280,7 @@ export class XMLSelector {
                     !terms.id ||
                     node.attributes?.id === terms.id
                 ) &&
-                matchClasses( node.attributes?.className, terms.classes ) &&
+                matchClasses( node.attributes?.['class'], terms.classes ) &&
                 matchAttributes( node.attributes, terms.attributes )
             ) {
                 findings.push( node );

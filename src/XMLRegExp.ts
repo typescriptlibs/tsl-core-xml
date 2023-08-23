@@ -89,11 +89,11 @@ export const XMLRegExp = {
     /**
      * RegExp pattern for XML selector.
      * - Group 1: Tag name.
-     * - Group 2: Class attribute.
-     * - Group 3: ID attribute.
+     * - Group 2: ID attribute.
+     * - Group 3: Class attribute.
      * - Group 4: Other attributes.
      */
-    selector: /(\*|[\w\-|]+)(\.[\w\-\.]+)?(#[\w\-]*)?((?:\[[^\[\]]+\])+)?/su,
+    selector: /(\*|[\w\-|]+)(#[\w\-]*)?(\.[\w\-\.]+)?((?:\[[^\[\]]+\])+)?/su,
 
 
 };
