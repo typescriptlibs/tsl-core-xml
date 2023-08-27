@@ -8,11 +8,13 @@ author:
 
 header_pages:
   - www/downloads.md
+  - CHANGELOG.md
   - SECURITY.md
   - LICENSE.md
   - www/all-libraries.md
 
 include:
+  - CHANGELOG.md
   - LICENSE.md
   - README.md
   - SECURITY.md
