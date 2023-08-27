@@ -18,9 +18,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("EscapeEntities/XMLEscapeEntities", ["require", "exports"], function (require, exports) {
@@ -52,9 +52,9 @@ define("EscapeEntities/XMLEscapeEntities", ["require", "exports"], function (req
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("EscapeEntities/index", ["require", "exports", "EscapeEntities/XMLEscapeEntities"], function (require, exports, XMLEscapeEntities_js_1) {
@@ -68,9 +68,9 @@ define("EscapeEntities/index", ["require", "exports", "EscapeEntities/XMLEscapeE
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("XMLRegExp", ["require", "exports"], function (require, exports) {
@@ -155,9 +155,9 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("Escaping", ["require", "exports", "EscapeEntities/index", "XMLRegExp"], function (require, exports, EscapeEntities, XMLRegExp_js_1) {
@@ -223,9 +223,9 @@ define("Escaping", ["require", "exports", "EscapeEntities/index", "XMLRegExp"], 
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("XMLComment", ["require", "exports"], function (require, exports) {
@@ -250,9 +250,9 @@ define("XMLComment", ["require", "exports"], function (require, exports) {
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("XMLTag", ["require", "exports"], function (require, exports) {
@@ -277,9 +277,9 @@ define("XMLTag", ["require", "exports"], function (require, exports) {
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("XMLNode", ["require", "exports"], function (require, exports) {
@@ -302,9 +302,9 @@ define("XMLNode", ["require", "exports"], function (require, exports) {
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("XMLCdata", ["require", "exports"], function (require, exports) {
@@ -329,9 +329,9 @@ define("XMLCdata", ["require", "exports"], function (require, exports) {
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (require, exports, Escaping_js_1, XMLRegExp_js_2) {
@@ -620,9 +620,9 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("XMLSelector", ["require", "exports", "XMLRegExp", "XMLTag"], function (require, exports, XMLRegExp_js_3, XMLTag_js_1) {
@@ -873,9 +873,9 @@ define("XMLSelector", ["require", "exports", "XMLRegExp", "XMLTag"], function (r
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLSelector", "XMLScanner", "XMLTag"], function (require, exports, XMLCdata_js_1, XMLNode_js_1, XMLSelector_js_1, XMLScanner_js_1, XMLTag_js_2) {
@@ -1003,9 +1003,9 @@ define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLSelector", "
 
   Copyright (c) TypeScriptLibs and Contributors
 
-  Licensed under the MIT License; you may not use this file except in
-  compliance with the License. You may obtain a copy of the MIT License at
-  https://typescriptlibs.org/LICENSE.txt
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 define("index", ["require", "exports", "XMLScanner", "Escaping", "XMLCdata", "XMLComment", "XMLNode", "XMLRegExp", "XMLScanner", "XMLSelector", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, Escaping_js_2, XMLCdata_js_2, XMLComment_js_1, XMLNode_js_2, XMLRegExp_js_4, XMLScanner_js_3, XMLSelector_js_2, XMLTag_js_3, XMLTree_js_1) {

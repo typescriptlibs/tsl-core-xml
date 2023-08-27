@@ -5,9 +5,9 @@ declare module "EscapeEntities/XMLEscapeEntities" {
     
       Copyright (c) TypeScriptLibs and Contributors
     
-      Licensed under the MIT License; you may not use this file except in
-      compliance with the License. You may obtain a copy of the MIT License at
-      https://typescriptlibs.org/LICENSE.txt
+      Licensed under the MIT License.
+      You may not use this file except in compliance with the License.
+      You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     export const XMLEscapeEntities: Record<string, string>;
@@ -20,9 +20,9 @@ declare module "EscapeEntities/index" {
     
       Copyright (c) TypeScriptLibs and Contributors
     
-      Licensed under the MIT License; you may not use this file except in
-      compliance with the License. You may obtain a copy of the MIT License at
-      https://typescriptlibs.org/LICENSE.txt
+      Licensed under the MIT License.
+      You may not use this file except in compliance with the License.
+      You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     export * from "EscapeEntities/XMLEscapeEntities";
@@ -34,9 +34,9 @@ declare module "XMLRegExp" {
     
       Copyright (c) TypeScriptLibs and Contributors
     
-      Licensed under the MIT License; you may not use this file except in
-      compliance with the License. You may obtain a copy of the MIT License at
-      https://typescriptlibs.org/LICENSE.txt
+      Licensed under the MIT License.
+      You may not use this file except in compliance with the License.
+      You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     /**
@@ -111,6 +111,17 @@ declare module "Escaping" {
     export default _default;
 }
 declare module "XMLComment" {
+    /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+    
+      XML TypeScript Library
+    
+      Copyright (c) TypeScriptLibs and Contributors
+    
+      Licensed under the MIT License.
+      You may not use this file except in compliance with the License.
+      You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
+    
+    \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     /**
      * Represents an XML comment node.
      */
@@ -138,9 +149,9 @@ declare module "XMLTag" {
     
       Copyright (c) TypeScriptLibs and Contributors
     
-      Licensed under the MIT License; you may not use this file except in
-      compliance with the License. You may obtain a copy of the MIT License at
-      https://typescriptlibs.org/LICENSE.txt
+      Licensed under the MIT License.
+      You may not use this file except in compliance with the License.
+      You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     import XMLNode from "XMLNode";
@@ -183,9 +194,9 @@ declare module "XMLNode" {
     
       Copyright (c) TypeScriptLibs and Contributors
     
-      Licensed under the MIT License; you may not use this file except in
-      compliance with the License. You may obtain a copy of the MIT License at
-      https://typescriptlibs.org/LICENSE.txt
+      Licensed under the MIT License.
+      You may not use this file except in compliance with the License.
+      You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     import XMLCdata from "XMLCdata";
@@ -324,9 +335,9 @@ declare module "XMLSelector" {
     
       Copyright (c) TypeScriptLibs and Contributors
     
-      Licensed under the MIT License; you may not use this file except in
-      compliance with the License. You may obtain a copy of the MIT License at
-      https://typescriptlibs.org/LICENSE.txt
+      Licensed under the MIT License.
+      You may not use this file except in compliance with the License.
+      You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     import XMLNode from "XMLNode";
@@ -448,9 +459,9 @@ declare module "index" {
     
       Copyright (c) TypeScriptLibs and Contributors
     
-      Licensed under the MIT License; you may not use this file except in
-      compliance with the License. You may obtain a copy of the MIT License at
-      https://typescriptlibs.org/LICENSE.txt
+      Licensed under the MIT License.
+      You may not use this file except in compliance with the License.
+      You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     import XMLScanner from "XMLScanner";
