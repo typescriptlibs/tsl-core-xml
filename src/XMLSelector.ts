@@ -54,7 +54,11 @@ export interface SelectorTerm {
  * */
 
 
-const spaceRegExp = /\s+/g;
+const pipeRegExp = /\|+/gsu;
+
+const pointRegExp = /\.+/gsu;
+
+const spaceRegExp = /\s+/gsu;
 
 
 /* *
@@ -171,7 +175,7 @@ export class XMLSelector {
     public static parse (
         selectorString: string
     ): ( XMLSelector | undefined ) {
-        const selectorsStrings = selectorString.split( /\s+/su );
+        const selectorsStrings = selectorString.split( spaceRegExp );
         const selectors: Array<SelectorTerm> = [];
         const selector = new XMLSelector( selectors );
 
@@ -196,7 +200,7 @@ export class XMLSelector {
                 match[1] &&
                 match[1] !== '*'
             ) {
-                terms.tag = match[1].replace( '|', ':' );
+                terms.tag = match[1].replace( pipeRegExp, ':' );
             }
 
             // ID attribute
@@ -206,7 +210,7 @@ export class XMLSelector {
 
             // Class attribute
             if ( match[3] ) {
-                const classesStrings = match[3].split( /\.+/g );
+                const classesStrings = match[3].split( pointRegExp );
                 const classes: Array<string> = [];
 
                 for ( let j = 0, jEnd = classesStrings.length; j < jEnd; ++j ) {
@@ -227,7 +231,7 @@ export class XMLSelector {
 
                 while ( matchAttribute = scanner.exec( match[4] ) ) {
                     attributes.push( {
-                        attribute: matchAttribute[1].replace( '|', ':' ),
+                        attribute: matchAttribute[1].replace( pipeRegExp, ':' ),
                         logic: matchAttribute[2],
                         value: matchAttribute[3]
                     } );
