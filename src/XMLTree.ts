@@ -110,46 +110,46 @@ export class XMLTree {
         roots.length = 0;
         scanner.setText( text );
 
-        let node: ( XMLNode | undefined );
+        let node2: ( XMLNode | undefined );
 
-        scan: while ( node = scanner.scan() ) {
+        scan: while ( node2 = scanner.scan() ) {
 
             // First check for closing tag, then search for opening tag
 
             if (
-                isXMLTag( node ) &&
-                node.tag?.[0] === '/'
+                isXMLTag( node2 ) &&
+                node2.tag?.[0] === '/'
             ) {
-                const openTag = node.tag.substring( 1 );
+                const openTag = node2.tag.substring( 1 );
                 const openStack: Array<XMLNode> = [];
 
                 // Search backwards for opening tag and build stack with nodes
                 // in-between
 
-                for ( let i = roots.length - 1, node2: XMLNode; i >= 0; --i ) {
-                    node2 = roots[i];
+                for ( let i = roots.length - 1, node1: XMLNode; i >= 0; --i ) {
+                    node1 = roots[i];
 
                     // Find opening tag and remove openStack from roots
 
                     if (
-                        isXMLTag( node2 ) &&
-                        node2.tag === openTag &&
-                        !node2.empty &&
-                        !closeStack.includes( node2 )
+                        isXMLTag( node1 ) &&
+                        node1.tag === openTag &&
+                        !node1.empty &&
+                        !closeStack.includes( node1 )
                     ) {
                         if ( openStack.length ) {
-                            node2.innerXML = openStack;
+                            node1.innerXML = openStack;
                             roots.length = roots.length - openStack.length;
                         }
 
-                        closeStack.push( node2 );
+                        closeStack.push( node1 );
 
                         continue scan;
                     }
 
                     // Save node in the openStack for innerXML
 
-                    openStack.unshift( node2 );
+                    openStack.unshift( node1 );
                 }
 
                 // Continue and ignore closing tag
@@ -159,9 +159,9 @@ export class XMLTree {
 
             // Add CDATA as raw string
 
-            if ( isXMLCdata( node ) ) {
+            if ( isXMLCdata( node2 ) ) {
 
-                roots.push( node.cdata );
+                roots.push( node2.cdata );
 
                 continue scan;
             }
@@ -170,13 +170,13 @@ export class XMLTree {
 
             if (
                 !allStringNodes &&
-                isString( node ) &&
-                !node.trim()
+                isString( node2 ) &&
+                !node2.trim()
             ) {
                 continue scan;
             }
 
-            roots.push( node );
+            roots.push( node2 );
         }
 
         return roots;

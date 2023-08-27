@@ -40,7 +40,7 @@ export const XMLRegExp = {
      * - Group 2: Match operation.
      * - Group 3: Match value.
      */
-    attributeSelector: /\[([\w\-|]+?)(=|~=|\|=|\^=|\$=|\*=)([^\[\]]*)\]/gsu,
+    attributeSelector: /\[([^\s\[\]<=>'"]+?)(=|~=|\|=|\^=|\$=|\*=)([^\[\]]*)\]/gsu,
 
     /**
      * RegExp pattern for XML character data.

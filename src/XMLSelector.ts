@@ -39,7 +39,7 @@ export interface AttributeTerm {
 }
 
 
-export interface SelectorTerms {
+export interface SelectorTerm {
     attributes?: Array<AttributeTerm>;
     classes?: Array<string>;
     id?: string;
@@ -73,29 +73,41 @@ function matchAttributes (
         return attributeTerms.length === 0;
     }
 
-    let attributeValue: string;
+    let value: string;
     let termValue: string;
 
     for ( const attributeTerm of attributeTerms ) {
-        attributeValue = attributes[attributeTerm.attribute];
+        value = ( attributes[attributeTerm.attribute] || '' );
         termValue = attributeTerm.value;
 
         switch ( attributeTerm.logic ) {
             case '=':
-                return attributeValue === termValue;
+                if ( value === termValue ) {
+                    continue
+                }
             case '~=':
-                return matchClasses( attributeValue, [termValue] );
+                if ( matchClasses( value, [termValue] ) ) {
+                    continue;
+                }
             case '|=':
-                return (
-                    attributeValue === termValue ||
-                    attributeValue.startsWith( termValue + '-' )
-                );
+                if (
+                    value === termValue ||
+                    value.startsWith( termValue + '-' )
+                ) {
+                    continue;
+                }
             case '^=':
-                return attributeValue.startsWith( termValue );
+                if ( value.startsWith( termValue ) ) {
+                    continue;
+                }
             case '$=':
-                return attributeValue.endsWith( termValue );
+                if ( value.endsWith( termValue ) ) {
+                    continue;
+                }
             case '*=':
-                return attributeValue.includes( termValue );
+                if ( value.includes( termValue ) ) {
+                    continue
+                }
             default:
                 return false;
         }
@@ -145,15 +157,26 @@ export class XMLSelector {
      * */
 
 
+    /**
+     * Parses selector terms in the string and create a XMLSelector instance
+     * with them.
+     *
+     * @param selectorString
+     * String with selector terms to parse.
+     *
+     * @return
+     * The XMLSelector instance with the parsed selector terms, or undefined on
+     * error.
+     */
     public static parse (
         selectorString: string
     ): ( XMLSelector | undefined ) {
         const selectorsStrings = selectorString.split( /\s+/su );
-        const selectors: Array<SelectorTerms> = [];
+        const selectors: Array<SelectorTerm> = [];
         const selector = new XMLSelector( selectors );
 
         let match: ( RegExpMatchArray | null );
-        let terms: SelectorTerms;
+        let terms: SelectorTerm;
 
         for ( let i = 0, iEnd = selectorsStrings.length; i < iEnd; ++i ) {
             match = selectorsStrings[i].match( XMLRegExp.selector );
@@ -162,8 +185,13 @@ export class XMLSelector {
                 continue;
             }
 
+            if ( match[0] !== selectorsStrings[i] ) {
+                return;
+            }
+
             terms = {};
 
+            // Tag name
             if (
                 match[1] &&
                 match[1] !== '*'
@@ -171,10 +199,12 @@ export class XMLSelector {
                 terms.tag = match[1].replace( '|', ':' );
             }
 
+            // ID attribute
             if ( match[2] ) {
                 terms.id = match[2].substring( 1 );
             }
 
+            // Class attribute
             if ( match[3] ) {
                 const classesStrings = match[3].split( /\.+/g );
                 const classes: Array<string> = [];
@@ -188,6 +218,7 @@ export class XMLSelector {
                 terms.classes = classes;
             }
 
+            // Regular attributes
             if ( match[4] ) {
                 const attributes: Array<AttributeTerm> = [];
                 const scanner = new RegExp( XMLRegExp.attributeSelector.source, XMLRegExp.attributeSelector.flags );
@@ -205,7 +236,10 @@ export class XMLSelector {
                 terms.attributes = attributes;
             }
 
-            selectors.push( terms );
+            // Add
+            if ( Object.keys( terms ).length ) {
+                selectors.push( terms );
+            }
         }
 
         return selector;
@@ -224,7 +258,7 @@ export class XMLSelector {
      * Selector to match against.
      */
     public constructor (
-        selectors: Array<SelectorTerms>
+        selectors: Array<SelectorTerm>
     ) {
         this.selectors = selectors;
     }
@@ -239,7 +273,7 @@ export class XMLSelector {
 
     public containsID?: boolean;
 
-    public selectors: Array<SelectorTerms>;
+    public selectors: Array<SelectorTerm>;
 
 
     /* *
@@ -255,38 +289,44 @@ export class XMLSelector {
      * @param nodes
      * List of nodes to search in.
      *
-     * @param terms
-     * Matching terms to search for.
+     * @param term
+     * Matching term to search for.
      *
      * @return
      * List of matching XML tags, or `undefined`.
      */
     public find (
         nodes: Array<XMLNode>,
-        terms: SelectorTerms
+        term: SelectorTerm
     ): ( Array<XMLTag> | undefined ) {
         const findings: Array<XMLTag> = [];
 
         for ( const node of nodes ) {
+
+            // Ignore non-tag nodes
             if ( !isXMLTag( node ) ) {
                 continue;
             }
+
+            // Check for direct match
             if (
                 (
-                    node.tag === terms.tag ||
-                    terms.tag === '*'
+                    node.tag === term.tag ||
+                    term.tag === '*'
                 ) &&
                 (
-                    !terms.id ||
-                    node.attributes?.id === terms.id
+                    !term.id ||
+                    node.attributes?.id === term.id
                 ) &&
-                matchClasses( node.attributes?.['class'], terms.classes ) &&
-                matchAttributes( node.attributes, terms.attributes )
+                matchClasses( node.attributes?.['class'], term.classes ) &&
+                matchAttributes( node.attributes, term.attributes )
             ) {
                 findings.push( node );
             }
+
+            // Continue with search in inner XML nodes
             else if ( node.innerXML ) {
-                const subFindings = this.find( node.innerXML, terms );
+                const subFindings = this.find( node.innerXML, term );
 
                 if ( subFindings ) {
                     for ( const subFinding of subFindings ) {
@@ -294,6 +334,7 @@ export class XMLSelector {
                     }
                 }
             }
+
         }
 
         if ( findings.length ) {

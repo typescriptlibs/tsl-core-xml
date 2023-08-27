@@ -33,7 +33,7 @@ import { isXMLTag, XMLSelector, XMLNode, XMLTag, XMLTree } from 'tsl-core-xml';
 
 
 test( 'Test XMLSelector parse', async ( assert: test.Assert ) => {
-    const selector = XMLSelector.parse( 'rss[xmlns|atom=http://www.w3.org/2005/Atom][version=2.0] channel#news item.a.b.c' );
+    let selector = XMLSelector.parse( 'rss[xmlns|atom=http://www.w3.org/2005/Atom][version=2.0] channel#news item.a.b.c' );
 
     assert.ok( selector );
 
@@ -63,6 +63,28 @@ test( 'Test XMLSelector parse', async ( assert: test.Assert ) => {
         ]
     );
 
+    selector = XMLSelector.parse( 'template div.else-clazz[@click$=true]' );
+
+    assert.ok( selector );
+
+    assert.deepStrictEqual(
+        selector.selectors,
+        [{
+            tag: 'template'
+        },
+        {
+            attributes: [{
+                attribute: '@click',
+                logic: '$=',
+                value: 'true'
+            }],
+            classes: [
+                'else-clazz'
+            ],
+            tag: 'div'
+        }]
+    );
+
 } );
 
 
@@ -72,11 +94,11 @@ test( 'Test XMLSelector find', async ( assert: test.Assert ) => {
 
     tree.grow();
 
-    const selector = XMLSelector.parse( 'div#idee.clazz[|class~=myClass][v-html=innerHtml]' );
+    let selector = XMLSelector.parse( 'div#idee.clazz[|class~=myClass][v-html=innerHtml]' );
 
     assert.ok( selector );
 
-    const selectorTerm = selector.selectors[0];
+    let selectorTerm = selector.selectors[0];
 
     assert.deepStrictEqual(
         selectorTerm,
@@ -113,6 +135,37 @@ test( 'Test XMLSelector find', async ( assert: test.Assert ) => {
             },
             tag: 'div'
         }]
+    );
+
+    selector = XMLSelector.parse( 'div#idee.clazz[|class~=myClass][|visible=hidden]' );
+
+    assert.ok( selector );
+
+    selectorTerm = selector.selectors[0];
+
+    assert.deepStrictEqual(
+        selectorTerm,
+        {
+            attributes: [{
+                attribute: ':class',
+                logic: '~=',
+                value: 'myClass'
+            }, {
+                attribute: ':visible',
+                logic: '=',
+                value: 'hidden'
+            }],
+            classes: [
+                'clazz'
+            ],
+            id: 'idee',
+            tag: 'div'
+        }
+    );
+
+    assert.deepStrictEqual(
+        selector.find( tree.roots, selectorTerm ),
+        undefined
     );
 
 } );
