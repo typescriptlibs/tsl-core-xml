@@ -76,6 +76,7 @@ const tree = new XMLTree(
 let roots = tree.grow();
 
 console.log( JSON.stringify( roots, null, '  ' ) );
+console.log( JSON.stringify( tree.query('body h1') );
 ```
 ``` JSON
 [{
@@ -113,7 +114,14 @@ console.log( JSON.stringify( roots, null, '  ' ) );
   }]
 }]
 ```
-
+``` JSON
+{
+  "tag": "h1",
+  "innerXML": [
+    "My Webpage"
+  ]
+}
+```
 
 
 Use Cases
@@ -163,6 +171,10 @@ representation of XML. The `XMLTree` class can have multiple root nodes in the
 Usually the last root is the one that contains most data. Or you check each root
 if it is a tag by using the `isXMLTag` helper function. Afterwards you can check
 the `XMLTag.innerXML` property for child nodes.
+
+You can also use the `XMLTag.query` function to extract XML nodes with the help
+of selectors as known from CSS. It depends on the selector and use case whether
+this is faster than a custom walk through the tree nodes.
 
 The `XMLTree` uses the `XMLScanner`, which is available via the
 `XMLTree.scanner` property. There you can adjust the `XMLScanner.cdataTags`

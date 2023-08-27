@@ -55,6 +55,7 @@ export class XMLScanner {
         this.cdataTags = ['script', 'style'];
     }
 
+
     /* *
      *
      *  Properties
@@ -376,9 +377,9 @@ export class XMLScanner {
         snippet: string
     ): ( Record<string, string> | undefined ) {
         const attributes: Record<string, string> = {};
+        const scanner = new RegExp( XMLRegExp.attribute.source, XMLRegExp.attribute.flags );
 
         let matchAttribute: ( RegExpExecArray | null );
-        let scanner = new RegExp( XMLRegExp.attribute.source, XMLRegExp.attribute.flags );
 
         while ( matchAttribute = scanner.exec( snippet ) ) {
             attributes[matchAttribute[1]] = unescapeXML(

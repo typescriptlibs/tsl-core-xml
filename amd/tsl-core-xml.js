@@ -95,6 +95,13 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          */
         attribute: /([^'"\s\/<=>]+)(?:=(?:'([^']*)'|"([^"]*)"|([^'"\s\/<=>]+)))?/gsu,
         /**
+         * RegExp pattern for XML attribute selector.
+         * - Group 1: Attribute key.
+         * - Group 2: Match operation.
+         * - Group 3: Match value.
+         */
+        attributeSelector: /\[([^\s\[\]<=>'"]+?)(=|~=|\|=|\^=|\$=|\*=)([^\[\]]*)\]/gsu,
+        /**
          * RegExp pattern for XML character data.
          * - Group 1: CDATA.
          */
@@ -122,10 +129,18 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
          */
         incompleteTag: /<$|<([\/!?]?[\w\-.:]*)\b[^<]*$/su,
         /**
-         * RegExp pattern for XML tag begin.
+         * RegExp pattern for XML open tag.
          * - Group 1: Tag name.
          */
         openTag: /<([!?]?[\w:][\w\-.:]*)\b/su,
+        /**
+         * RegExp pattern for XML selector.
+         * - Group 1: Tag name.
+         * - Group 2: ID attribute.
+         * - Group 3: Class attribute.
+         * - Group 4: Other attributes.
+         */
+        selector: /(\*|[\w\-|]+)(#[\w\-]*)?(\.[\w\-\.]+)?((?:\[[^\[\]]+\])+)?/su,
     };
     /* *
      *
@@ -552,8 +567,8 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
          */
         scanAttributes(snippet) {
             const attributes = {};
+            const scanner = new RegExp(XMLRegExp_js_2.default.attribute.source, XMLRegExp_js_2.default.attribute.flags);
             let matchAttribute;
-            let scanner = new RegExp(XMLRegExp_js_2.default.attribute.source, XMLRegExp_js_2.default.attribute.flags);
             while (matchAttribute = scanner.exec(snippet)) {
                 attributes[matchAttribute[1]] = (0, Escaping_js_1.unescapeXML)(matchAttribute[2] ||
                     matchAttribute[3] ||
@@ -610,7 +625,260 @@ define("XMLScanner", ["require", "exports", "Escaping", "XMLRegExp"], function (
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLScanner", "XMLTag"], function (require, exports, XMLCdata_js_1, XMLNode_js_1, XMLScanner_js_1, XMLTag_js_1) {
+define("XMLSelector", ["require", "exports", "XMLRegExp", "XMLTag"], function (require, exports, XMLRegExp_js_3, XMLTag_js_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.XMLSelector = void 0;
+    /* *
+     *
+     *  Constants
+     *
+     * */
+    const pipeRegExp = /\|+/gsu;
+    const pointRegExp = /\.+/gsu;
+    const spaceRegExp = /\s+/gsu;
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    function matchAttributes(attributes, attributeTerms = []) {
+        if (!attributes) {
+            return attributeTerms.length === 0;
+        }
+        let value;
+        let termValue;
+        for (const attributeTerm of attributeTerms) {
+            value = (attributes[attributeTerm.attribute] || '');
+            termValue = attributeTerm.value;
+            switch (attributeTerm.logic) {
+                case '=':
+                    if (value === termValue) {
+                        continue;
+                    }
+                case '~=':
+                    if (matchClasses(value, [termValue])) {
+                        continue;
+                    }
+                case '|=':
+                    if (value === termValue ||
+                        value.startsWith(termValue + '-')) {
+                        continue;
+                    }
+                case '^=':
+                    if (value.startsWith(termValue)) {
+                        continue;
+                    }
+                case '$=':
+                    if (value.endsWith(termValue)) {
+                        continue;
+                    }
+                case '*=':
+                    if (value.includes(termValue)) {
+                        continue;
+                    }
+                default:
+                    return false;
+            }
+        }
+        return true;
+    }
+    function matchClasses(classValue, classNeedles = []) {
+        if (!classValue) {
+            return classNeedles.length === 0;
+        }
+        const classes = classValue.split(spaceRegExp);
+        for (let i = 0, iEnd = classNeedles.length; i < iEnd; ++i) {
+            if (!classes.includes(classNeedles[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /* *
+     *
+     *  Class
+     *
+     * */
+    /**
+     * Creates a selector to search in a list of XML nodes.
+     */
+    class XMLSelector {
+        /* *
+         *
+         *  Static Functions
+         *
+         * */
+        /**
+         * Parses selector terms in the string and create a XMLSelector instance
+         * with them.
+         *
+         * @param selectorString
+         * String with selector terms to parse.
+         *
+         * @return
+         * The XMLSelector instance with the parsed selector terms, or undefined on
+         * error.
+         */
+        static parse(selectorString) {
+            const selectorsStrings = selectorString.split(spaceRegExp);
+            const selectors = [];
+            const selector = new XMLSelector(selectors);
+            let match;
+            let terms;
+            for (let i = 0, iEnd = selectorsStrings.length; i < iEnd; ++i) {
+                match = selectorsStrings[i].match(XMLRegExp_js_3.default.selector);
+                if (!match) {
+                    continue;
+                }
+                if (match[0] !== selectorsStrings[i]) {
+                    return;
+                }
+                terms = {};
+                // Tag name
+                if (match[1] &&
+                    match[1] !== '*') {
+                    terms.tag = match[1].replace(pipeRegExp, ':');
+                }
+                // ID attribute
+                if (match[2]) {
+                    terms.id = match[2].substring(1);
+                }
+                // Class attribute
+                if (match[3]) {
+                    const classesStrings = match[3].split(pointRegExp);
+                    const classes = [];
+                    for (let j = 0, jEnd = classesStrings.length; j < jEnd; ++j) {
+                        if (classesStrings[j]) {
+                            classes.push(classesStrings[j]);
+                        }
+                    }
+                    terms.classes = classes;
+                }
+                // Regular attributes
+                if (match[4]) {
+                    const attributes = [];
+                    const scanner = new RegExp(XMLRegExp_js_3.default.attributeSelector.source, XMLRegExp_js_3.default.attributeSelector.flags);
+                    let matchAttribute;
+                    while (matchAttribute = scanner.exec(match[4])) {
+                        attributes.push({
+                            attribute: matchAttribute[1].replace(pipeRegExp, ':'),
+                            logic: matchAttribute[2],
+                            value: matchAttribute[3]
+                        });
+                    }
+                    terms.attributes = attributes;
+                }
+                // Add
+                if (Object.keys(terms).length) {
+                    selectors.push(terms);
+                }
+            }
+            return selector;
+        }
+        /* *
+         *
+         *  Constructor
+         *
+         * */
+        /**
+         * @param selector
+         * Selector to match against.
+         */
+        constructor(selectors) {
+            this.selectors = selectors;
+        }
+        /* *
+         *
+         *  Functions
+         *
+         * */
+        /**
+         * Creates a list of XML tags matching the specified terms.
+         *
+         * @param nodes
+         * List of nodes to search in.
+         *
+         * @param term
+         * Matching term to search for.
+         *
+         * @return
+         * List of matching XML tags, or `undefined`.
+         */
+        find(nodes, term) {
+            var _a, _b;
+            const findings = [];
+            for (const node of nodes) {
+                // Ignore non-tag nodes
+                if (!(0, XMLTag_js_1.isXMLTag)(node)) {
+                    continue;
+                }
+                // Check for direct match
+                if ((node.tag === term.tag ||
+                    term.tag === '*') &&
+                    (!term.id ||
+                        ((_a = node.attributes) === null || _a === void 0 ? void 0 : _a.id) === term.id) &&
+                    matchClasses((_b = node.attributes) === null || _b === void 0 ? void 0 : _b['class'], term.classes) &&
+                    matchAttributes(node.attributes, term.attributes)) {
+                    findings.push(node);
+                }
+                // Continue with search in inner XML nodes
+                else if (node.innerXML) {
+                    const subFindings = this.find(node.innerXML, term);
+                    if (subFindings) {
+                        for (const subFinding of subFindings) {
+                            findings.push(subFinding);
+                        }
+                    }
+                }
+            }
+            if (findings.length) {
+                return findings;
+            }
+        }
+        /**
+         * Creates a list of XML tags matching the selector conditions.  The
+         * matching is done using depth-first pre-order traversal of the XML nodes.
+         *
+         * @param nodes
+         * Array of nodes to search in.
+         *
+         * @return
+         * List of matching XML tags, or `undefined`.
+         */
+        query(nodes) {
+            const selectors = this.selectors;
+            let findings;
+            for (let i = 0, iEnd = selectors.length; i < iEnd; ++i) {
+                findings = this.find(nodes, selectors[i]);
+                if (!findings) {
+                    return;
+                }
+                nodes = findings;
+            }
+            return findings;
+        }
+    }
+    exports.XMLSelector = XMLSelector;
+    /* *
+     *
+     *  Default Export
+     *
+     * */
+    exports.default = XMLSelector;
+});
+/*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+
+  XML TypeScript Library
+
+  Copyright (c) TypeScriptLibs and Contributors
+
+  Licensed under the MIT License; you may not use this file except in
+  compliance with the License. You may obtain a copy of the MIT License at
+  https://typescriptlibs.org/LICENSE.txt
+
+\*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLSelector", "XMLScanner", "XMLTag"], function (require, exports, XMLCdata_js_1, XMLNode_js_1, XMLSelector_js_1, XMLScanner_js_1, XMLTag_js_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.XMLTree = void 0;
@@ -644,12 +912,13 @@ define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLScanner", "X
          * Text to grow tree from.
          *
          * @param allStringNodes
-         * Whether to keep all empty string nodes. This might be necessary for
+         * Whether to keep all empty string nodes.  This might be necessary for
          * pre-formatted text like scripts.
          *
          * @return
-         * Tree roots, usually the last one is the main root. Malformatted XML might
-         * have different roots.
+         * Tree roots, usually the last one is the main root.  Malformatted XML
+         * might have different roots.  These roots are also available in the
+         * `roots` property.
          */
         grow(text = this.scanner.getText(), allStringNodes) {
             var _a;
@@ -658,49 +927,66 @@ define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLScanner", "X
             const scanner = this.scanner;
             roots.length = 0;
             scanner.setText(text);
-            let node;
-            scan: while (node = scanner.scan()) {
+            let node2;
+            scan: while (node2 = scanner.scan()) {
                 // First check for closing tag, then search for opening tag
-                if ((0, XMLTag_js_1.isXMLTag)(node) &&
-                    ((_a = node.tag) === null || _a === void 0 ? void 0 : _a[0]) === '/') {
-                    const openTag = node.tag.substring(1);
+                if ((0, XMLTag_js_2.isXMLTag)(node2) &&
+                    ((_a = node2.tag) === null || _a === void 0 ? void 0 : _a[0]) === '/') {
+                    const openTag = node2.tag.substring(1);
                     const openStack = [];
                     // Search backwards for opening tag and build stack with nodes
                     // in-between
-                    for (let i = roots.length - 1, node2; i >= 0; --i) {
-                        node2 = roots[i];
+                    for (let i = roots.length - 1, node1; i >= 0; --i) {
+                        node1 = roots[i];
                         // Find opening tag and remove openStack from roots
-                        if ((0, XMLTag_js_1.isXMLTag)(node2) &&
-                            node2.tag === openTag &&
-                            !node2.empty &&
-                            !closeStack.includes(node2)) {
+                        if ((0, XMLTag_js_2.isXMLTag)(node1) &&
+                            node1.tag === openTag &&
+                            !node1.empty &&
+                            !closeStack.includes(node1)) {
                             if (openStack.length) {
-                                node2.innerXML = openStack;
+                                node1.innerXML = openStack;
                                 roots.length = roots.length - openStack.length;
                             }
-                            closeStack.push(node2);
+                            closeStack.push(node1);
                             continue scan;
                         }
                         // Save node in the openStack for innerXML
-                        openStack.unshift(node2);
+                        openStack.unshift(node1);
                     }
                     // Continue and ignore closing tag
                     continue scan;
                 }
                 // Add CDATA as raw string
-                if ((0, XMLCdata_js_1.isXMLCdata)(node)) {
-                    roots.push(node.cdata);
+                if ((0, XMLCdata_js_1.isXMLCdata)(node2)) {
+                    roots.push(node2.cdata);
                     continue scan;
                 }
                 // Skip empty string nodes
                 if (!allStringNodes &&
-                    (0, XMLNode_js_1.isString)(node) &&
-                    !node.trim()) {
+                    (0, XMLNode_js_1.isString)(node2) &&
+                    !node2.trim()) {
                     continue scan;
                 }
-                roots.push(node);
+                roots.push(node2);
             }
             return roots;
+        }
+        /**
+         * Searches for XML nodes matching the specified selector.  If the selector
+         * contains the `#` character, only the first machting XML node will be
+         * returned.
+         *
+         * @param selector
+         * Selector to match against.
+         *
+         * @return
+         * List of XML nodes matching the selector, or `undefined`.
+         */
+        query(selector) {
+            const xmlSelector = XMLSelector_js_1.default.parse(selector);
+            if (xmlSelector) {
+                return xmlSelector.query(this.roots);
+            }
         }
     }
     exports.XMLTree = XMLTree;
@@ -722,16 +1008,17 @@ define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLScanner", "X
   https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("index", ["require", "exports", "XMLScanner", "Escaping", "XMLCdata", "XMLComment", "XMLNode", "XMLRegExp", "XMLScanner", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, Escaping_js_2, XMLCdata_js_2, XMLComment_js_1, XMLNode_js_2, XMLRegExp_js_3, XMLScanner_js_3, XMLTag_js_2, XMLTree_js_1) {
+define("index", ["require", "exports", "XMLScanner", "Escaping", "XMLCdata", "XMLComment", "XMLNode", "XMLRegExp", "XMLScanner", "XMLSelector", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, Escaping_js_2, XMLCdata_js_2, XMLComment_js_1, XMLNode_js_2, XMLRegExp_js_4, XMLScanner_js_3, XMLSelector_js_2, XMLTag_js_3, XMLTree_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     __exportStar(Escaping_js_2, exports);
     __exportStar(XMLCdata_js_2, exports);
     __exportStar(XMLComment_js_1, exports);
     __exportStar(XMLNode_js_2, exports);
-    __exportStar(XMLRegExp_js_3, exports);
+    __exportStar(XMLRegExp_js_4, exports);
     __exportStar(XMLScanner_js_3, exports);
-    __exportStar(XMLTag_js_2, exports);
+    __exportStar(XMLSelector_js_2, exports);
+    __exportStar(XMLTag_js_3, exports);
     __exportStar(XMLTree_js_1, exports);
     exports.default = XMLScanner_js_2.default;
 });
