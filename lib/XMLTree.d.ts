@@ -22,7 +22,7 @@ export declare class XMLTree {
      */
     readonly roots: Array<XMLNode>;
     /**
-     * Underlying scanner to process text. Can be used to access the last
+     * Underlying scanner to process text.  Can be used to access the last
      * processed text and raw XML.
      */
     readonly scanner: XMLScanner;
@@ -33,13 +33,13 @@ export declare class XMLTree {
      * Text to grow tree from.
      *
      * @param allStringNodes
-     * Whether to keep all empty string nodes. This might be necessary for
+     * Whether to keep all empty string nodes.  This might be necessary for
      * pre-formatted text like scripts.
      *
      * @return
-     * Tree roots, usually the last one is the main root. Malformatted XML might
-     * have different roots. These roots are also available in the `roots`
-     * property.
+     * Tree roots, usually the last one is the main root.  Malformatted XML
+     * might have different roots.  These roots are also available in the
+     * `roots` property.
      */
     grow(text?: string, allStringNodes?: boolean): Array<XMLNode>;
     /**

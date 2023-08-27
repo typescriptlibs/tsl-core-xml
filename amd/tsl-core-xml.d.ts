@@ -52,6 +52,13 @@ declare module "XMLRegExp" {
          */
         attribute: RegExp;
         /**
+         * RegExp pattern for XML attribute selector.
+         * - Group 1: Attribute key.
+         * - Group 2: Match operation.
+         * - Group 3: Match value.
+         */
+        attributeSelector: RegExp;
+        /**
          * RegExp pattern for XML character data.
          * - Group 1: CDATA.
          */
@@ -84,14 +91,13 @@ declare module "XMLRegExp" {
          */
         openTag: RegExp;
         /**
-         * RegExp pattern for XMLTree selector.
+         * RegExp pattern for XML selector.
          * - Group 1: Tag name.
-         * - Group 2: CSS class.
-         * - Group 3: HTML ID attribute.
-         * - Group 4: Attribute name.
-         * - Group 5: Attribute value
+         * - Group 2: ID attribute.
+         * - Group 3: Class attribute.
+         * - Group 4: Other attributes.
          */
-        Selector: RegExp;
+        selector: RegExp;
     };
     export default XMLRegExp;
 }
@@ -325,38 +331,53 @@ declare module "XMLSelector" {
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     import XMLNode from "XMLNode";
     import XMLTag from "XMLTag";
-    export interface SelectorConditions {
-        attribute?: string;
-        attributeMatch?: string;
-        cssClass: string;
-        htmlID?: string;
-        tag: string;
+    export interface AttributeTerm {
+        attribute: string;
+        logic: string;
+        value: string;
+    }
+    export interface SelectorTerm {
+        attributes?: Array<AttributeTerm>;
+        classes?: Array<string>;
+        id?: string;
+        tag?: string;
     }
     /**
      * Creates a selector to search in a list of XML nodes.
      */
     export class XMLSelector {
-        static parse(selector: string): (XMLSelector | undefined);
+        /**
+         * Parses selector terms in the string and create a XMLSelector instance
+         * with them.
+         *
+         * @param selectorString
+         * String with selector terms to parse.
+         *
+         * @return
+         * The XMLSelector instance with the parsed selector terms, or undefined on
+         * error.
+         */
+        static parse(selectorString: string): (XMLSelector | undefined);
         /**
          * @param selector
          * Selector to match against.
          */
-        private constructor();
+        constructor(selectors: Array<SelectorTerm>);
         containsID?: boolean;
-        private selector;
+        selectors: Array<SelectorTerm>;
         /**
-         * Creates a list of XML tags matching the specified conditions.
+         * Creates a list of XML tags matching the specified terms.
          *
          * @param nodes
          * List of nodes to search in.
          *
-         * @param conditions
-         * Conditions to search for.
+         * @param term
+         * Matching term to search for.
          *
          * @return
          * List of matching XML tags, or `undefined`.
          */
-        find(nodes: Exclude<XMLTag['innerXML'], undefined>, conditions: SelectorConditions): (Array<XMLTag> | undefined);
+        find(nodes: Array<XMLNode>, term: SelectorTerm): (Array<XMLTag> | undefined);
         /**
          * Creates a list of XML tags matching the selector conditions.  The
          * matching is done using depth-first pre-order traversal of the XML nodes.
@@ -385,7 +406,7 @@ declare module "XMLTree" {
          */
         readonly roots: Array<XMLNode>;
         /**
-         * Underlying scanner to process text. Can be used to access the last
+         * Underlying scanner to process text.  Can be used to access the last
          * processed text and raw XML.
          */
         readonly scanner: XMLScanner;
@@ -396,13 +417,13 @@ declare module "XMLTree" {
          * Text to grow tree from.
          *
          * @param allStringNodes
-         * Whether to keep all empty string nodes. This might be necessary for
+         * Whether to keep all empty string nodes.  This might be necessary for
          * pre-formatted text like scripts.
          *
          * @return
-         * Tree roots, usually the last one is the main root. Malformatted XML might
-         * have different roots. These roots are also available in the `roots`
-         * property.
+         * Tree roots, usually the last one is the main root.  Malformatted XML
+         * might have different roots.  These roots are also available in the
+         * `roots` property.
          */
         grow(text?: string, allStringNodes?: boolean): Array<XMLNode>;
         /**
@@ -439,6 +460,7 @@ declare module "index" {
     export * from "XMLNode";
     export * from "XMLRegExp";
     export * from "XMLScanner";
+    export * from "XMLSelector";
     export * from "XMLTag";
     export * from "XMLTree";
     export default XMLScanner;
