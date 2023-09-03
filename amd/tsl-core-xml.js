@@ -370,6 +370,19 @@ define("XMLPrinter", ["require", "exports", "Escaping", "XMLTag"], function (req
          *  Functions
          *
          * */
+        /**
+         * Prints XML nodes as a string.
+         *
+         * @param nodes
+         * Node or nodes to print as a string.
+         *
+         * @param noEscape
+         * Disable escaping of XML characters. Requires escaping in node properties
+         * to prevent security risks like XML injections.
+         *
+         * @return
+         * XML nodes as a string.
+         */
         toString(nodes = this.nodes, noEscape) {
             switch (typeof nodes) {
                 case 'object':
@@ -1002,7 +1015,7 @@ define("XMLSelector", ["require", "exports", "XMLRegExp", "XMLTag"], function (r
   You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLSelector", "XMLScanner", "XMLTag"], function (require, exports, XMLCdata_js_1, XMLNode_js_1, XMLSelector_js_1, XMLScanner_js_1, XMLTag_js_3) {
+define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLPrinter", "XMLSelector", "XMLScanner", "XMLTag"], function (require, exports, XMLCdata_js_1, XMLNode_js_1, XMLPrinter_js_1, XMLSelector_js_1, XMLScanner_js_1, XMLTag_js_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.XMLTree = void 0;
@@ -1112,6 +1125,12 @@ define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLSelector", "
                 return xmlSelector.query(this.roots);
             }
         }
+        /**
+         * Converts the tree of nodes back to XML text.
+         */
+        toString() {
+            return (new XMLPrinter_js_1.default(this.roots)).toString();
+        }
     }
     exports.XMLTree = XMLTree;
     /* *
@@ -1132,14 +1151,14 @@ define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLSelector", "
   You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("index", ["require", "exports", "XMLScanner", "Escaping", "XMLCdata", "XMLComment", "XMLNode", "XMLPrinter", "XMLRegExp", "XMLScanner", "XMLSelector", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, Escaping_js_3, XMLCdata_js_2, XMLComment_js_1, XMLNode_js_2, XMLPrinter_js_1, XMLRegExp_js_4, XMLScanner_js_3, XMLSelector_js_2, XMLTag_js_4, XMLTree_js_1) {
+define("index", ["require", "exports", "XMLScanner", "Escaping", "XMLCdata", "XMLComment", "XMLNode", "XMLPrinter", "XMLRegExp", "XMLScanner", "XMLSelector", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, Escaping_js_3, XMLCdata_js_2, XMLComment_js_1, XMLNode_js_2, XMLPrinter_js_2, XMLRegExp_js_4, XMLScanner_js_3, XMLSelector_js_2, XMLTag_js_4, XMLTree_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     __exportStar(Escaping_js_3, exports);
     __exportStar(XMLCdata_js_2, exports);
     __exportStar(XMLComment_js_1, exports);
     __exportStar(XMLNode_js_2, exports);
-    __exportStar(XMLPrinter_js_1, exports);
+    __exportStar(XMLPrinter_js_2, exports);
     __exportStar(XMLRegExp_js_4, exports);
     __exportStar(XMLScanner_js_3, exports);
     __exportStar(XMLSelector_js_2, exports);

@@ -22,6 +22,8 @@ import { isXMLCdata } from './XMLCdata.js';
 
 import XMLNode, { isString } from './XMLNode.js';
 
+import XMLPrinter from './XMLPrinter.js';
+
 import XMLSelector from './XMLSelector.js';
 
 import XMLScanner from './XMLScanner.js';
@@ -202,6 +204,14 @@ export class XMLTree {
         if ( xmlSelector ) {
             return xmlSelector.query( this.roots );
         }
+    }
+
+
+    /**
+     * Converts the tree of nodes back to XML text.
+     */
+    public toString (): string {
+        return ( new XMLPrinter( this.roots ) ).toString();
     }
 
 

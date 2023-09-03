@@ -248,6 +248,19 @@ declare module "XMLPrinter" {
          * Nodes to print.
          */
         readonly nodes: Array<XMLNode>;
+        /**
+         * Prints XML nodes as a string.
+         *
+         * @param nodes
+         * Node or nodes to print as a string.
+         *
+         * @param noEscape
+         * Disable escaping of XML characters. Requires escaping in node properties
+         * to prevent security risks like XML injections.
+         *
+         * @return
+         * XML nodes as a string.
+         */
         toString(nodes?: (XMLNode | Array<XMLNode>), noEscape?: boolean): string;
     }
     export default XMLPrinter;
@@ -470,6 +483,10 @@ declare module "XMLTree" {
          * List of XML nodes matching the selector, or `undefined`.
          */
         query(selector: string): (Array<XMLTag> | undefined);
+        /**
+         * Converts the tree of nodes back to XML text.
+         */
+        toString(): string;
     }
     export default XMLTree;
 }

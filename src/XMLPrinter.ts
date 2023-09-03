@@ -74,6 +74,19 @@ export class XMLPrinter {
      * */
 
 
+    /**
+     * Prints XML nodes as a string.
+     *
+     * @param nodes
+     * Node or nodes to print as a string.
+     *
+     * @param noEscape
+     * Disable escaping of XML characters. Requires escaping in node properties
+     * to prevent security risks like XML injections.
+     *
+     * @return
+     * XML nodes as a string.
+     */
     public toString (
         nodes: ( XMLNode | Array<XMLNode> ) = this.nodes,
         noEscape?: boolean
