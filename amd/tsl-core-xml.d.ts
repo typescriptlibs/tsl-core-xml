@@ -184,6 +184,12 @@ declare module "XMLTag" {
          */
         tag: string;
     }
+    export function isDocumentDeclaration(xmlNode: unknown): xmlNode is XMLTag & {
+        tag: ['!'];
+    };
+    export function isXMLDeclaration(xmlNode: unknown): xmlNode is XMLTag & {
+        tag: ['?'];
+    };
     export function isXMLTag(xmlNode: unknown): xmlNode is XMLTag;
     export default XMLTag;
 }
@@ -230,6 +236,21 @@ declare module "XMLCdata" {
     }
     export function isXMLCdata(xmlNode: unknown): xmlNode is XMLCdata;
     export default XMLCdata;
+}
+declare module "XMLPrinter" {
+    import XMLNode from "XMLNode";
+    /**
+     * Scans text sources for XML tags.
+     */
+    export class XMLPrinter {
+        constructor(nodes: Array<XMLNode>);
+        /**
+         * Nodes to print.
+         */
+        readonly nodes: Array<XMLNode>;
+        toString(nodes?: (XMLNode | Array<XMLNode>), noEscape?: boolean): string;
+    }
+    export default XMLPrinter;
 }
 declare module "XMLScanner" {
     import XMLNode from "XMLNode";
@@ -469,6 +490,7 @@ declare module "index" {
     export * from "XMLCdata";
     export * from "XMLComment";
     export * from "XMLNode";
+    export * from "XMLPrinter";
     export * from "XMLRegExp";
     export * from "XMLScanner";
     export * from "XMLSelector";

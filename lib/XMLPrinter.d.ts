@@ -9,15 +9,16 @@
   You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-import XMLScanner from './XMLScanner.js';
-export * from './Escaping.js';
-export * from './XMLCdata.js';
-export * from './XMLComment.js';
-export * from './XMLNode.js';
-export * from './XMLPrinter.js';
-export * from './XMLRegExp.js';
-export * from './XMLScanner.js';
-export * from './XMLSelector.js';
-export * from './XMLTag.js';
-export * from './XMLTree.js';
-export default XMLScanner;
+import XMLNode from './XMLNode.js';
+/**
+ * Scans text sources for XML tags.
+ */
+export declare class XMLPrinter {
+    constructor(nodes: Array<XMLNode>);
+    /**
+     * Nodes to print.
+     */
+    readonly nodes: Array<XMLNode>;
+    toString(nodes?: (XMLNode | Array<XMLNode>), noEscape?: boolean): string;
+}
+export default XMLPrinter;
