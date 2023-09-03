@@ -54,5 +54,9 @@ export declare class XMLTree {
      * List of XML nodes matching the selector, or `undefined`.
      */
     query(selector: string): (Array<XMLTag> | undefined);
+    /**
+     * Converts the tree of nodes back to XML text.
+     */
+    toString(): string;
 }
 export default XMLTree;

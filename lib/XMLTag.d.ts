@@ -39,5 +39,11 @@ export interface XMLTag {
      */
     tag: string;
 }
+export declare function isDocumentDeclaration(xmlNode: unknown): xmlNode is XMLTag & {
+    tag: ['!'];
+};
+export declare function isXMLDeclaration(xmlNode: unknown): xmlNode is XMLTag & {
+    tag: ['?'];
+};
 export declare function isXMLTag(xmlNode: unknown): xmlNode is XMLTag;
 export default XMLTag;
