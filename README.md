@@ -20,7 +20,7 @@ Table Of Content
 - [Examples](#examples)
   - [XMLTree Example](#xmltree-example)
   - [XMLScanner Example](#xmlscanner-example)
-  - [XMLScanner Example](#xmlprinter-example)
+  - [XMLPrinter Example](#xmlprinter-example)
 - [Use Cases](#use-cases)
   - [Types Of XML Nodes](#types-of-xml-nodes)
   - [Walk On The XML Tree](#walk-on-the-xml-tree)
