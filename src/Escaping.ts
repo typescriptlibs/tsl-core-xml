@@ -127,7 +127,7 @@ export function unescapeXML (
 
 export default {
     escapeXML,
-    sanitizeName: sanitizeTag,
+    sanitizeTag,
     sanitizeXML,
     unescapeXML
 };

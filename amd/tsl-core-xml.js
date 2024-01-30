@@ -263,7 +263,7 @@ define("Escaping", ["require", "exports", "EscapeEntities/index", "XMLRegExp"], 
      * */
     exports.default = {
         escapeXML,
-        sanitizeName: sanitizeTag,
+        sanitizeTag,
         sanitizeXML,
         unescapeXML
     };

@@ -128,7 +128,7 @@ declare module "Escaping" {
     export function unescapeXML(str: string): string;
     const _default_1: {
         escapeXML: typeof escapeXML;
-        sanitizeName: typeof sanitizeTag;
+        sanitizeTag: typeof sanitizeTag;
         sanitizeXML: typeof sanitizeXML;
         unescapeXML: typeof unescapeXML;
     };

@@ -15,7 +15,7 @@ export declare function sanitizeXML(str: string): string;
 export declare function unescapeXML(str: string): string;
 declare const _default: {
     escapeXML: typeof escapeXML;
-    sanitizeName: typeof sanitizeTag;
+    sanitizeTag: typeof sanitizeTag;
     sanitizeXML: typeof sanitizeXML;
     unescapeXML: typeof unescapeXML;
 };
