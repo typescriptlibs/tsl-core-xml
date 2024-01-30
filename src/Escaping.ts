@@ -84,6 +84,7 @@ function escapeToCharacter (
 export function escapeXML (
     str: string
 ): string {
+    str = sanitizeXML( str );
 
     for ( const entry of Object.entries( EscapeEntities.XMLEscapeEntities ) ) {
         if ( str.includes( entry[1] ) ) {
@@ -92,6 +93,21 @@ export function escapeXML (
     }
 
     return str;
+}
+
+
+export function sanitizeTag (
+    str: string
+): string {
+    return str
+        .replace( EscapeEntities.ControlCharacterEntities, '' )
+        .replace( EscapeEntities.XMLCharacterEntities, '' );
+}
+
+export function sanitizeXML (
+    str: string
+): string {
+    return str.replace( EscapeEntities.ControlCharacterEntities, '' );
 }
 
 
@@ -111,5 +127,7 @@ export function unescapeXML (
 
 export default {
     escapeXML,
+    sanitizeTag,
+    sanitizeXML,
     unescapeXML
 };

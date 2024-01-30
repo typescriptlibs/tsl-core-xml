@@ -13,6 +13,25 @@ declare module "EscapeEntities/XMLEscapeEntities" {
     export const XMLEscapeEntities: Record<string, string>;
     export default XMLEscapeEntities;
 }
+declare module "EscapeEntities/XMLSanitizeEntities" {
+    /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+    
+      XML TypeScript Library
+    
+      Copyright (c) TypeScriptLibs and Contributors
+    
+      Licensed under the MIT License.
+      You may not use this file except in compliance with the License.
+      You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
+    
+    \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+    export const XMLCharacterEntities: RegExp;
+    export const ControlCharacterEntities: RegExp;
+    const _default: {
+        ControlCharacterEntities: RegExp;
+    };
+    export default _default;
+}
 declare module "EscapeEntities/index" {
     /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
     
@@ -26,6 +45,7 @@ declare module "EscapeEntities/index" {
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
     export * from "EscapeEntities/XMLEscapeEntities";
+    export * from "EscapeEntities/XMLSanitizeEntities";
 }
 declare module "XMLRegExp" {
     /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
@@ -103,12 +123,16 @@ declare module "XMLRegExp" {
 }
 declare module "Escaping" {
     export function escapeXML(str: string): string;
+    export function sanitizeTag(str: string): string;
+    export function sanitizeXML(str: string): string;
     export function unescapeXML(str: string): string;
-    const _default: {
+    const _default_1: {
         escapeXML: typeof escapeXML;
+        sanitizeTag: typeof sanitizeTag;
+        sanitizeXML: typeof sanitizeXML;
         unescapeXML: typeof unescapeXML;
     };
-    export default _default;
+    export default _default_1;
 }
 declare module "XMLComment" {
     /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
@@ -184,6 +208,12 @@ declare module "XMLTag" {
          */
         tag: string;
     }
+    export function isDocumentDeclaration(xmlNode: unknown): xmlNode is XMLTag & {
+        tag: ['!'];
+    };
+    export function isXMLDeclaration(xmlNode: unknown): xmlNode is XMLTag & {
+        tag: ['?'];
+    };
     export function isXMLTag(xmlNode: unknown): xmlNode is XMLTag;
     export default XMLTag;
 }
@@ -230,6 +260,52 @@ declare module "XMLCdata" {
     }
     export function isXMLCdata(xmlNode: unknown): xmlNode is XMLCdata;
     export default XMLCdata;
+}
+declare module "XMLPrinter" {
+    import XMLNode from "XMLNode";
+    /**
+     * Print options.
+     */
+    export interface XMLPrinterOptions {
+        /**
+         * Disable escaping of XML characters. Requires escaping in node properties
+         * to avoid security risks like XML injections.
+         */
+        noEscaping?: boolean;
+        /**
+         * Print all XML in one line.
+         */
+        noLineBreaks?: boolean;
+    }
+    /**
+     * Scans text sources for XML tags.
+     */
+    export class XMLPrinter {
+        constructor(nodes?: Array<XMLNode>, options?: XMLPrinterOptions);
+        /**
+         * Nodes to print.
+         */
+        readonly nodes: Array<XMLNode>;
+        /**
+         * Print options.
+         */
+        readonly options: XMLPrinterOptions;
+        /**
+         * Prints XML nodes as a string.
+         *
+         * @param nodes
+         * Node or nodes to print as a string.
+         *
+         * @param noEscape
+         * Disable escaping of XML characters. Requires escaping in node properties
+         * to prevent security risks like XML injections.
+         *
+         * @return
+         * XML nodes as a string.
+         */
+        toString(nodes?: (XMLNode | Array<XMLNode>), noEscape?: boolean): string;
+    }
+    export default XMLPrinter;
 }
 declare module "XMLScanner" {
     import XMLNode from "XMLNode";
@@ -449,6 +525,10 @@ declare module "XMLTree" {
          * List of XML nodes matching the selector, or `undefined`.
          */
         query(selector: string): (Array<XMLTag> | undefined);
+        /**
+         * Converts the tree of nodes back to XML text.
+         */
+        toString(): string;
     }
     export default XMLTree;
 }
@@ -464,15 +544,16 @@ declare module "index" {
       You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
     
     \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-    import XMLScanner from "XMLScanner";
+    import XMLTree from "XMLTree";
     export * from "Escaping";
     export * from "XMLCdata";
     export * from "XMLComment";
     export * from "XMLNode";
+    export * from "XMLPrinter";
     export * from "XMLRegExp";
     export * from "XMLScanner";
     export * from "XMLSelector";
     export * from "XMLTag";
     export * from "XMLTree";
-    export default XMLScanner;
+    export default XMLTree;
 }

@@ -10,9 +10,13 @@
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 export declare function escapeXML(str: string): string;
+export declare function sanitizeTag(str: string): string;
+export declare function sanitizeXML(str: string): string;
 export declare function unescapeXML(str: string): string;
 declare const _default: {
     escapeXML: typeof escapeXML;
+    sanitizeTag: typeof sanitizeTag;
+    sanitizeXML: typeof sanitizeXML;
     unescapeXML: typeof unescapeXML;
 };
 export default _default;

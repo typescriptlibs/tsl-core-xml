@@ -4,8 +4,8 @@
         "outDir": "../tst-run",
         "rootDir": "./",
         "paths": {
-            "tsl-core-xml/*": [
-                "../src/*"
+            "tsl-core-xml": [
+                "../src/index"
             ]
         }
     }

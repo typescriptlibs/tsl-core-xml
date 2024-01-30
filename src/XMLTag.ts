@@ -73,6 +73,26 @@ export interface XMLTag {
  * */
 
 
+export function isDocumentDeclaration (
+    xmlNode: unknown
+): xmlNode is XMLTag & { tag: ['!'] } {
+    return (
+        isXMLTag( xmlNode ) &&
+        xmlNode.tag.startsWith( '!' )
+    );
+}
+
+
+export function isXMLDeclaration (
+    xmlNode: unknown
+): xmlNode is XMLTag & { tag: ['?'] } {
+    return (
+        isXMLTag( xmlNode ) &&
+        xmlNode.tag.startsWith( '?' )
+    );
+}
+
+
 export function isXMLTag (
     xmlNode: unknown
 ): xmlNode is XMLTag {

@@ -18,8 +18,9 @@ Table Of Content
 
 
 - [Examples](#examples)
-  - [XMLScanner Example](#xmlscanner-example)
   - [XMLTree Example](#xmltree-example)
+  - [XMLScanner Example](#xmlscanner-example)
+  - [XMLPrinter Example](#xmlprinter-example)
 - [Use Cases](#use-cases)
   - [Types Of XML Nodes](#types-of-xml-nodes)
   - [Walk On The XML Tree](#walk-on-the-xml-tree)
@@ -29,39 +30,6 @@ Table Of Content
 
 Examples
 --------
-
-
-### XMLScanner Example
-
-``` TypeScript
-const scanner = new XMLScanner(
-    '<!DOCTYPE html>' +
-    '<html lang="en"><head><title>My Webpage</title></head>' +
-    '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
-);
-
-let node: ( XMLNode | undefined );
-
-while ( node = scanner.scan() ) {
-    console.log( node );
-}
-```
-``` JavaScript
-{ tag: "!DOCTYPE", attributes: { html: "" } }
-{ tag: "html", attributes: { lang: "en" } }
-{ tag: "head" }
-{ tag: "title" }
-"My Webpage"
-{ tag: "/title" }
-{ tag: "/head" }
-{ tag: "body", attributes: { style: "background:#9CF" } }
-{ tag: "h1" }
-"My Webpage"
-{ tag: "/h1" }
-{ tag: "hr", empty: true }
-{ tag: "/body" }
-{ tag: "/html" }
-```
 
 
 ### XMLTree Example
@@ -75,8 +43,16 @@ const tree = new XMLTree(
 
 let roots = tree.grow();
 
-console.log( JSON.stringify( roots, null, '  ' ) );
 console.log( JSON.stringify( tree.query('body h1') );
+console.log( JSON.stringify( roots, null, '  ' ) );
+```
+``` JSON
+{
+  "tag": "h1",
+  "innerXML": [
+    "My Webpage"
+  ]
+}
 ```
 ``` JSON
 [{
@@ -114,14 +90,55 @@ console.log( JSON.stringify( tree.query('body h1') );
   }]
 }]
 ```
-``` JSON
-{
-  "tag": "h1",
-  "innerXML": [
-    "My Webpage"
-  ]
+
+
+### XMLScanner Example
+
+``` TypeScript
+const scanner = new XMLScanner(
+    '<!DOCTYPE html>' +
+    '<html lang="en"><head><title>My Webpage</title></head>' +
+    '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
+);
+
+let node: ( XMLNode | undefined );
+
+while ( node = scanner.scan() ) {
+    console.log( node );
 }
 ```
+``` JavaScript
+{ tag: "!DOCTYPE", attributes: { html: "" } }
+{ tag: "html", attributes: { lang: "en" } }
+{ tag: "head" }
+{ tag: "title" }
+"My Webpage"
+{ tag: "/title" }
+{ tag: "/head" }
+{ tag: "body", attributes: { style: "background:#9CF" } }
+{ tag: "h1" }
+"My Webpage"
+{ tag: "/h1" }
+{ tag: "hr", empty: true }
+{ tag: "/body" }
+{ tag: "/html" }
+```
+
+
+### XMLPrinter Example
+
+``` TypeScript
+const printer = new XMLPrinter( [
+    { tag: "!DOCTYPE", attributes: { html: "" } },
+    { tag: "html", attributes: { lang: "en" } }
+]);
+
+console.log( printer.toString() );
+```
+``` HTML
+<!DOCTYPE html=""><html></html>
+```
+
 
 
 Use Cases
