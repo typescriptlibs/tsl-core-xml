@@ -3,6 +3,16 @@ Changelog
 
 
 
+v0.3.0
+------
+
+* XMLSelector
+* XMLPrinter
+
+**Full Changelog**: https://github.com/typescriptlibs/tsl-core-xml/compare/v0.2.0...v0.3.0
+
+
+
 v0.2.0
 ------
 
