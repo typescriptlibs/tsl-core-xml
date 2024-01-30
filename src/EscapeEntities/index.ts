@@ -11,3 +11,4 @@
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 
 export * from './XMLEscapeEntities.js';
+export * from './XMLSanitizeEntities.js';

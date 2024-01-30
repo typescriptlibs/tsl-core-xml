@@ -10,7 +10,23 @@
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 
-import XMLScanner from './XMLScanner.js';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+
+import XMLTree from './XMLTree.js';
+
+
+/* *
+ *
+ *  Exports
+ *
+ * */
+
 
 export * from './Escaping.js';
 export * from './XMLCdata.js';
@@ -23,4 +39,12 @@ export * from './XMLSelector.js';
 export * from './XMLTag.js';
 export * from './XMLTree.js';
 
-export default XMLScanner;
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+
+export default XMLTree;

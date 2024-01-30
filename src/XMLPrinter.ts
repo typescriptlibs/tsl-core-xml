@@ -18,13 +18,37 @@
  * */
 
 
-import { escapeXML } from "./Escaping.js";
-
-import XMLRegExp from "./XMLRegExp.js";
+import { escapeXML, sanitizeTag, sanitizeXML } from "./Escaping.js";
 
 import XMLNode from './XMLNode.js';
 
-import XMLTag, { isDocumentDeclaration, isXMLDeclaration } from './XMLTag.js';
+import { isDocumentDeclaration, isXMLDeclaration } from './XMLTag.js';
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+
+/**
+ * Print options.
+ */
+export interface XMLPrinterOptions {
+
+    /**
+     * Disable escaping of XML characters. Requires escaping in node properties
+     * to avoid security risks like XML injections.
+     */
+    noEscaping?: boolean;
+
+    /**
+     * Print all XML in one line.
+     */
+    noLineBreaks?: boolean;
+
+}
 
 
 /* *
@@ -48,9 +72,11 @@ export class XMLPrinter {
 
 
     public constructor (
-        nodes: Array<XMLNode>
+        nodes: Array<XMLNode> = [],
+        options: XMLPrinterOptions = {}
     ) {
         this.nodes = nodes;
+        this.options = options;
     }
 
 
@@ -65,6 +91,12 @@ export class XMLPrinter {
      * Nodes to print.
      */
     public readonly nodes: Array<XMLNode>;
+
+
+    /**
+     * Print options.
+     */
+    public readonly options: XMLPrinterOptions;
 
 
     /* *
@@ -106,7 +138,7 @@ export class XMLPrinter {
 
                     return str;
                 }
-                else if ( nodes.tag ) {
+                else if ( typeof nodes.tag === 'string' ) {
                     const attributes = nodes.attributes || {};
                     const attributeKeys = Object.keys( attributes );
                     const innerXML = nodes.innerXML || [];
@@ -116,15 +148,25 @@ export class XMLPrinter {
 
                     // attributes
                     if ( noEscape ) {
-                        for ( let i = 0, iEnd = attributeKeys.length, key: string; i < iEnd; ++i ) {
+                        for ( let i = 0, iEnd = attributeKeys.length, key: string, value: string; i < iEnd; ++i ) {
                             key = attributeKeys[i];
-                            str += ` ${key}="${attributes[key]}"`;
+                            value = attributes[key];
+                            str += (
+                                value ?
+                                    ` ${sanitizeTag( key )}="${sanitizeXML( value )}"` :
+                                    ` ${sanitizeTag( key )}`
+                            );
                         }
                     }
                     else {
-                        for ( let i = 0, iEnd = attributeKeys.length, key: string; i < iEnd; ++i ) {
+                        for ( let i = 0, iEnd = attributeKeys.length, key: string, value: string; i < iEnd; ++i ) {
                             key = attributeKeys[i];
-                            str += ` ${key}="${escapeXML( attributes[key] )}"`;
+                            value = attributes[key];
+                            str += (
+                                value ?
+                                    ` ${sanitizeTag( key )}="${escapeXML( value )}"` :
+                                    ` ${sanitizeTag( key )}`
+                            );
                         }
                     }
 
@@ -148,20 +190,20 @@ export class XMLPrinter {
                     // close
                     str += `</${nodes.tag}>`;
 
-                    return str;
+                    return sanitizeXML( str );
                 }
-                else if ( nodes.comment ) {
+                else if ( typeof nodes.comment === 'string' ) {
                     // comment
-                    return `<!--${nodes.comment}-->`;
+                    return `<!--${sanitizeXML( nodes.comment )}-->`;
                 }
-                else {
+                else if ( typeof nodes.cdata === 'string' ) {
                     // cdata
-                    return `<![CDATA[${nodes.cdata}]]>`;
+                    return `<![CDATA[${sanitizeXML( nodes.cdata )}]]>`;
                 }
             default:
                 // text
                 if ( noEscape ) {
-                    return nodes.toString();
+                    return sanitizeXML( nodes.toString() );
                 }
                 else {
                     return escapeXML( nodes );

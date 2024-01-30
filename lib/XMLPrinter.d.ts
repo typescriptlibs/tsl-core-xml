@@ -11,14 +11,32 @@
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
 import XMLNode from './XMLNode.js';
 /**
+ * Print options.
+ */
+export interface XMLPrinterOptions {
+    /**
+     * Disable escaping of XML characters. Requires escaping in node properties
+     * to avoid security risks like XML injections.
+     */
+    noEscaping?: boolean;
+    /**
+     * Print all XML in one line.
+     */
+    noLineBreaks?: boolean;
+}
+/**
  * Scans text sources for XML tags.
  */
 export declare class XMLPrinter {
-    constructor(nodes: Array<XMLNode>);
+    constructor(nodes?: Array<XMLNode>, options?: XMLPrinterOptions);
     /**
      * Nodes to print.
      */
     readonly nodes: Array<XMLNode>;
+    /**
+     * Print options.
+     */
+    readonly options: XMLPrinterOptions;
     /**
      * Prints XML nodes as a string.
      *

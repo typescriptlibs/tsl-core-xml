@@ -9,7 +9,7 @@
   You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-import XMLScanner from './XMLScanner.js';
+import XMLTree from './XMLTree.js';
 export * from './Escaping.js';
 export * from './XMLCdata.js';
 export * from './XMLComment.js';
@@ -20,4 +20,4 @@ export * from './XMLScanner.js';
 export * from './XMLSelector.js';
 export * from './XMLTag.js';
 export * from './XMLTree.js';
-export default XMLScanner;
+export default XMLTree;

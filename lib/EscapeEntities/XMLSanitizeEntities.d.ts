@@ -9,5 +9,9 @@
   You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-export * from './XMLEscapeEntities.js';
-export * from './XMLSanitizeEntities.js';
+export declare const XMLCharacterEntities: RegExp;
+export declare const ControlCharacterEntities: RegExp;
+declare const _default: {
+    ControlCharacterEntities: RegExp;
+};
+export default _default;

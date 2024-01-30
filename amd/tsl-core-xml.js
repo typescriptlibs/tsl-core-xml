@@ -57,10 +57,48 @@ define("EscapeEntities/XMLEscapeEntities", ["require", "exports"], function (req
   You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("EscapeEntities/index", ["require", "exports", "EscapeEntities/XMLEscapeEntities"], function (require, exports, XMLEscapeEntities_js_1) {
+define("EscapeEntities/XMLSanitizeEntities", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ControlCharacterEntities = exports.XMLCharacterEntities = void 0;
+    /* *
+     *
+     *  Constants
+     *
+     * */
+    exports.XMLCharacterEntities = new RegExp('[\'"\\s\\/<=>]', 'gsu');
+    exports.ControlCharacterEntities = new RegExp('[' +
+        '\\x00-\\x08' +
+        '\\x0b-\\x0c' +
+        '\\x0e-\\x1f' +
+        '\\x7f-\\x84' +
+        '\\x86-\\x9f' +
+        ']', 'gsu');
+    /* *
+     *
+     *  Default Export
+     *
+     * */
+    exports.default = {
+        ControlCharacterEntities: exports.ControlCharacterEntities
+    };
+});
+/*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
+
+  XML TypeScript Library
+
+  Copyright (c) TypeScriptLibs and Contributors
+
+  Licensed under the MIT License.
+  You may not use this file except in compliance with the License.
+  You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
+
+\*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
+define("EscapeEntities/index", ["require", "exports", "EscapeEntities/XMLEscapeEntities", "EscapeEntities/XMLSanitizeEntities"], function (require, exports, XMLEscapeEntities_js_1, XMLSanitizeEntities_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     __exportStar(XMLEscapeEntities_js_1, exports);
+    __exportStar(XMLSanitizeEntities_js_1, exports);
 });
 /*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*\
 
@@ -163,7 +201,7 @@ define("XMLRegExp", ["require", "exports"], function (require, exports) {
 define("Escaping", ["require", "exports", "EscapeEntities/index", "XMLRegExp"], function (require, exports, EscapeEntities, XMLRegExp_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.unescapeXML = exports.escapeXML = void 0;
+    exports.unescapeXML = exports.sanitizeXML = exports.sanitizeTag = exports.escapeXML = void 0;
     /* *
      *
      *  Constants
@@ -195,6 +233,7 @@ define("Escaping", ["require", "exports", "EscapeEntities/index", "XMLRegExp"], 
         return match;
     }
     function escapeXML(str) {
+        str = sanitizeXML(str);
         for (const entry of Object.entries(EscapeEntities.XMLEscapeEntities)) {
             if (str.includes(entry[1])) {
                 str = str.replace(xmlEscapePatterns[entry[1]], `&${entry[0]};`);
@@ -203,6 +242,16 @@ define("Escaping", ["require", "exports", "EscapeEntities/index", "XMLRegExp"], 
         return str;
     }
     exports.escapeXML = escapeXML;
+    function sanitizeTag(str) {
+        return str
+            .replace(EscapeEntities.ControlCharacterEntities, '')
+            .replace(EscapeEntities.XMLCharacterEntities, '');
+    }
+    exports.sanitizeTag = sanitizeTag;
+    function sanitizeXML(str) {
+        return str.replace(EscapeEntities.ControlCharacterEntities, '');
+    }
+    exports.sanitizeXML = sanitizeXML;
     function unescapeXML(str) {
         return str.replace(XMLRegExp_js_1.default.escapeEntity, escapeToCharacter);
     }
@@ -214,6 +263,8 @@ define("Escaping", ["require", "exports", "EscapeEntities/index", "XMLRegExp"], 
      * */
     exports.default = {
         escapeXML,
+        sanitizeName: sanitizeTag,
+        sanitizeXML,
         unescapeXML
     };
 });
@@ -362,8 +413,9 @@ define("XMLPrinter", ["require", "exports", "Escaping", "XMLTag"], function (req
          *  Constructor
          *
          * */
-        constructor(nodes) {
+        constructor(nodes = [], options = {}) {
             this.nodes = nodes;
+            this.options = options;
         }
         /* *
          *
@@ -395,7 +447,7 @@ define("XMLPrinter", ["require", "exports", "Escaping", "XMLTag"], function (req
                         }
                         return str;
                     }
-                    else if (nodes.tag) {
+                    else if (typeof nodes.tag === 'string') {
                         const attributes = nodes.attributes || {};
                         const attributeKeys = Object.keys(attributes);
                         const innerXML = nodes.innerXML || [];
@@ -403,15 +455,21 @@ define("XMLPrinter", ["require", "exports", "Escaping", "XMLTag"], function (req
                         let str = `<${nodes.tag}`;
                         // attributes
                         if (noEscape) {
-                            for (let i = 0, iEnd = attributeKeys.length, key; i < iEnd; ++i) {
+                            for (let i = 0, iEnd = attributeKeys.length, key, value; i < iEnd; ++i) {
                                 key = attributeKeys[i];
-                                str += ` ${key}="${attributes[key]}"`;
+                                value = attributes[key];
+                                str += (value ?
+                                    ` ${(0, Escaping_js_1.sanitizeTag)(key)}="${(0, Escaping_js_1.sanitizeXML)(value)}"` :
+                                    ` ${(0, Escaping_js_1.sanitizeTag)(key)}`);
                             }
                         }
                         else {
-                            for (let i = 0, iEnd = attributeKeys.length, key; i < iEnd; ++i) {
+                            for (let i = 0, iEnd = attributeKeys.length, key, value; i < iEnd; ++i) {
                                 key = attributeKeys[i];
-                                str += ` ${key}="${(0, Escaping_js_1.escapeXML)(attributes[key])}"`;
+                                value = attributes[key];
+                                str += (value ?
+                                    ` ${(0, Escaping_js_1.sanitizeTag)(key)}="${(0, Escaping_js_1.escapeXML)(value)}"` :
+                                    ` ${(0, Escaping_js_1.sanitizeTag)(key)}`);
                             }
                         }
                         // self-closing tags
@@ -431,20 +489,20 @@ define("XMLPrinter", ["require", "exports", "Escaping", "XMLTag"], function (req
                         str += '>' + this.toString(innerXML);
                         // close
                         str += `</${nodes.tag}>`;
-                        return str;
+                        return (0, Escaping_js_1.sanitizeXML)(str);
                     }
-                    else if (nodes.comment) {
+                    else if (typeof nodes.comment === 'string') {
                         // comment
-                        return `<!--${nodes.comment}-->`;
+                        return `<!--${(0, Escaping_js_1.sanitizeXML)(nodes.comment)}-->`;
                     }
-                    else {
+                    else if (typeof nodes.cdata === 'string') {
                         // cdata
-                        return `<![CDATA[${nodes.cdata}]]>`;
+                        return `<![CDATA[${(0, Escaping_js_1.sanitizeXML)(nodes.cdata)}]]>`;
                     }
                 default:
                     // text
                     if (noEscape) {
-                        return nodes.toString();
+                        return (0, Escaping_js_1.sanitizeXML)(nodes.toString());
                     }
                     else {
                         return (0, Escaping_js_1.escapeXML)(nodes);
@@ -1151,19 +1209,29 @@ define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLPrinter", "X
   You can get a copy of the License at https://typescriptlibs.org/LICENSE.txt
 
 \*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*i*/
-define("index", ["require", "exports", "XMLScanner", "Escaping", "XMLCdata", "XMLComment", "XMLNode", "XMLPrinter", "XMLRegExp", "XMLScanner", "XMLSelector", "XMLTag", "XMLTree"], function (require, exports, XMLScanner_js_2, Escaping_js_3, XMLCdata_js_2, XMLComment_js_1, XMLNode_js_2, XMLPrinter_js_2, XMLRegExp_js_4, XMLScanner_js_3, XMLSelector_js_2, XMLTag_js_4, XMLTree_js_1) {
+define("index", ["require", "exports", "XMLTree", "Escaping", "XMLCdata", "XMLComment", "XMLNode", "XMLPrinter", "XMLRegExp", "XMLScanner", "XMLSelector", "XMLTag", "XMLTree"], function (require, exports, XMLTree_js_1, Escaping_js_3, XMLCdata_js_2, XMLComment_js_1, XMLNode_js_2, XMLPrinter_js_2, XMLRegExp_js_4, XMLScanner_js_2, XMLSelector_js_2, XMLTag_js_4, XMLTree_js_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    /* *
+     *
+     *  Exports
+     *
+     * */
     __exportStar(Escaping_js_3, exports);
     __exportStar(XMLCdata_js_2, exports);
     __exportStar(XMLComment_js_1, exports);
     __exportStar(XMLNode_js_2, exports);
     __exportStar(XMLPrinter_js_2, exports);
     __exportStar(XMLRegExp_js_4, exports);
-    __exportStar(XMLScanner_js_3, exports);
+    __exportStar(XMLScanner_js_2, exports);
     __exportStar(XMLSelector_js_2, exports);
     __exportStar(XMLTag_js_4, exports);
-    __exportStar(XMLTree_js_1, exports);
-    exports.default = XMLScanner_js_2.default;
+    __exportStar(XMLTree_js_2, exports);
+    /* *
+     *
+     *  Default Export
+     *
+     * */
+    exports.default = XMLTree_js_1.default;
 });
 //# sourceMappingURL=tsl-core-xml.js.map

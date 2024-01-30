@@ -22,7 +22,7 @@ import { promises as FS } from 'node:fs';
 
 import test from '@typescriptlibs/tst';
 
-import { XMLPrinter, XMLTree } from 'tsl-core-xml';
+import { XMLNode, XMLPrinter, XMLTree } from 'tsl-core-xml';
 
 
 /* *
@@ -64,6 +64,46 @@ test( 'Test XMLPrinter with XMLTree', async ( assert: test.Assert ) => {
     assert.ok(
         noErrors,
         'Printed XML should be equal to original XML.'
+    );
+
+} );
+
+
+test( 'Test XMLPrinter with malicious code', async ( assert: test.Assert ) => {
+    const xml: Array<XMLNode> = [{
+        tag: 'img',
+        attributes: {
+            'alt': '\"<script>alert(\'Hello, world!\');</script>'
+        },
+        empty: true
+    }, {
+        tag: 'h2',
+        attributes: {
+            '><script': 'alert(\'Catch\\\'em all\')',
+            '</script>': ''
+        },
+        innerXML: ['Hello, world!']
+    }, {
+        tag: '\x00p'
+    }];
+    const printer = new XMLPrinter();
+
+    assert.strictEqual(
+        printer.toString( xml[0] ),
+        '<img alt="&quot;&lt;script&gt;alert(&apos;Hello, world!&apos;);&lt;/script&gt;" />',
+        'Printed img should be correctly escaped.'
+    );
+
+    assert.strictEqual(
+        printer.toString( xml[1] ),
+        '<h2 script="alert(&apos;Catch\\&apos;em all&apos;)" script>Hello, world!</h2>',
+        'Printed h2 should be correctly escaped.'
+    );
+
+    assert.strictEqual(
+        printer.toString( xml[2] ),
+        '<p></p>',
+        'Printed p should be correctly sanitized.'
     );
 
 } );
