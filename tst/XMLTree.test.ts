@@ -99,7 +99,7 @@ test( 'Test XMLTree on Atom RSS', async ( assert: test.Assert ) => {
 
 
 test( 'Test XMLTree on CDATA', async ( assert: test.Assert ) => {
-    const tree = new XMLTree( [
+    const tree = XMLTree.parse( [
         '<script>',
         '<![CDATA[',
         '20<[4]',
@@ -108,7 +108,7 @@ test( 'Test XMLTree on CDATA', async ( assert: test.Assert ) => {
     ].join( '' ) );
 
     assert.deepStrictEqual(
-        tree.grow(),
+        tree.roots,
         [{
             "tag": "script",
             "innerXML": [

@@ -16,6 +16,20 @@ import XMLTag from './XMLTag.js';
  * Scans text sources for XML tags and build a tree.
  */
 export declare class XMLTree {
+    /**
+     * Grows the tree based on all XMLNodes in a given text.
+     *
+     * @param text
+     * Text to grow tree from.
+     *
+     * @param allStringNodes
+     * Whether to keep all empty string nodes.  This might be necessary for
+     * pre-formatted text like scripts.
+     *
+     * @return
+     * Tree with roots, where usually the last root is the main one.
+     */
+    static parse(text?: string, allStringNodes?: boolean): XMLTree;
     constructor(text?: string);
     /**
      * Tree roots after the last grow process.
@@ -27,7 +41,7 @@ export declare class XMLTree {
      */
     readonly scanner: XMLScanner;
     /**
-     * Grows a new tree based on the XMLNodes in a given text.
+     * Grows new tree roots based on all XMLNodes in a given text.
      *
      * @param text
      * Text to grow tree from.

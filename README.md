@@ -35,16 +35,14 @@ Examples
 ### XMLTree Example
 
 ``` TypeScript
-const tree = new XMLTree(
+const tree = XMLTree.parse(
     '<!DOCTYPE html>' +
     '<html lang="en"><head><title>My Webpage</title></head>' +
     '<body style="background:#9CF"><h1>My Webpage</h1><hr /></body></html>'
 );
 
-let roots = tree.grow();
-
 console.log( JSON.stringify( tree.query('body h1') );
-console.log( JSON.stringify( roots, null, '  ' ) );
+console.log( JSON.stringify( tree.roots, null, '  ' ) );
 ```
 ``` JSON
 {

@@ -1088,6 +1088,29 @@ define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLPrinter", "X
     class XMLTree {
         /* *
          *
+         *  Static Functions
+         *
+         * */
+        /**
+         * Grows the tree based on all XMLNodes in a given text.
+         *
+         * @param text
+         * Text to grow tree from.
+         *
+         * @param allStringNodes
+         * Whether to keep all empty string nodes.  This might be necessary for
+         * pre-formatted text like scripts.
+         *
+         * @return
+         * Tree with roots, where usually the last root is the main one.
+         */
+        static parse(text, allStringNodes) {
+            const xmlTree = new XMLTree();
+            xmlTree.grow(text, allStringNodes);
+            return xmlTree;
+        }
+        /* *
+         *
          *  Constructor
          *
          * */
@@ -1101,7 +1124,7 @@ define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLPrinter", "X
          *
          * */
         /**
-         * Grows a new tree based on the XMLNodes in a given text.
+         * Grows new tree roots based on all XMLNodes in a given text.
          *
          * @param text
          * Text to grow tree from.
