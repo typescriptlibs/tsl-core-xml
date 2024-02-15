@@ -3,6 +3,15 @@ Changelog
 
 
 
+v0.3.1
+------
+
+* Add XMLTree.parse for easier access
+
+**Full Changelog**: https://github.com/typescriptlibs/tsl-core-xml/compare/v0.3.0...v0.3.1
+
+
+
 v0.3.0
 ------
 
