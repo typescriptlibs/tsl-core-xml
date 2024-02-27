@@ -12,27 +12,42 @@ This package provides simple ways to parse any XML-like text.
 
 
 
-Table Of Content
+Table of Content
 ----------------
 
-
-
-- [Examples](#examples)
-  - [XMLTree Example](#xmltree-example)
-  - [XMLScanner Example](#xmlscanner-example)
-  - [XMLPrinter Example](#xmlprinter-example)
-- [Use Cases](#use-cases)
-  - [Types Of XML Nodes](#types-of-xml-nodes)
-  - [Walk On The XML Tree](#walk-on-the-xml-tree)
-  - [Read Raw XML](#read-raw-xml)
+- [XMLTree](#xmltree)
+- [XMLTree Example](#xmltree-example)
+- [XMLScanner](#xmlscanner)
+- [XMLScanner Example](#xmlscanner-example)
+- [Types of XML Nodes](#types-of-xml-nodes)
+- [XMLPrinter Example](#xmlprinter-example)
 
 
 
-Examples
---------
+XMLTree
+-------
 
 
-### XMLTree Example
+The XML tree, often also called the DOM (Document Object Model), is the natural
+representation of XML. The `XMLTree` class can have multiple root nodes in the
+`XMLTree.roots` property.
+
+Usually the last root is the one that contains most data. Or you check each root
+if it is a tag by using the `isXMLTag` helper function. Afterwards you can check
+the `XMLTag.innerXML` property for child nodes.
+
+You can also use the `XMLTag.query` function to extract XML nodes with the help
+of selectors as known from CSS. It depends on the selector and use case whether
+this is faster than a custom walk through the tree nodes.
+
+The `XMLTree` uses the `XMLScanner`, which is available via the
+`XMLTree.scanner` property. There you can adjust the `XMLScanner.cdataTags`
+property or the `XMLScanner.scanSize` property for special use cases.
+
+
+
+XMLTree Example
+---------------
 
 ``` TypeScript
 const tree = XMLTree.parse(
@@ -90,7 +105,24 @@ console.log( JSON.stringify( tree.roots, null, '  ' ) );
 ```
 
 
-### XMLScanner Example
+
+XMLScanner
+----------
+
+If XML should be read exactly like it is written, the `XMLScanner` is the class
+to use. It keeps every linebreak and every variant of a closing tag. The only
+things not preserved by the scanner are the surrounding quote characters for
+attribute values.
+
+If you expect text between XML tags or an XML tag itself to be larger than 1 MB,
+then you should increase the value of the `XMLScanner.scanSize` property
+accordingly. If you like to save memory during a scan, you can also decrease the
+scan size.
+
+
+
+XMLScanner Example
+------------------
 
 ``` TypeScript
 const scanner = new XMLScanner(
@@ -123,31 +155,9 @@ while ( node = scanner.scan() ) {
 ```
 
 
-### XMLPrinter Example
 
-``` TypeScript
-const printer = new XMLPrinter( [
-    { tag: "!DOCTYPE", attributes: { html: "" } },
-    { tag: "html", attributes: { lang: "en" } }
-]);
-
-console.log( printer.toString() );
-```
-``` HTML
-<!DOCTYPE html=""><html></html>
-```
-
-
-
-Use Cases
----------
-
-
-In the following you find a list of typical use cases for this library. They
-give you an idea how to use the library and how to work around edge cases.
-
-
-### Types Of XML Nodes
+Types of XML Nodes
+------------------
 
 XML has 7 different types of nodes.
 
@@ -177,33 +187,19 @@ XML has 7 different types of nodes.
     starting with a `?` character. A typical instruction tag is `?xml`.
 
 
-### Walk On The XML Tree
-
-The XML tree, often also called the DOM (Document Object Model), is the natural
-representation of XML. The `XMLTree` class can have multiple root nodes in the
-`XMLTree.roots` property.
-
-Usually the last root is the one that contains most data. Or you check each root
-if it is a tag by using the `isXMLTag` helper function. Afterwards you can check
-the `XMLTag.innerXML` property for child nodes.
-
-You can also use the `XMLTag.query` function to extract XML nodes with the help
-of selectors as known from CSS. It depends on the selector and use case whether
-this is faster than a custom walk through the tree nodes.
-
-The `XMLTree` uses the `XMLScanner`, which is available via the
-`XMLTree.scanner` property. There you can adjust the `XMLScanner.cdataTags`
-property or the `XMLScanner.scanSize` property for special use cases.
 
 
-### Read Raw XML
+XMLPrinter Example
+------------------
 
-If XML should be read exactly like it is written, then `XMLScanner` is the class
-to go with. It keeps every linebreak and every variant of a closing tag. The
-only things not preserved by the scanner are the surrounding quote characters
-for attribute values.
+``` TypeScript
+const printer = new XMLPrinter( [
+    { tag: "!DOCTYPE", attributes: { html: "" } },
+    { tag: "html", attributes: { lang: "en" } }
+]);
 
-If you expect text between XML tags or an XML tag itself to be larger than 1 MB,
-then you should increase the value of the `XMLScanner.scanSize` property
-accordingly. If you like to save memory during a scan, you can also decrease the
-scan size.
+console.log( printer.toString() );
+```
+``` HTML
+<!DOCTYPE html=""><html></html>
+```
