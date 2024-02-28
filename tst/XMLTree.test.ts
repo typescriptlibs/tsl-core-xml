@@ -219,7 +219,7 @@ test( 'Test XMLTree on HTML', async ( assert: test.Assert ) => {
 
     assert.deepStrictEqual(
         tree.query( 'template div.else-clazz[@click$=true]' ),
-        undefined,
+        [],
         'Query should not match any div node.'
     );
 

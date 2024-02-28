@@ -441,10 +441,12 @@ declare module "XMLSelector" {
          * String with selector terms to parse.
          *
          * @return
-         * The XMLSelector instance with the parsed selector terms, or undefined on
-         * error.
+         * The XMLSelector instance with the parsed selector terms.
+         *
+         * @throws
+         * SyntaxError, if unexpected patterns in selector terms are found.
          */
-        static parse(selectorString: string): (XMLSelector | undefined);
+        static parse(selectorString: string): XMLSelector;
         /**
          * @param selector
          * Selector to match against.
@@ -462,9 +464,9 @@ declare module "XMLSelector" {
          * Matching term to search for.
          *
          * @return
-         * List of matching XML tags, or `undefined`.
+         * List of matching XML tags.
          */
-        find(nodes: Array<XMLNode>, term: SelectorTerm): (Array<XMLTag> | undefined);
+        find(nodes: Array<XMLNode>, term: SelectorTerm): Array<XMLTag>;
         /**
          * Creates a list of XML tags matching the selector conditions.  The
          * matching is done using depth-first pre-order traversal of the XML nodes.
@@ -473,9 +475,9 @@ declare module "XMLSelector" {
          * Array of nodes to search in.
          *
          * @return
-         * List of matching XML tags, or `undefined`.
+         * List of matching XML tags.
          */
-        query(nodes: Array<XMLNode>): (Array<XMLTag> | undefined);
+        query(nodes: Array<XMLNode>): Array<XMLTag>;
     }
     export default XMLSelector;
 }
@@ -536,9 +538,12 @@ declare module "XMLTree" {
          * Selector to match against.
          *
          * @return
-         * List of XML nodes matching the selector, or `undefined`.
+         * List of XML nodes matching the selector.
+         *
+         * @throws
+         * SyntaxError, if unexpected patterns in selector terms are found.
          */
-        query(selector: string): (Array<XMLTag> | undefined);
+        query(selector: string): Array<XMLTag>;
         /**
          * Converts the tree of nodes back to XML text.
          */

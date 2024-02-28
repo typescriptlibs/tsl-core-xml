@@ -912,8 +912,10 @@ define("XMLSelector", ["require", "exports", "XMLRegExp", "XMLTag"], function (r
          * String with selector terms to parse.
          *
          * @return
-         * The XMLSelector instance with the parsed selector terms, or undefined on
-         * error.
+         * The XMLSelector instance with the parsed selector terms.
+         *
+         * @throws
+         * SyntaxError, if unexpected patterns in selector terms are found.
          */
         static parse(selectorString) {
             const selectorsStrings = selectorString.split(spaceRegExp);
@@ -923,11 +925,9 @@ define("XMLSelector", ["require", "exports", "XMLRegExp", "XMLTag"], function (r
             let terms;
             for (let i = 0, iEnd = selectorsStrings.length; i < iEnd; ++i) {
                 match = selectorsStrings[i].match(XMLRegExp_js_3.default.selector);
-                if (!match) {
-                    continue;
-                }
-                if (match[0] !== selectorsStrings[i]) {
-                    return;
+                if (!match ||
+                    match[0] !== selectorsStrings[i]) {
+                    throw new SyntaxError('Unexpected pattern\n' + selectorsStrings[i]);
                 }
                 terms = {};
                 // Tag name
@@ -998,7 +998,7 @@ define("XMLSelector", ["require", "exports", "XMLRegExp", "XMLTag"], function (r
          * Matching term to search for.
          *
          * @return
-         * List of matching XML tags, or `undefined`.
+         * List of matching XML tags.
          */
         find(nodes, term) {
             var _a, _b;
@@ -1027,9 +1027,7 @@ define("XMLSelector", ["require", "exports", "XMLRegExp", "XMLTag"], function (r
                     }
                 }
             }
-            if (findings.length) {
-                return findings;
-            }
+            return findings;
         }
         /**
          * Creates a list of XML tags matching the selector conditions.  The
@@ -1039,15 +1037,15 @@ define("XMLSelector", ["require", "exports", "XMLRegExp", "XMLTag"], function (r
          * Array of nodes to search in.
          *
          * @return
-         * List of matching XML tags, or `undefined`.
+         * List of matching XML tags.
          */
         query(nodes) {
             const selectors = this.selectors;
-            let findings;
+            let findings = [];
             for (let i = 0, iEnd = selectors.length; i < iEnd; ++i) {
                 findings = this.find(nodes, selectors[i]);
                 if (!findings) {
-                    return;
+                    break;
                 }
                 nodes = findings;
             }
@@ -1198,13 +1196,14 @@ define("XMLTree", ["require", "exports", "XMLCdata", "XMLNode", "XMLPrinter", "X
          * Selector to match against.
          *
          * @return
-         * List of XML nodes matching the selector, or `undefined`.
+         * List of XML nodes matching the selector.
+         *
+         * @throws
+         * SyntaxError, if unexpected patterns in selector terms are found.
          */
         query(selector) {
             const xmlSelector = XMLSelector_js_1.default.parse(selector);
-            if (xmlSelector) {
-                return xmlSelector.query(this.roots);
-            }
+            return xmlSelector.query(this.roots);
         }
         /**
          * Converts the tree of nodes back to XML text.

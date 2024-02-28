@@ -226,16 +226,17 @@ export class XMLTree {
      * Selector to match against.
      *
      * @return
-     * List of XML nodes matching the selector, or `undefined`.
+     * List of XML nodes matching the selector.
+     *
+     * @throws
+     * SyntaxError, if unexpected patterns in selector terms are found.
      */
     public query (
         selector: string
-    ): ( Array<XMLTag> | undefined ) {
+    ): Array<XMLTag> {
         const xmlSelector = XMLSelector.parse( selector );
 
-        if ( xmlSelector ) {
-            return xmlSelector.query( this.roots );
-        }
+        return xmlSelector.query( this.roots );
     }
 
 
