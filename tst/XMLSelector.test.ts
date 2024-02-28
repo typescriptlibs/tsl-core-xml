@@ -85,6 +85,21 @@ test( 'Test XMLSelector parse', async ( assert: test.Assert ) => {
         }]
     );
 
+    try {
+        selector = XMLSelector.parse( ']' );
+
+        assert.ok(
+            false,
+            'XMLSelector.parse should throw ParseError.'
+        );
+    }
+    catch ( error ) {
+        assert.ok(
+            error instanceof SyntaxError,
+            'XMLSelector.parse should throw ParseError.'
+        );
+    }
+
 } );
 
 
@@ -165,7 +180,7 @@ test( 'Test XMLSelector find', async ( assert: test.Assert ) => {
 
     assert.deepStrictEqual(
         selector.find( tree.roots, selectorTerm ),
-        undefined
+        []
     );
 
 } );

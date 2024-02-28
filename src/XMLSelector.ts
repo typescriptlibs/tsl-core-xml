@@ -120,6 +120,7 @@ function matchAttributes (
     return true;
 }
 
+
 function matchClasses (
     classValue?: string,
     classNeedles: Array<string> = []
@@ -169,12 +170,14 @@ export class XMLSelector {
      * String with selector terms to parse.
      *
      * @return
-     * The XMLSelector instance with the parsed selector terms, or undefined on
-     * error.
+     * The XMLSelector instance with the parsed selector terms.
+     *
+     * @throws
+     * SyntaxError, if unexpected patterns in selector terms are found.
      */
     public static parse (
         selectorString: string
-    ): ( XMLSelector | undefined ) {
+    ): XMLSelector {
         const selectorsStrings = selectorString.split( spaceRegExp );
         const selectors: Array<SelectorTerm> = [];
         const selector = new XMLSelector( selectors );
@@ -185,12 +188,11 @@ export class XMLSelector {
         for ( let i = 0, iEnd = selectorsStrings.length; i < iEnd; ++i ) {
             match = selectorsStrings[i].match( XMLRegExp.selector );
 
-            if ( !match ) {
-                continue;
-            }
-
-            if ( match[0] !== selectorsStrings[i] ) {
-                return;
+            if (
+                !match ||
+                match[0] !== selectorsStrings[i]
+            ) {
+                throw new SyntaxError( 'Unexpected pattern\n' + selectorsStrings[i] );
             }
 
             terms = {};
@@ -297,12 +299,12 @@ export class XMLSelector {
      * Matching term to search for.
      *
      * @return
-     * List of matching XML tags, or `undefined`.
+     * List of matching XML tags.
      */
     public find (
         nodes: Array<XMLNode>,
         term: SelectorTerm
-    ): ( Array<XMLTag> | undefined ) {
+    ): Array<XMLTag> {
         const findings: Array<XMLTag> = [];
 
         for ( const node of nodes ) {
@@ -341,9 +343,7 @@ export class XMLSelector {
 
         }
 
-        if ( findings.length ) {
-            return findings;
-        }
+        return findings;
     }
 
 
@@ -355,20 +355,20 @@ export class XMLSelector {
      * Array of nodes to search in.
      *
      * @return
-     * List of matching XML tags, or `undefined`.
+     * List of matching XML tags.
      */
     public query (
         nodes: Array<XMLNode>
-    ): ( Array<XMLTag> | undefined ) {
+    ): Array<XMLTag> {
         const selectors = this.selectors;
 
-        let findings: ( Array<XMLTag> | undefined );
+        let findings: Array<XMLTag> = [];
 
         for ( let i = 0, iEnd = selectors.length; i < iEnd; ++i ) {
             findings = this.find( nodes, selectors[i] );
 
             if ( !findings ) {
-                return;
+                break;
             }
 
             nodes = findings;
