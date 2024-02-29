@@ -10,7 +10,7 @@ The following versions of the XML TypeScript Library are currently being support
 
 | Version | Supported |
 | ------- | --------- |
-| 0.3.x   | yes       |
+| 0.4.x   | yes       |
 | < 0.3.0 | no        |
 
 

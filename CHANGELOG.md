@@ -3,6 +3,16 @@ Changelog
 
 
 
+v0.4.0
+------
+
+* Query results in array by @sophiebremer in https://github.com/typescriptlibs/tsl-core-xml/pull/19
+* XMLSelector.parse throws SyntaxError by @sophiebremer in https://github.com/typescriptlibs/tsl-core-xml/pull/19
+
+**Full Changelog**: https://github.com/typescriptlibs/tsl-core-xml/compare/v0.3.1...v0.4.0
+
+
+
 v0.3.1
 ------
 
