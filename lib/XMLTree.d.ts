@@ -65,9 +65,12 @@ export declare class XMLTree {
      * Selector to match against.
      *
      * @return
-     * List of XML nodes matching the selector, or `undefined`.
+     * List of XML nodes matching the selector.
+     *
+     * @throws
+     * SyntaxError, if unexpected patterns in selector terms are found.
      */
-    query(selector: string): (Array<XMLTag> | undefined);
+    query(selector: string): Array<XMLTag>;
     /**
      * Converts the tree of nodes back to XML text.
      */
