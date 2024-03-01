@@ -36,7 +36,7 @@ Usually the last root is the one that contains most data. Or you check each root
 if it is a tag by using the `isXMLTag` helper function. Afterwards you can check
 the `XMLTag.innerXML` property for child nodes.
 
-You can also use the `XMLTag.query` function to extract XML nodes with the help
+You can also use the `XMLTree.query` function to extract XML nodes with the help
 of selectors as known from CSS. It depends on the selector and use case whether
 this is faster than a custom walk through the tree nodes.
 
