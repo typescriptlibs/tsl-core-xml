@@ -59,7 +59,7 @@ export interface XMLPrinterOptions {
 
 
 /**
- * Scans text sources for XML tags.
+ * Converts XML nodes to strings.
  */
 export class XMLPrinter {
 
