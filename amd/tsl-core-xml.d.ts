@@ -278,7 +278,7 @@ declare module "XMLPrinter" {
         noLineBreaks?: boolean;
     }
     /**
-     * Scans text sources for XML tags.
+     * Converts XML nodes to strings.
      */
     export class XMLPrinter {
         constructor(nodes?: Array<XMLNode>, options?: XMLPrinterOptions);

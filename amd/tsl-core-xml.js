@@ -405,7 +405,7 @@ define("XMLPrinter", ["require", "exports", "Escaping", "XMLTag"], function (req
      *
      * */
     /**
-     * Scans text sources for XML tags.
+     * Converts XML nodes to strings.
      */
     class XMLPrinter {
         /* *

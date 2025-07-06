@@ -25,7 +25,7 @@ export interface XMLPrinterOptions {
     noLineBreaks?: boolean;
 }
 /**
- * Scans text sources for XML tags.
+ * Converts XML nodes to strings.
  */
 export declare class XMLPrinter {
     constructor(nodes?: Array<XMLNode>, options?: XMLPrinterOptions);
