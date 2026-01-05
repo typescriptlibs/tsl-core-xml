@@ -4,7 +4,7 @@ title: tsl-core-xml
 description: TypeScript library for XML
 author:
   name: © TypeScriptLibs and Contributors
-  email: bug@typescriptlibs.org
+  email: bug@typescriptlibs.eu
 
 header_pages:
   - www/downloads.md
@@ -26,8 +26,6 @@ plugins:
   - jekyll-seo-tag
   - jekyll-titles-from-headings
 
-show_excerpts: false
-
 remote_theme: jekyll/minima@2e9c7c0
 
 minima:
@@ -35,7 +33,13 @@ minima:
   skin: auto
   social_links:
     - { platform: github,  user_url: "https://github.com/typescriptlibs/" }
+    - { platform: mastodon, user_url: "https://mastodon.social/@typescriptlibs" }
     - { platform: rss,  user_url: "feed.xml" }
+
+sass:
+  quiet_deps: true
+
+show_excerpts: false
 
 titles_from_headings:
   enabled: true
